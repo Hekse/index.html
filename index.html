@@ -145,10 +145,6 @@
       position:relative;
       z-index:2;
     }
-    .splash-text.small{
-      color:rgba(255,255,255,.65);
-      font-size:13px;
-    }
     @keyframes loaderPulse{
       0%,100%{transform:scaleX(.82); opacity:.75}
       50%{transform:scaleX(1); opacity:1}
@@ -237,7 +233,6 @@
     .switch-row .tab{flex:1;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
     .switch-row .tab.active{background:rgba(47,128,255,.18);color:white;border-color:rgba(47,128,255,.4)}
     .result-box{background:linear-gradient(180deg,rgba(34,197,94,.12),rgba(34,197,94,.06));border:1px solid rgba(34,197,94,.22);color:#ecfff2;border-radius:16px;padding:12px}
-    .warn-box{background:linear-gradient(180deg,rgba(250,204,21,.12),rgba(250,204,21,.06));border:1px solid rgba(250,204,21,.25);color:#fff7d6;border-radius:16px;padding:12px}
     .list{display:grid;gap:10px}
     .item{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:13px}
     .item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -373,7 +368,7 @@
 
           <div>
             <label for="destinationAddress">Kohde tai osoite</label>
-            <input id="destinationAddress" type="text" placeholder="Esim. Pubituuri, Lapinlahti" />
+            <input id="destinationAddress" type="text" placeholder="Esim. Pubituuri, Lapinlahti tai Kinttupolku 1, Iisalmi" />
           </div>
 
           <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
@@ -626,12 +621,14 @@
       if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[]};
       if(!Array.isArray(state.settings.savedLocations)) state.settings.savedLocations = [];
       if(!Array.isArray(state.drives)) state.drives = [];
+
       if(state.settings.savedLocations.length === 0){
         state.settings.savedLocations = [
-          {id:cryptoRandom(), name:'Koti', address:''},
-          {id:cryptoRandom(), name:'Toimisto', address:''}
+          {id:cryptoRandom(), name:'Koti', address:'Poskipuronkatu 9 A 3, Iisalmi'},
+          {id:cryptoRandom(), name:'Toimisto', address:'Iisalmi'}
         ];
       }
+
       if(state.settings.defaultKmRate === undefined || state.settings.defaultKmRate === null || state.settings.defaultKmRate === '') {
         state.settings.defaultKmRate = 0.57;
       }
@@ -645,6 +642,19 @@
       return String(value || '').trim().replace(/\s+/g, ' ');
     }
 
+    function uniqueQueries(list){
+      const seen = new Set();
+      return list
+        .map(x => normalizeText(x))
+        .filter(Boolean)
+        .filter(x => {
+          const key = x.toLowerCase();
+          if(seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+    }
+
     function buildDestinationQuery(placeName, destinationAddress){
       const name = normalizeText(placeName);
       const address = normalizeText(destinationAddress);
@@ -654,6 +664,51 @@
         return `${name}, ${address}`;
       }
       return address || name || '';
+    }
+
+    function buildGeocodeCandidates(placeName, destinationAddress){
+      const name = normalizeText(placeName);
+      const address = normalizeText(destinationAddress);
+
+      return uniqueQueries([
+        address && name ? `${name}, ${address}` : '',
+        address,
+        name
+      ]);
+    }
+
+    async function geocodeSingleQuery(query){
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
+      const res = await fetch(url, {
+        headers: {
+          'Accept':'application/json'
+        }
+      });
+      if(!res.ok) throw new Error('Hakupalvelu ei vastannut');
+      const data = await res.json();
+      if(!data || !data.length) return null;
+
+      return {
+        lat: Number(data[0].lat),
+        lon: Number(data[0].lon),
+        displayName: data[0].display_name,
+        queryUsed: query
+      };
+    }
+
+    async function geocodeAddressSmart(input, fallbackQueries = []){
+      const queries = uniqueQueries([input, ...fallbackQueries]);
+
+      for(const q of queries){
+        try {
+          const result = await geocodeSingleQuery(q);
+          if(result) return result;
+        } catch(err){
+          console.error('Geocode failed for query:', q, err);
+        }
+      }
+
+      throw new Error('Osoitetta tai paikkaa ei löytynyt');
     }
 
     function go(screen){
@@ -909,15 +964,6 @@
       return found ? { label: found.name, address: found.address } : { label:'', address:'' };
     }
 
-    async function geocodeAddress(address){
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(address)}`;
-      const res = await fetch(url, { headers: { 'Accept':'application/json' } });
-      if(!res.ok) throw new Error('Osoitteen haku epäonnistui');
-      const data = await res.json();
-      if(!data || !data.length) throw new Error('Osoitetta ei löytynyt');
-      return { lat: Number(data[0].lat), lon: Number(data[0].lon), displayName: data[0].display_name };
-    }
-
     async function reverseGeocode(lat, lon){
       const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
       const res = await fetch(url, { headers: { 'Accept':'application/json' } });
@@ -967,11 +1013,13 @@
         .map(s => normalizeText(s.address))
         .filter(Boolean);
 
-      const destination = filledStops.length > 0
-        ? filledStops[filledStops.length - 1]
-        : buildDestinationQuery(placeName, destinationAddress);
+      const destinationCandidates = buildGeocodeCandidates(placeName, destinationAddress);
 
-      if(!start.address || !destination){
+      const destinationPrimary = filledStops.length > 0
+        ? filledStops[filledStops.length - 1]
+        : destinationCandidates[0] || '';
+
+      if(!start.address || !destinationPrimary){
         alert('Anna lähtöosoite ja kohde tai osoite.');
         return;
       }
@@ -979,13 +1027,14 @@
       status.textContent = 'Haetaan kilometrejä...';
 
       try {
-        const [from,to] = await Promise.all([
-          geocodeAddress(start.address),
-          geocodeAddress(destination)
-        ]);
+        const from = await geocodeAddressSmart(start.address, [start.label]);
+        const to = filledStops.length > 0
+          ? await geocodeAddressSmart(destinationPrimary)
+          : await geocodeAddressSmart(destinationPrimary, destinationCandidates.slice(1));
 
         const url = `https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`;
         const res = await fetch(url);
+
         if(!res.ok) throw new Error('Reittihaku epäonnistui');
 
         const data = await res.json();
@@ -993,12 +1042,12 @@
 
         const km = data.routes[0].distance / 1000;
         document.getElementById('distanceKm').value = km.toFixed(1);
-        status.textContent = `Haettu reitti: ${km.toFixed(1).replace('.',',')} km`;
+        status.textContent = `Haettu reitti: ${km.toFixed(1).replace('.',',')} km (${to.queryUsed})`;
         recalculateTotals();
       } catch(err){
         console.error(err);
         status.textContent = 'Km-haku ei onnistunut.';
-        alert('Km-haku ei onnistunut. Tarkista kohde tai syötä kilometrit käsin.');
+        alert('Km-haku ei onnistunut. Tarkista lähtöpaikan osoite asetuksista tai syötä kilometrit käsin.');
       }
     }
 
