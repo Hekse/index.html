@@ -2,947 +2,1334 @@
 <html lang="fi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Ajo</title>
-
-  <meta name="theme-color" content="#0b1220" />
-
-  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-    <defs>
-      <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-        <stop offset="0%" stop-color="%238ec5ff"/>
-        <stop offset="50%" stop-color="%234b7dff"/>
-        <stop offset="100%" stop-color="%2315284f"/>
-      </linearGradient>
-    </defs>
-    <rect x="4" y="4" width="56" height="56" rx="16" fill="%230c1528"/>
-    <path d="M16 40 L27 24 L36 35 L48 18" fill="none" stroke="url(%23g)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="16" cy="40" r="3.5" fill="%238ec5ff"/>
-    <circle cx="27" cy="24" r="3.5" fill="%238ec5ff"/>
-    <circle cx="36" cy="35" r="3.5" fill="%238ec5ff"/>
-    <circle cx="48" cy="18" r="3.5" fill="%238ec5ff"/>
-  </svg>' />
-
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Opero Ajo – v2</title>
   <style>
     :root{
       --bg:#07111f;
-      --bg-2:#0a1628;
-      --panel:#0e1c31;
-      --panel-2:#132540;
-      --line:rgba(157,190,255,.14);
+      --panel:#0d1b2f;
+      --panel2:#10233d;
       --text:#eef4ff;
-      --muted:#9bb0d4;
-      --soft:#c9d7f0;
-      --brand:#4b7dff;
-      --brand-2:#8ec5ff;
-      --danger:#ff6b6b;
-      --ok:#32d296;
-      --shadow:0 18px 40px rgba(0,0,0,.35);
+      --muted:#9db0d3;
+      --line:rgba(125,170,255,.18);
+      --brand:#2f80ff;
+      --brand2:#6ea8ff;
+      --green:#22c55e;
+      --yellow:#facc15;
+      --red:#ef4444;
+      --shadow:0 12px 32px rgba(0,0,0,.25);
       --radius:22px;
       --radius-sm:16px;
     }
 
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg-2));color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    body{min-height:100vh}
-    button,input,textarea,select{font:inherit}
-
-    .app{
-      max-width:1100px;
-      margin:0 auto;
-      padding:20px 16px 42px;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:18px;
-      padding:14px 16px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:rgba(12,22,39,.72);
-      backdrop-filter:blur(12px);
-      box-shadow:var(--shadow);
-      position:sticky;
-      top:10px;
-      z-index:20;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
-    }
-
-    .brand-badge{
-      width:44px;
-      height:44px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg,rgba(142,197,255,.18),rgba(75,125,255,.16));
-      border:1px solid rgba(142,197,255,.18);
-      flex:0 0 auto;
-    }
-
-    .brand-badge svg{width:26px;height:26px}
-
-    .brand-text{
-      min-width:0;
-      line-height:1.05;
-    }
-
-    .brand-text .opero{
-      font-size:11px;
-      letter-spacing:.22em;
-      color:var(--muted);
-      text-transform:uppercase;
-      margin-bottom:5px;
-    }
-
-    .brand-text .title{
-      font-size:24px;
-      font-weight:800;
-      letter-spacing:.01em;
-      white-space:nowrap;
-    }
-
-    .toolbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-
-    .btn{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      padding:12px 16px;
-      border-radius:14px;
-      font-weight:700;
+    html,body{
+      margin:0;
+      padding:0;
+      background:
+        radial-gradient(circle at 50% 8%, rgba(20,72,160,.20), transparent 34%),
+        linear-gradient(180deg,#07111f 0%, #091726 100%);
       color:var(--text);
-      background:#1a2b49;
-      border:1px solid rgba(157,190,255,.12);
-      transition:.18s ease;
+      font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif
     }
-
-    .btn:hover{transform:translateY(-1px)}
-    .btn:active{transform:translateY(0)}
-    .btn.primary{
-      background:linear-gradient(135deg,var(--brand),#3968e9);
-      border-color:rgba(255,255,255,.08);
-      box-shadow:0 10px 26px rgba(75,125,255,.28);
-    }
-    .btn.ghost{background:rgba(255,255,255,.04)}
-    .btn.danger{background:rgba(255,107,107,.14);color:#ffd8d8;border-color:rgba(255,107,107,.18)}
-    .btn.small{padding:10px 12px;font-size:14px;border-radius:12px}
-
-    .grid{
-      display:grid;
-      grid-template-columns:380px 1fr;
-      gap:16px;
-      align-items:start;
-    }
-
-    .card{
-      background:linear-gradient(180deg,rgba(16,29,50,.94),rgba(12,22,39,.94));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
-
-    .panel{
-      padding:18px;
-    }
-
-    .panel h2{
-      margin:0 0 6px;
-      font-size:20px;
-      letter-spacing:.01em;
-    }
-
-    .sub{
-      color:var(--muted);
-      font-size:14px;
-      margin-bottom:16px;
-    }
-
-    .fields{
-      display:grid;
-      gap:12px;
-    }
-
-    .field{
-      display:grid;
-      gap:8px;
-    }
-
-    .field label{
-      font-size:14px;
-      color:var(--soft);
-      font-weight:600;
-    }
-
-    .input,.textarea{
-      width:100%;
-      background:#0a1528;
-      color:var(--text);
-      border:1px solid rgba(157,190,255,.12);
-      border-radius:14px;
-      padding:14px 14px;
-      outline:none;
-      transition:.18s ease;
-    }
-
-    .textarea{
-      min-height:90px;
-      resize:vertical;
-    }
-
-    .input:focus,.textarea:focus{
-      border-color:rgba(142,197,255,.42);
-      box-shadow:0 0 0 4px rgba(75,125,255,.12);
-    }
-
-    .stop-row{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:8px;
-      align-items:center;
-      margin-bottom:8px;
-    }
-
-    .hint{
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.45;
-    }
-
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .stat{
-      padding:14px;
-      border-radius:16px;
-      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
-      border:1px solid rgba(157,190,255,.10);
-    }
-
-    .stat .k{
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:8px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .stat .v{
-      font-size:28px;
-      font-weight:800;
-    }
-
-    .list{
-      display:grid;
-      gap:12px;
-    }
-
-    .trip{
-      padding:14px;
-      border-radius:18px;
-      border:1px solid rgba(157,190,255,.10);
-      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
-    }
-
-    .trip-top{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      justify-content:space-between;
-      margin-bottom:8px;
-    }
-
-    .trip-title{
-      font-size:18px;
-      font-weight:800;
-      line-height:1.2;
-      margin-bottom:3px;
-      word-break:break-word;
-    }
-
-    .trip-date{
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .trip-actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      flex:0 0 auto;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:700;
-      color:#d8e7ff;
-      background:rgba(75,125,255,.14);
-      border:1px solid rgba(75,125,255,.18);
-    }
-
-    .trip-meta{
-      display:grid;
-      gap:8px;
-      color:var(--soft);
-      font-size:14px;
-      margin:10px 0 0;
-    }
-
-    .trip-meta strong{color:var(--text)}
-    .trip-notes{
-      margin-top:10px;
-      padding-top:10px;
-      border-top:1px solid rgba(157,190,255,.10);
-      color:var(--soft);
-      white-space:pre-wrap;
-      font-size:14px;
-    }
-
-    .empty{
-      padding:34px 20px;
-      border:1px dashed rgba(157,190,255,.16);
-      border-radius:18px;
-      text-align:center;
-      color:var(--muted);
-      background:rgba(255,255,255,.02);
-    }
-
-    .footer-note{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:13px;
-    }
+    body{min-height:100vh;background-attachment:fixed}
+    .app{max-width:760px;margin:0 auto;padding:18px 14px 110px}
 
     .splash{
-      position:fixed;
-      inset:0;
-      z-index:9999;
-      display:grid;
-      place-items:center;
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
       background:
-        radial-gradient(circle at 20% 15%, rgba(142,197,255,.14), transparent 34%),
-        radial-gradient(circle at 80% 80%, rgba(75,125,255,.18), transparent 28%),
-        linear-gradient(180deg,#06101d,#091423 56%,#07111f);
-      transition:opacity .4s ease, visibility .4s ease;
+        radial-gradient(circle at 50% 40%, rgba(36,104,255,.22), transparent 20%),
+        radial-gradient(circle at 50% 65%, rgba(35,123,255,.12), transparent 16%),
+        linear-gradient(180deg,#030814 0%, #041024 55%, #030814 100%);
+      transition:opacity .45s ease, visibility .45s ease;
     }
-
-    .splash.hide{
+    .splash.hidden{
       opacity:0;
       visibility:hidden;
       pointer-events:none;
     }
-
-    .splash-box{
+    .splash-inner{
+      width:min(92vw,460px);
+      min-height:540px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      position:relative;
       text-align:center;
-      padding:28px;
     }
-
+    .splash-glow{
+      position:absolute;
+      width:320px;height:320px;border-radius:999px;
+      border:1px solid rgba(114,171,255,.10);
+      box-shadow:
+        0 0 50px rgba(38,121,255,.10) inset,
+        0 0 80px rgba(38,121,255,.08);
+      top:88px;
+      left:50%;
+      transform:translateX(-50%);
+      pointer-events:none;
+    }
+    .splash-brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:10px;
+      position:relative;
+      z-index:2;
+    }
     .splash-logo{
-      width:104px;
-      height:104px;
-      margin:0 auto 18px;
-      border-radius:28px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg,rgba(142,197,255,.14),rgba(75,125,255,.18));
-      border:1px solid rgba(142,197,255,.16);
-      box-shadow:0 18px 50px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.03);
-      backdrop-filter:blur(8px);
+      width:78px;height:78px;border-radius:999px;position:relative;flex:0 0 auto;
+      background:radial-gradient(circle at 30% 30%, #33b1ff 0%, #1f7fff 35%, #0e56df 68%, #0a2f7d 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.16),
+        0 0 28px rgba(47,128,255,.28);
     }
-
-    .splash-logo svg{width:58px;height:58px}
-
-    .splash-opero{
-      color:var(--muted);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.24em;
-      margin-bottom:8px;
+    .splash-logo::before{
+      content:"";
+      position:absolute; inset:11px; border-radius:999px;
+      border:5px solid rgba(255,255,255,.96);
+      border-right-color:transparent;
+      transform:rotate(-18deg);
     }
-
-    .splash-title{
-      font-size:42px;
+    .splash-logo::after{
+      content:"";
+      position:absolute;
+      left:36px; top:8px;
+      width:6px; height:60px; border-radius:6px;
+      background:linear-gradient(180deg,#eef8ff,#c8e7ff 55%,#8ecbff 100%);
+      transform:rotate(41deg);
+      box-shadow:0 0 14px rgba(130,200,255,.45);
+    }
+    .splash-word{
+      font-size:44px;
       font-weight:900;
       letter-spacing:.02em;
-      margin-bottom:8px;
+      color:white;
+      text-shadow:0 0 18px rgba(255,255,255,.06);
     }
-
+    .splash-line{
+      width:170px;height:2px;border-radius:999px;
+      background:linear-gradient(90deg, transparent 0%, #1f85ff 18%, #6cc2ff 50%, #1f85ff 82%, transparent 100%);
+      margin:8px auto 10px;
+      box-shadow:0 0 16px rgba(79,165,255,.45);
+    }
     .splash-sub{
-      font-size:14px;
-      color:var(--muted);
-      letter-spacing:.02em;
+      font-size:28px;
+      font-weight:700;
+      letter-spacing:.18em;
+      color:white;
+      margin-left:.18em;
+      margin-bottom:150px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-loader{
+      width:220px;
+      margin:0 auto 18px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-loader-bar{
+      height:3px;border-radius:999px;
+      background:linear-gradient(90deg, transparent 0%, #1590ff 20%, #6fd0ff 50%, #1590ff 80%, transparent 100%);
+      box-shadow:0 0 16px rgba(83,173,255,.55);
+      animation:loaderPulse 1.5s ease-in-out infinite;
+    }
+    .splash-text{
+      color:rgba(255,255,255,.88);
+      font-size:15px;
+      letter-spacing:.03em;
+      margin-bottom:4px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-text.small{
+      color:rgba(255,255,255,.65);
+      font-size:13px;
+    }
+    @keyframes loaderPulse{
+      0%,100%{transform:scaleX(.82); opacity:.75}
+      50%{transform:scaleX(1); opacity:1}
     }
 
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+      position:sticky;top:0;z-index:5;padding:8px 0 10px;
+      background:linear-gradient(180deg,rgba(7,17,31,.94),rgba(7,17,31,.74),transparent);
+      backdrop-filter:blur(14px)
+    }
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .brand-logo{
+      width:54px;height:54px;border-radius:999px;position:relative;flex:0 0 auto;
+      background:radial-gradient(circle at 30% 30%, #33b1ff 0%, #1f7fff 35%, #0e56df 68%, #0a2f7d 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.16),
+        0 0 22px rgba(47,128,255,.24);
+    }
+    .brand-logo::before{
+      content:"";
+      position:absolute; inset:8px; border-radius:999px;
+      border:4px solid rgba(255,255,255,.94);
+      border-right-color:transparent;
+      transform:rotate(-18deg);
+    }
+    .brand-logo::after{
+      content:"";
+      position:absolute;
+      left:24px; top:6px;
+      width:5px; height:42px; border-radius:5px;
+      background:linear-gradient(180deg,#eef8ff,#c8e7ff 55%,#8ecbff 100%);
+      transform:rotate(41deg);
+      box-shadow:0 0 10px rgba(130,200,255,.4);
+    }
+    .brand-stack{
+      display:flex;
+      flex-direction:column;
+      line-height:1;
+      gap:6px;
+    }
+    .brand-title{
+      font-weight:900;
+      letter-spacing:.05em;
+      font-size:28px;
+    }
+    .brand-sub{
+      font-weight:700;
+      letter-spacing:.22em;
+      font-size:15px;
+      color:#f3f8ff;
+      margin-left:.22em;
+    }
+
+    .card{background:linear-gradient(180deg,rgba(18,38,66,.98),rgba(10,22,39,.98));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:14px;overflow:hidden}
+    .hero{padding:20px;background:radial-gradient(circle at top right, rgba(47,128,255,.18), transparent 34%), linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))}
+    .hero h1{font-size:24px;line-height:1.15;margin:0 0 8px}
+    .hero p{margin:0;color:var(--muted)}
+    .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .btn,.ghost,.danger,.small-btn,.tab{
+      border:0;border-radius:14px;padding:13px 14px;font-weight:700;cursor:pointer;font-size:15px;
+      transition:.15s transform ease,.15s opacity ease,.15s background ease;
+    }
+    .btn:active,.ghost:active,.danger:active,.small-btn:active,.tab:active{transform:scale(.99)}
+    .btn{background:linear-gradient(180deg,var(--brand2),var(--brand));color:white;box-shadow:0 10px 20px rgba(47,128,255,.24)}
+    .ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
+    .danger{background:rgba(239,68,68,.12);color:#ffd2d2;border:1px solid rgba(239,68,68,.25)}
+    .small-btn{background:rgba(47,128,255,.12);color:#dbe8ff;border:1px solid rgba(47,128,255,.25);padding:10px 12px;font-size:14px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+    .section-title h2{font-size:17px;margin:0}
+    .muted{color:var(--muted)}
     .hidden{display:none!important}
-
-    @media (max-width: 920px){
-      .grid{grid-template-columns:1fr}
-      .topbar{align-items:flex-start;flex-direction:column}
-      .toolbar{justify-content:flex-start}
-      .stats{grid-template-columns:1fr 1fr 1fr}
+    .grid{display:grid;gap:12px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;color:#d8e5ff;margin:0 0 7px;font-weight:700}
+    input,select,textarea{
+      width:100%;background:#091525;color:var(--text);border:1px solid var(--line);border-radius:14px;padding:13px 12px;font:inherit;outline:none;
     }
+    input::placeholder,textarea::placeholder{color:#7f95bc}
+    textarea{min-height:90px;resize:vertical}
+    .switch-row{display:flex;gap:10px}
+    .switch-row .tab{flex:1;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+    .switch-row .tab.active{background:rgba(47,128,255,.18);color:white;border-color:rgba(47,128,255,.4)}
+    .result-box{background:linear-gradient(180deg,rgba(34,197,94,.12),rgba(34,197,94,.06));border:1px solid rgba(34,197,94,.22);color:#ecfff2;border-radius:16px;padding:12px}
+    .warn-box{background:linear-gradient(180deg,rgba(250,204,21,.12),rgba(250,204,21,.06));border:1px solid rgba(250,204,21,.25);color:#fff7d6;border-radius:16px;padding:12px}
+    .list{display:grid;gap:10px}
+    .item{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:13px}
+    .item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .item-title{font-weight:800}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 9px;border-radius:999px;font-size:12px;color:#dfe9ff;background:rgba(255,255,255,.03)}
+    .item-meta{margin-top:8px;color:var(--muted);font-size:13px}
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(7,17,31,.78);backdrop-filter:blur(22px);border-top:1px solid var(--line)}
+    .bottom-nav .inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .nav-btn{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:11px 8px;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer}
+    .nav-btn.active{background:rgba(47,128,255,.16);color:#fff;border-color:rgba(47,128,255,.35)}
+    .row{display:flex;gap:10px;align-items:center}
+    .row-between{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .right{text-align:right}
+    .totals{display:grid;gap:10px}
+    .total{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dashed var(--line)}
+    .total:last-child{border-bottom:0;padding-bottom:0}
+    .empty{padding:18px;text-align:center;color:var(--muted)}
+    .divider{height:1px;background:var(--line);margin:8px 0}
+    .mini{font-size:12px;color:var(--muted)}
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;color:#dce7ff}
+    .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+    .stat{padding:13px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--line)}
+    .stat-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .stat-value{font-size:20px;font-weight:900;letter-spacing:.01em}
+    .toast-wrap{position:fixed;left:12px;right:12px;top:14px;z-index:30;display:grid;gap:8px;pointer-events:none}
+    .toast{margin-left:auto;max-width:520px;background:linear-gradient(180deg,rgba(13,27,47,.98),rgba(10,22,39,.98));border:1px solid var(--line);color:#eef4ff;padding:12px 14px;border-radius:16px;box-shadow:var(--shadow);transform:translateY(-10px);opacity:0;animation:toastIn .18s ease forwards}
+    .toast.good{border-color:rgba(34,197,94,.25)}
+    .toast.warn{border-color:rgba(250,204,21,.3)}
+    .toast.bad{border-color:rgba(239,68,68,.3)}
+    @keyframes toastIn{to{transform:translateY(0);opacity:1}}
 
-    @media (max-width: 640px){
-      .app{padding:14px 12px 30px}
-      .topbar{padding:12px}
-      .brand-text .title{font-size:22px}
-      .panel{padding:16px}
-      .stats{grid-template-columns:1fr}
-      .trip-top{flex-direction:column}
-      .trip-actions{justify-content:flex-start}
-      .splash-title{font-size:34px}
-      .splash-logo{width:92px;height:92px}
+    @media (max-width:620px){
+      .grid-2{grid-template-columns:1fr}
+      .quick-grid{grid-template-columns:1fr}
+      .brand-title{font-size:24px}
+      .brand-sub{font-size:13px}
+      .splash-word{font-size:38px}
+      .splash-sub{font-size:24px}
     }
-
     @media print{
-      .topbar,.left-col,.footer-note,.splash{display:none!important}
       body{background:#fff;color:#000}
-      .app{max-width:none;padding:0}
-      .grid{display:block}
-      .card{border:none;box-shadow:none;background:#fff}
+      .bottom-nav,.no-print,.topbar,.splash{display:none!important}
+      .app{padding:0;max-width:none}
+      .card{box-shadow:none;border:1px solid #ccc;background:#fff;color:#000}
+      input,select,textarea,button{display:none!important}
     }
   </style>
 </head>
 <body>
-  <div id="splash" class="splash" aria-hidden="true">
-    <div class="splash-box">
-      <div class="splash-logo" aria-hidden="true">
-        <svg viewBox="0 0 64 64" fill="none">
-          <defs>
-            <linearGradient id="splashGrad" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#8ec5ff"/>
-              <stop offset="0.5" stop-color="#4b7dff"/>
-              <stop offset="1" stop-color="#20366e"/>
-            </linearGradient>
-          </defs>
-          <path d="M16 40 L27 24 L36 35 L48 18" stroke="url(#splashGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="16" cy="40" r="3.4" fill="#8ec5ff"/>
-          <circle cx="27" cy="24" r="3.4" fill="#8ec5ff"/>
-          <circle cx="36" cy="35" r="3.4" fill="#8ec5ff"/>
-          <circle cx="48" cy="18" r="3.4" fill="#8ec5ff"/>
-        </svg>
+  <div id="splashScreen" class="splash">
+    <div class="splash-inner">
+      <div class="splash-glow"></div>
+      <div class="splash-brand">
+        <div class="splash-logo"></div>
+        <div class="splash-word">OPERO</div>
       </div>
-      <div class="splash-opero">OPERO</div>
-      <div class="splash-title">Ajo</div>
-      <div class="splash-sub">Loading...</div>
+      <div class="splash-line"></div>
+      <div class="splash-sub">AJO</div>
+      <div class="splash-loader">
+        <div class="splash-loader-bar"></div>
+      </div>
+      <div class="splash-text">LADATAAN... 1.5 s</div>
+      <div class="splash-text small">Siirrytään sovellukseen</div>
     </div>
   </div>
 
+  <div id="toastWrap" class="toast-wrap no-print"></div>
+
   <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-badge" aria-hidden="true">
-          <svg viewBox="0 0 64 64" fill="none">
-            <defs>
-              <linearGradient id="brandGrad" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#8ec5ff"/>
-                <stop offset="0.5" stop-color="#4b7dff"/>
-                <stop offset="1" stop-color="#20366e"/>
-              </linearGradient>
-            </defs>
-            <path d="M16 40 L27 24 L36 35 L48 18" stroke="url(#brandGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="16" cy="40" r="3.4" fill="#8ec5ff"/>
-            <circle cx="27" cy="24" r="3.4" fill="#8ec5ff"/>
-            <circle cx="36" cy="35" r="3.4" fill="#8ec5ff"/>
-            <circle cx="48" cy="18" r="3.4" fill="#8ec5ff"/>
-          </svg>
+    <div class="topbar no-print">
+      <div class="brand-wrap">
+        <div class="brand-logo"></div>
+        <div class="brand-stack">
+          <div class="brand-title">OPERO</div>
+          <div class="brand-sub">AJO</div>
         </div>
+      </div>
+    </div>
 
-        <div class="brand-text">
-          <div class="opero">OPERO</div>
-          <div class="title">Ajo</div>
+    <section id="screen-home">
+      <div class="card hero">
+        <h1>Ajot ja matkakulut talteen kentällä.</h1>
+        <p>Kirjaa ajo, lisää pysäköinti tai muu kulu, ja tee kuukausikoonti PDF:ksi yhdellä napilla.</p>
+        <div class="quick-grid no-print">
+          <button class="btn" onclick="go('new')">➕ Uusi ajo</button>
+          <button class="ghost" onclick="go('report')">📄 Raportti</button>
+          <button class="ghost" onclick="go('drives')">📋 Ajot</button>
+          <button class="ghost" onclick="go('settings')">⚙️ Asetukset</button>
         </div>
       </div>
 
-      <div class="toolbar">
-        <button class="btn ghost" id="exportPdfBtn" type="button">PDF</button>
-        <button class="btn ghost" id="clearAllBtn" type="button">Tyhjennä kaikki</button>
+      <div class="card">
+        <div class="section-title"><h2>Tämän kuun koonti</h2><span class="mini" id="homeMonthLabel"></span></div>
+        <div id="homeStats" class="stats-grid"></div>
+        <div class="divider"></div>
+        <div class="totals" id="homeTotals"></div>
       </div>
-    </header>
 
-    <main class="grid">
-      <section class="left-col">
-        <div class="card panel">
-          <h2>Lisää ajo</h2>
-          <div class="sub">Syötä kohde nopeasti. Tarkan osoitteen sijasta voit kirjoittaa myös paikan nimen ja paikkakunnan.</div>
+      <div class="card">
+        <div class="section-title"><h2>Viimeisimmät ajot</h2></div>
+        <div id="recentDrives" class="list"></div>
+      </div>
+    </section>
 
-          <form id="tripForm" class="fields">
-            <div class="field">
-              <label for="date">Päivä</label>
-              <input id="date" class="input" type="date" required />
+    <section id="screen-new" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Uusi ajo</h2></div>
+        <div class="grid">
+          <div>
+            <label for="driveDate">Päivämäärä</label>
+            <input id="driveDate" type="date" />
+          </div>
+
+          <div>
+            <label for="startLocationSelect">Lähtöpaikka</label>
+            <select id="startLocationSelect"></select>
+          </div>
+
+          <div class="no-print">
+            <button class="small-btn" type="button" onclick="useCurrentLocationAsStart()">📍 Paikanna sijainti</button>
+            <div id="geoStatus" class="mini" style="margin-top:8px"></div>
+          </div>
+
+          <div id="customStartWrap" class="hidden">
+            <label for="customStartAddress">Muu lähtöosoite</label>
+            <input id="customStartAddress" type="text" placeholder="Esim. Asemakatu 1, Kuopio" />
+          </div>
+
+          <div>
+            <label for="placeName">Paikan nimi</label>
+            <input id="placeName" type="text" placeholder="Esim. Konttila Iisalmi" />
+          </div>
+
+          <div>
+            <label for="destinationAddress">Kohdeosoite</label>
+            <input id="destinationAddress" type="text" placeholder="Esim. Kinttupolku 1, Iisalmi" />
+          </div>
+
+          <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
+            <div class="section-title">
+              <h2>Lisäpysähdykset</h2>
+              <button class="small-btn no-print" type="button" onclick="addDraftStop()">+ Lisää pysähdys</button>
             </div>
+            <div id="draftStopsList" class="list"></div>
+          </div>
 
-            <div class="field">
-              <label for="destination">Kohde tai osoite</label>
-              <input
-                id="destination"
-                class="input"
-                type="text"
-                placeholder="Esim. Pubituuri, Lapinlahti"
-                autocomplete="off"
-                required
-              />
+          <div>
+            <label for="purpose">Ajon tarkoitus</label>
+            <input id="purpose" type="text" placeholder="Esim. asiakaskäynti" />
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label for="kmRate">€/km</label>
+              <input id="kmRate" type="number" step="0.01" min="0" inputmode="decimal" />
             </div>
-
-            <div class="field">
-              <label>Pysähdykset</label>
-              <div id="stopsWrap"></div>
-              <button class="btn small ghost" id="addStopBtn" type="button">+ Lisää stoppi</button>
-              <div class="hint">Voit lisätä yhden tai useamman välipysähdyksen. Esim. ABC Iisalmi, Matkahuolto Kuopio.</div>
-            </div>
-
-            <div class="field">
-              <label for="notes">Muistiinpanot</label>
-              <textarea id="notes" class="textarea" placeholder="Esim. asiakaskäynti, tavaran nouto, päivän huomioita"></textarea>
-            </div>
-
-            <button class="btn primary" type="submit">Tallenna ajo</button>
-          </form>
-
-          <div class="footer-note">Tallennus tapahtuu laitteen omaan muistiin.</div>
-        </div>
-      </section>
-
-      <section>
-        <div class="card panel">
-          <div class="stats">
-            <div class="stat">
-              <div class="k">Ajoja</div>
-              <div class="v" id="countTrips">0</div>
-            </div>
-            <div class="stat">
-              <div class="k">Tämän kk</div>
-              <div class="v" id="countMonth">0</div>
-            </div>
-            <div class="stat">
-              <div class="k">Stoppien määrä</div>
-              <div class="v" id="countStops">0</div>
+            <div>
+              <label for="distanceKm">Km</label>
+              <input id="distanceKm" type="number" step="0.1" min="0" inputmode="decimal" placeholder="0" />
             </div>
           </div>
 
-          <h2>Ajot</h2>
-          <div class="sub">Uusimmat ylimpänä. Kohde avautuu karttahakuna myös vapaalla tekstillä.</div>
+          <div class="switch-row no-print">
+            <button class="tab active" id="oneWayBtn" type="button">Meno</button>
+            <button class="tab" id="roundTripBtn" type="button">Meno-paluu</button>
+          </div>
 
-          <div id="tripList" class="list"></div>
+          <div class="grid-2 no-print">
+            <button class="small-btn" type="button" onclick="lookupDistance()">🗺️ Hae km</button>
+            <button class="ghost" type="button" onclick="recalculateTotals()">Laske summa</button>
+          </div>
+
+          <div id="distanceStatus" class="mini"></div>
+
+          <div class="result-box">
+            <div class="row-between"><strong>Km-korvaus</strong><strong id="kmCompValue">0,00 €</strong></div>
+          </div>
+
+          <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
+            <div class="section-title"><h2>Kulut</h2><button class="small-btn no-print" type="button" onclick="openExpenseModal()">+ Lisää kulu</button></div>
+            <div id="expenseDraftList" class="list"></div>
+          </div>
+
+          <div>
+            <label for="notes">Muistiinpano</label>
+            <textarea id="notes" placeholder="Esim. pysäköinti hallissa, tapaaminen venyi 30 min"></textarea>
+          </div>
+
+          <div class="result-box">
+            <div class="row-between"><span>Kulut yhteensä</span><strong id="expenseTotalValue">0,00 €</strong></div>
+            <div class="row-between" style="margin-top:6px"><span>Kaikki yhteensä</span><strong id="grandTotalValue">0,00 €</strong></div>
+          </div>
+
+          <div class="grid-2 no-print">
+            <button class="btn" type="button" onclick="saveDrive()">✅ Tallenna ajo</button>
+            <button class="ghost" type="button" onclick="resetDriveForm()">Tyhjennä</button>
+          </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+
+    <section id="screen-drives" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Ajot</h2><span class="mini" id="driveCountLabel"></span></div>
+        <div id="drivesList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="screen-report" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Raportti</h2></div>
+        <div class="grid">
+          <div class="grid-2">
+            <div>
+              <label for="reportMonth">Kuukausi</label>
+              <select id="reportMonth"></select>
+            </div>
+            <div>
+              <label for="reportYear">Vuosi</label>
+              <select id="reportYear"></select>
+            </div>
+          </div>
+
+          <div class="totals" id="reportTotals"></div>
+
+          <div class="no-print">
+            <label class="row" style="align-items:center;gap:10px">
+              <input id="includeReceiptsInPdf" type="checkbox" style="width:auto" />
+              <span>Sisällytä kuittikuvat PDF:ään</span>
+            </label>
+          </div>
+
+          <div class="grid-2 no-print">
+            <button class="btn" type="button" onclick="openPrintableReport()">📄 Luo PDF / tulostusnäkymä</button>
+            <button class="ghost" type="button" onclick="refreshReport()">Päivitä koonti</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>Raportin rivit</h2></div>
+        <div id="reportRows" class="list"></div>
+      </div>
+    </section>
+
+    <section id="screen-settings" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Asetukset</h2></div>
+        <div class="grid">
+          <div>
+            <label for="userName">Nimi</label>
+            <input id="userName" type="text" placeholder="Esim. Pasi Valta" />
+          </div>
+          <div>
+            <label for="defaultKmRate">Oletus km-korvaus (€/km)</label>
+            <input id="defaultKmRate" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Esim. 0.57" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>Lähtöpaikat</h2><span class="mini">Max 5</span></div>
+        <div id="savedLocationsList" class="list"></div>
+        <div class="divider"></div>
+        <div class="grid">
+          <div>
+            <label for="newLocationName">Paikan nimi</label>
+            <input id="newLocationName" type="text" placeholder="Esim. Koti / Toimisto" />
+          </div>
+          <div>
+            <label for="newLocationAddress">Osoite</label>
+            <input id="newLocationAddress" type="text" placeholder="Esim. Poskipuronkatu 9 A 3, Iisalmi" />
+          </div>
+          <button class="small-btn no-print" type="button" onclick="addSavedLocation()">+ Lisää lähtöpaikka</button>
+        </div>
+      </div>
+
+      <div class="card no-print">
+        <div class="section-title"><h2>Data</h2></div>
+        <div class="grid-2">
+          <button class="ghost" type="button" onclick="exportJson()">Vie varmuuskopio (JSON)</button>
+          <label class="ghost" style="display:flex;align-items:center;justify-content:center;min-height:48px;cursor:pointer">
+            Tuo varmuuskopio
+            <input id="importJsonInput" type="file" accept="application/json" style="display:none" onchange="importJson(event)" />
+          </label>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <template id="stopTemplate">
-    <div class="stop-row">
-      <input class="input stop-input" type="text" placeholder="Esim. ABC Iisalmi" />
-      <button class="btn small danger remove-stop-btn" type="button">Poista</button>
+  <div class="bottom-nav no-print">
+    <div class="inner">
+      <button class="nav-btn active" data-screen="home" onclick="go('home')">Koti</button>
+      <button class="nav-btn" data-screen="new" onclick="go('new')">Uusi ajo</button>
+      <button class="nav-btn" data-screen="drives" onclick="go('drives')">Ajot</button>
+      <button class="nav-btn" data-screen="settings" onclick="go('settings')">Asetukset</button>
     </div>
-  </template>
+  </div>
+
+  <dialog id="expenseModal" style="max-width:560px;width:calc(100% - 24px);border:1px solid rgba(125,170,255,.18);border-radius:18px;background:#0d1b2f;color:#eef4ff;padding:0;box-shadow:0 20px 50px rgba(0,0,0,.45)">
+    <form method="dialog" style="padding:16px">
+      <div class="section-title"><h2>Lisää kulu</h2><button class="ghost" value="cancel">Sulje</button></div>
+      <div class="grid">
+        <div>
+          <label for="expenseType">Tyyppi</label>
+          <select id="expenseType">
+            <option>Pysäköinti</option>
+            <option>Tietulli</option>
+            <option>Majoitus</option>
+            <option>Muu kulu</option>
+          </select>
+        </div>
+        <div>
+          <label for="expenseAmount">Summa (€)</label>
+          <input id="expenseAmount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00" />
+        </div>
+        <div>
+          <label for="expensePlace">Paikka</label>
+          <input id="expensePlace" type="text" placeholder="Esim. Kuopio keskusta" />
+        </div>
+        <div>
+          <label for="expenseDesc">Selite</label>
+          <input id="expenseDesc" type="text" placeholder="Esim. Halliparkki" />
+        </div>
+        <div>
+          <label for="expenseReceipt">Kuitti (kuva)</label>
+          <input id="expenseReceipt" type="file" accept="image/*" capture="environment" />
+        </div>
+        <div class="grid-2">
+          <button class="btn" type="button" onclick="addDraftExpense()">Tallenna kulu</button>
+          <button class="ghost" value="cancel">Peruuta</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
 
   <script>
-    const STORAGE_KEY = "opero_ajo_v1";
+    const STORAGE_KEY = 'opero-ajot-mvp-v1';
+    let state = {
+      settings: {
+        userName: '',
+        defaultKmRate: 0.57,
+        savedLocations: []
+      },
+      drives: []
+    };
 
-    const splash = document.getElementById("splash");
-    const tripForm = document.getElementById("tripForm");
-    const tripList = document.getElementById("tripList");
-    const stopsWrap = document.getElementById("stopsWrap");
-    const addStopBtn = document.getElementById("addStopBtn");
-    const clearAllBtn = document.getElementById("clearAllBtn");
-    const exportPdfBtn = document.getElementById("exportPdfBtn");
+    let ui = {
+      currentScreen: 'home',
+      roundTrip: false,
+      draftExpenses: [],
+      draftStops: []
+    };
 
-    const dateInput = document.getElementById("date");
-    const destinationInput = document.getElementById("destination");
-    const notesInput = document.getElementById("notes");
+    const euro = n => new Intl.NumberFormat('fi-FI',{style:'currency',currency:'EUR'}).format(Number(n||0));
+    const dec = n => Number(n||0).toLocaleString('fi-FI',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const todayISO = () => new Date().toISOString().slice(0,10);
+    const monthNames = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu','Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
 
-    const countTrips = document.getElementById("countTrips");
-    const countMonth = document.getElementById("countMonth");
-    const countStops = document.getElementById("countStops");
+    function toast(message, type='good'){
+      const wrap = document.getElementById('toastWrap');
+      if(!wrap) return;
+      const el = document.createElement('div');
+      el.className = 'toast ' + type;
+      el.textContent = message;
+      wrap.appendChild(el);
+      setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(-10px)'; }, 2200);
+      setTimeout(()=> el.remove(), 2600);
+    }
 
-    let trips = loadTrips();
-
-    function showSplash() {
+    function hideSplash(){
+      const splash = document.getElementById('splashScreen');
+      if(!splash) return;
       setTimeout(() => {
-        splash.classList.add("hide");
+        splash.classList.add('hidden');
       }, 1500);
     }
 
-    function todayISO() {
-      const now = new Date();
-      const off = now.getTimezoneOffset();
-      const local = new Date(now.getTime() - off * 60000);
-      return local.toISOString().slice(0, 10);
-    }
+    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
-    function normalizeText(value) {
-      return (value || "").trim().replace(/\s+/g, " ");
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function loadTrips() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const data = JSON.parse(raw);
-        return Array.isArray(data) ? data : [];
-      } catch {
-        return [];
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try { state = JSON.parse(raw); } catch(e){ console.error(e); }
+      }
+      if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[]};
+      if(!Array.isArray(state.settings.savedLocations)) state.settings.savedLocations = [];
+      if(!Array.isArray(state.drives)) state.drives = [];
+      if(state.settings.savedLocations.length === 0){
+        state.settings.savedLocations = [
+          {id:cryptoRandom(), name:'Koti', address:''},
+          {id:cryptoRandom(), name:'Toimisto', address:''}
+        ];
+      }
+      if(state.settings.defaultKmRate === undefined || state.settings.defaultKmRate === null || state.settings.defaultKmRate === '') {
+        state.settings.defaultKmRate = 0.57;
       }
     }
 
-    function saveTrips() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
+    function cryptoRandom(){
+      return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
     }
 
-    function addStopField(value = "") {
-      const tpl = document.getElementById("stopTemplate");
-      const node = tpl.content.firstElementChild.cloneNode(true);
-      const input = node.querySelector(".stop-input");
-      const removeBtn = node.querySelector(".remove-stop-btn");
-
-      input.value = value;
-
-      removeBtn.addEventListener("click", () => {
-        node.remove();
+    function go(screen){
+      ui.currentScreen = screen;
+      ['home','new','drives','report','settings'].forEach(s=>{
+        document.getElementById('screen-'+s).classList.toggle('hidden', s !== screen);
       });
-
-      stopsWrap.appendChild(node);
+      document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.screen === screen));
+      if(screen === 'home') renderHome();
+      if(screen === 'new') prepareNewDrive();
+      if(screen === 'drives') renderDrives();
+      if(screen === 'report') refreshReport();
+      if(screen === 'settings') renderSettings();
+      window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    function readStopsFromForm() {
-      return [...document.querySelectorAll(".stop-input")]
-        .map(i => normalizeText(i.value))
-        .filter(Boolean);
+    function init(){
+      loadState();
+      fillReportSelectors();
+      bindNewDriveEvents();
+      renderSettings();
+      prepareNewDrive();
+      renderHome();
+      renderDrives();
+      refreshReport();
+      go('home');
+      hideSplash();
     }
 
-    function resetForm() {
-      tripForm.reset();
-      dateInput.value = todayISO();
-      stopsWrap.innerHTML = "";
-      addStopField();
-      notesInput.value = "";
-      destinationInput.focus();
+    function bindNewDriveEvents(){
+      document.getElementById('oneWayBtn').addEventListener('click',()=>setTripType(false));
+      document.getElementById('roundTripBtn').addEventListener('click',()=>setTripType(true));
+      document.getElementById('kmRate').addEventListener('input', recalculateTotals);
+      document.getElementById('distanceKm').addEventListener('input', recalculateTotals);
+      document.getElementById('startLocationSelect').addEventListener('change', handleStartLocationChange);
+      ['userName','defaultKmRate'].forEach(id=>document.getElementById(id).addEventListener('change', saveSettingsFromForm));
+      document.getElementById('reportMonth').addEventListener('change', refreshReport);
+      document.getElementById('reportYear').addEventListener('change', refreshReport);
     }
 
-    function formatDate(isoDate) {
-      if (!isoDate) return "-";
-      const [y, m, d] = isoDate.split("-");
-      return `${d}.${m}.${y}`;
+    function setTripType(round){
+      ui.roundTrip = round;
+      document.getElementById('oneWayBtn').classList.toggle('active', !round);
+      document.getElementById('roundTripBtn').classList.toggle('active', round);
+      recalculateTotals();
     }
 
-    function openInMaps(queryText) {
-      const query = normalizeText(queryText);
-      if (!query) {
-        alert("Anna kohde tai osoite.");
-        return;
-      }
-      const encoded = encodeURIComponent(query);
-      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const url = isIOS
-        ? `https://maps.apple.com/?q=${encoded}`
-        : `https://www.google.com/maps/search/?api=1&query=${encoded}`;
-
-      window.open(url, "_blank");
+    function handleStartLocationChange(){
+      const value = document.getElementById('startLocationSelect').value;
+      document.getElementById('customStartWrap').classList.toggle('hidden', value !== '__custom__');
     }
 
-    function buildRouteQuery(trip) {
-      const parts = [
-        trip.destination,
-        ...(Array.isArray(trip.stops) ? trip.stops : [])
-      ].map(normalizeText).filter(Boolean);
-
-      return parts.join(" | ");
+    function prepareNewDrive(){
+      populateStartSelect();
+      document.getElementById('driveDate').value = todayISO();
+      document.getElementById('placeName').value = '';
+      document.getElementById('destinationAddress').value = '';
+      document.getElementById('purpose').value = '';
+      document.getElementById('distanceKm').value = '';
+      document.getElementById('kmRate').value = Number(state.settings.defaultKmRate || 0.57).toFixed(2);
+      document.getElementById('notes').value = '';
+      document.getElementById('customStartAddress').value = '';
+      document.getElementById('distanceStatus').textContent = '';
+      ui.draftExpenses = [];
+      ui.draftStops = [];
+      handleStartLocationChange();
+      renderDraftExpenses();
+      renderDraftStops();
+      setTripType(false);
+      recalculateTotals();
     }
 
-    function renderStats() {
-      countTrips.textContent = trips.length;
-
-      const currentMonth = todayISO().slice(0, 7);
-      const monthTrips = trips.filter(t => String(t.date || "").slice(0, 7) === currentMonth).length;
-      countMonth.textContent = monthTrips;
-
-      const stopsTotal = trips.reduce((sum, t) => sum + ((t.stops || []).filter(Boolean).length), 0);
-      countStops.textContent = stopsTotal;
+    function resetDriveForm(){
+      prepareNewDrive();
     }
 
-    function renderTrips() {
-      renderStats();
-
-      if (!trips.length) {
-        tripList.innerHTML = `
-          <div class="empty">
-            Ei vielä ajoja tallennettuna.<br>
-            Lisää ensimmäinen ajo vasemmalta.
-          </div>
-        `;
-        return;
-      }
-
-      const sorted = [...trips].sort((a, b) => {
-        const da = `${a.date || ""} ${a.createdAt || ""}`;
-        const db = `${b.date || ""} ${b.createdAt || ""}`;
-        return db.localeCompare(da);
+    function populateStartSelect(){
+      const select = document.getElementById('startLocationSelect');
+      select.innerHTML = '';
+      (state.settings.savedLocations || []).forEach((loc, idx)=>{
+        const opt = document.createElement('option');
+        opt.value = loc.id;
+        opt.textContent = loc.name || ('Paikka ' + (idx+1));
+        select.appendChild(opt);
       });
+      const customOpt = document.createElement('option');
+      customOpt.value = '__custom__';
+      customOpt.textContent = 'Muu osoite';
+      select.appendChild(customOpt);
+    }
 
-      tripList.innerHTML = sorted.map(trip => {
-        const stopCount = (trip.stops || []).filter(Boolean).length;
-        const routeQuery = buildRouteQuery(trip);
+    function saveSettingsFromForm(){
+      state.settings.userName = document.getElementById('userName').value.trim();
+      state.settings.defaultKmRate = Number(document.getElementById('defaultKmRate').value || 0.57);
+      saveState();
+      toast('Asetukset tallennettu.');
+      renderHome();
+      refreshReport();
+    }
 
-        return `
-          <article class="trip">
-            <div class="trip-top">
+    function renderSettings(){
+      document.getElementById('userName').value = state.settings.userName || '';
+      document.getElementById('defaultKmRate').value = Number(state.settings.defaultKmRate || 0.57).toFixed(2);
+      const wrap = document.getElementById('savedLocationsList');
+      const arr = state.settings.savedLocations || [];
+      if(arr.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei tallennettuja lähtöpaikkoja.</div>';
+      } else {
+        wrap.innerHTML = arr.map(loc => `
+          <div class="item">
+            <div class="item-head">
               <div>
-                <div class="trip-title">${escapeHtml(trip.destination || "-")}</div>
-                <div class="trip-date">${escapeHtml(formatDate(trip.date))}</div>
+                <div class="item-title">${escapeHtml(loc.name || '')}</div>
+                <div class="item-meta">${escapeHtml(loc.address || '') || 'Osoite puuttuu'}</div>
               </div>
-
-              <div class="trip-actions">
-                <button class="btn small ghost" type="button" data-action="maps" data-id="${trip.id}">Kartta</button>
-                <button class="btn small ghost" type="button" data-action="edit" data-id="${trip.id}">Muokkaa</button>
-                <button class="btn small danger" type="button" data-action="delete" data-id="${trip.id}">Poista</button>
-              </div>
+              <button class="danger" type="button" onclick="removeSavedLocation('${loc.id}')">Poista</button>
             </div>
-
-            <div class="trip-meta">
-              <div><span class="badge">${stopCount} stoppia</span></div>
-              ${stopCount ? `<div><strong>Pysähdykset:</strong> ${escapeHtml(trip.stops.join(" → "))}</div>` : ""}
-              <div><strong>Reittihaun teksti:</strong> ${escapeHtml(routeQuery || trip.destination || "-")}</div>
-            </div>
-
-            ${trip.notes ? `<div class="trip-notes"><strong>Muistiinpanot:</strong>\n${escapeHtml(trip.notes)}</div>` : ""}
-          </article>
-        `;
-      }).join("");
+          </div>`).join('');
+      }
     }
 
-    function createTripFromForm() {
-      const date = dateInput.value;
-      const destination = normalizeText(destinationInput.value);
-      const stops = readStopsFromForm();
-      const notes = normalizeText(notesInput.value);
+    function addSavedLocation(){
+      const name = document.getElementById('newLocationName').value.trim();
+      const address = document.getElementById('newLocationAddress').value.trim();
+      if(!name || !address){ alert('Anna sekä paikan nimi että osoite.'); return; }
+      if((state.settings.savedLocations || []).length >= 5){ alert('Maksimimäärä on 5 tallennettua lähtöpaikkaa.'); return; }
+      state.settings.savedLocations.push({id:cryptoRandom(), name, address});
+      document.getElementById('newLocationName').value = '';
+      document.getElementById('newLocationAddress').value = '';
+      saveState();
+      renderSettings();
+      populateStartSelect();
+      toast('Lähtöpaikka lisätty.');
+    }
 
-      if (!date) {
-        alert("Valitse päivä.");
-        return null;
+    function removeSavedLocation(id){
+      state.settings.savedLocations = (state.settings.savedLocations || []).filter(x=>x.id !== id);
+      saveState();
+      renderSettings();
+      populateStartSelect();
+    }
+
+    function openExpenseModal(){
+      document.getElementById('expenseType').value = 'Pysäköinti';
+      document.getElementById('expenseAmount').value = '';
+      document.getElementById('expensePlace').value = '';
+      document.getElementById('expenseDesc').value = '';
+      document.getElementById('expenseReceipt').value = '';
+      document.getElementById('expenseModal').showModal();
+    }
+
+    function addDraftExpense(){
+      const type = document.getElementById('expenseType').value;
+      const amount = Number(document.getElementById('expenseAmount').value || 0);
+      const place = document.getElementById('expensePlace').value.trim();
+      const description = document.getElementById('expenseDesc').value.trim();
+      if(!amount){ alert('Anna kululle summa.'); return; }
+
+      const file = document.getElementById('expenseReceipt').files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = () => {
+          ui.draftExpenses.push({ id: cryptoRandom(), type, amount, place, description, receiptDataUrl: reader.result || '' });
+          renderDraftExpenses();
+          recalculateTotals();
+          document.getElementById('expenseModal').close();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        ui.draftExpenses.push({ id: cryptoRandom(), type, amount, place, description, receiptDataUrl: '' });
+        renderDraftExpenses();
+        recalculateTotals();
+        document.getElementById('expenseModal').close();
+      }
+    }
+
+    function removeDraftExpense(id){
+      ui.draftExpenses = ui.draftExpenses.filter(x=>x.id !== id);
+      renderDraftExpenses();
+      recalculateTotals();
+    }
+
+    function renderDraftExpenses(){
+      const wrap = document.getElementById('expenseDraftList');
+      if(ui.draftExpenses.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei lisättyjä kuluja.</div>';
+        return;
+      }
+      wrap.innerHTML = ui.draftExpenses.map(ex => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${escapeHtml(ex.type)} · ${euro(ex.amount)}</div>
+              <div class="item-meta">${escapeHtml(ex.place || 'Paikka ei annettu')} ${ex.description ? '· ' + escapeHtml(ex.description) : ''}</div>
+            </div>
+            <button class="danger" type="button" onclick="removeDraftExpense('${ex.id}')">Poista</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function addDraftStop(){
+      if(ui.draftStops.length >= 5){
+        toast('Maksimi on 5 lisäpysähdystä.', 'warn');
+        return;
+      }
+      ui.draftStops.push({ id: cryptoRandom(), address: '' });
+      renderDraftStops();
+    }
+
+    function updateDraftStop(id, value){
+      const stop = ui.draftStops.find(x => x.id === id);
+      if(!stop) return;
+      stop.address = value;
+    }
+
+    function removeDraftStop(id){
+      ui.draftStops = ui.draftStops.filter(x => x.id !== id);
+      renderDraftStops();
+    }
+
+    function renderDraftStops(){
+      const wrap = document.getElementById('draftStopsList');
+      if(!wrap) return;
+
+      if(ui.draftStops.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei lisättyjä pysähdyksiä.</div>';
+        return;
       }
 
-      if (!destination) {
-        alert("Anna kohde tai osoite.");
-        return null;
+      wrap.innerHTML = ui.draftStops.map((stop, idx) => `
+        <div class="item">
+          <div class="item-head">
+            <div style="width:100%">
+              <div class="item-title">Pysähdys ${idx + 1}</div>
+              <input
+                type="text"
+                value="${escapeHtml(stop.address || '')}"
+                placeholder="Esim. Puijonkatu 12, Kuopio"
+                oninput="updateDraftStop('${stop.id}', this.value)"
+              />
+            </div>
+            <button class="danger no-print" type="button" onclick="removeDraftStop('${stop.id}')">Poista</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function getSelectedStartLocation(){
+      const val = document.getElementById('startLocationSelect').value;
+      if(val === '__custom__'){
+        return { label: 'Muu osoite', address: document.getElementById('customStartAddress').value.trim() };
+      }
+      const found = (state.settings.savedLocations || []).find(x=>x.id === val);
+      return found ? { label: found.name, address: found.address } : { label:'', address:'' };
+    }
+
+    async function geocodeAddress(address){
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(address)}`;
+      const res = await fetch(url, { headers: { 'Accept':'application/json' } });
+      if(!res.ok) throw new Error('Osoitteen haku epäonnistui');
+      const data = await res.json();
+      if(!data || !data.length) throw new Error('Osoitetta ei löytynyt');
+      return { lat: Number(data[0].lat), lon: Number(data[0].lon), displayName: data[0].display_name };
+    }
+
+    async function reverseGeocode(lat, lon){
+      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+      const res = await fetch(url, { headers: { 'Accept':'application/json' } });
+      if(!res.ok) throw new Error('Sijainnin osoitteen haku epäonnistui');
+      const data = await res.json();
+      if(!data || !data.display_name) throw new Error('Osoitetta ei löytynyt nykyisestä sijainnista');
+      return data.display_name;
+    }
+
+    async function useCurrentLocationAsStart(){
+      const status = document.getElementById('geoStatus');
+      if(!navigator.geolocation){
+        status.textContent = 'Tämä selain ei tue paikannusta.';
+        alert('Tämä selain ei tue paikannusta.');
+        return;
+      }
+      status.textContent = 'Haetaan nykyistä sijaintia...';
+      try {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 300000
+          });
+        });
+        const address = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+        const select = document.getElementById('startLocationSelect');
+        select.value = '__custom__';
+        handleStartLocationChange();
+        document.getElementById('customStartAddress').value = address;
+        status.textContent = 'Nykyinen sijainti asetettu lähtöosoitteeksi.';
+        toast('Nykyinen sijainti lisätty lähtöpaikaksi.');
+      } catch(err){
+        console.error(err);
+        status.textContent = 'Paikannus ei onnistunut.';
+        alert('Paikannus ei onnistunut. Tarkista selaimen sijaintilupa tai kirjoita osoite käsin.');
+      }
+    }
+
+    async function lookupDistance(){
+      const start = getSelectedStartLocation();
+      const status = document.getElementById('distanceStatus');
+
+      const filledStops = (ui.draftStops || [])
+        .map(s => (s.address || '').trim())
+        .filter(Boolean);
+
+      const destination =
+        filledStops.length > 0
+          ? filledStops[filledStops.length - 1]
+          : document.getElementById('destinationAddress').value.trim();
+
+      if(!start.address || !destination){
+        alert('Anna lähtöosoite ja kohdeosoite.');
+        return;
       }
 
-      return {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+      status.textContent = 'Haetaan kilometrejä...';
+
+      try {
+        const [from,to] = await Promise.all([
+          geocodeAddress(start.address),
+          geocodeAddress(destination)
+        ]);
+
+        const url = `https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Reittihaku epäonnistui');
+
+        const data = await res.json();
+        if(!data.routes || !data.routes.length) throw new Error('Reittiä ei löytynyt');
+
+        const km = data.routes[0].distance / 1000;
+        document.getElementById('distanceKm').value = km.toFixed(1);
+        status.textContent = `Haettu reitti: ${km.toFixed(1).replace('.',',')} km`;
+        recalculateTotals();
+      } catch(err){
+        console.error(err);
+        status.textContent = 'Km-haku ei onnistunut.';
+        alert('Km-haku ei onnistunut. Tarkista osoitteet tai syötä kilometrit käsin.');
+      }
+    }
+
+    function recalculateTotals(){
+      const km = Number(document.getElementById('distanceKm').value || 0);
+      const rate = Number(document.getElementById('kmRate').value || 0);
+      const effectiveKm = ui.roundTrip ? km * 2 : km;
+      const kmComp = effectiveKm * rate;
+      const expenseTotal = ui.draftExpenses.reduce((sum,x)=>sum + Number(x.amount || 0), 0);
+      const grand = kmComp + expenseTotal;
+      document.getElementById('kmCompValue').textContent = euro(kmComp);
+      document.getElementById('expenseTotalValue').textContent = euro(expenseTotal);
+      document.getElementById('grandTotalValue').textContent = euro(grand);
+    }
+
+    function saveDrive(){
+      const date = document.getElementById('driveDate').value;
+      const start = getSelectedStartLocation();
+      const placeName = document.getElementById('placeName').value.trim();
+      const destinationAddress = document.getElementById('destinationAddress').value.trim();
+      const purpose = document.getElementById('purpose').value.trim();
+      const baseKm = Number(document.getElementById('distanceKm').value || 0);
+      const rate = Number(document.getElementById('kmRate').value || 0);
+      const notes = document.getElementById('notes').value.trim();
+      const cleanStops = ui.draftStops.map(s => ({...s, address:(s.address || '').trim()})).filter(s => s.address);
+
+      if(!date || !start.address || !placeName || !destinationAddress){
+        alert('Täytä vähintään päivämäärä, lähtöpaikka, paikan nimi ja kohdeosoite.');
+        return;
+      }
+
+      const distanceKm = ui.roundTrip ? baseKm * 2 : baseKm;
+      const kmCompensation = distanceKm * rate;
+      const expenseTotal = ui.draftExpenses.reduce((sum,x)=>sum + Number(x.amount || 0), 0);
+      const total = kmCompensation + expenseTotal;
+
+      const drive = {
+        id: cryptoRandom(),
         date,
-        destination,
-        stops,
+        startLabel: start.label,
+        startAddress: start.address,
+        placeName,
+        destinationAddress,
+        extraStops: cleanStops,
+        purpose,
+        roundTrip: ui.roundTrip,
+        distanceKm,
+        kmRate: rate,
+        kmCompensation,
+        expenses: JSON.parse(JSON.stringify(ui.draftExpenses)),
+        expenseTotal,
+        total,
         notes,
         createdAt: new Date().toISOString()
       };
+
+      state.drives.unshift(drive);
+      saveState();
+      resetDriveForm();
+      renderHome();
+      renderDrives();
+      refreshReport();
+      toast('Ajo tallennettu.');
+      go('drives');
     }
 
-    function fillFormForEdit(trip) {
-      dateInput.value = trip.date || todayISO();
-      destinationInput.value = trip.destination || "";
-      notesInput.value = trip.notes || "";
-      stopsWrap.innerHTML = "";
-      if (trip.stops && trip.stops.length) {
-        trip.stops.forEach(s => addStopField(s));
-      } else {
-        addStopField();
-      }
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    function buildRouteText(d){
+      const parts = [
+        d.startLabel || d.startAddress || '',
+        ...((d.extraStops || []).map(s => s.address).filter(Boolean)),
+        d.destinationAddress || ''
+      ].filter(Boolean);
+      return parts.join(' → ');
     }
 
-    tripForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+    function renderDrives(){
+      const wrap = document.getElementById('drivesList');
+      document.getElementById('driveCountLabel').textContent = `${state.drives.length} ajoa`;
+      if(state.drives.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei tallennettuja ajoja vielä.</div>';
+        return;
+      }
+      wrap.innerHTML = state.drives.map(d => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
+            </div>
+            <div class="right">
+              <div class="pill">${Number(d.distanceKm||0).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</div>
+              <div style="margin-top:8px;font-weight:800">${euro(d.total)}</div>
+            </div>
+          </div>
+          <div class="item-meta">Km-korvaus ${euro(d.kmCompensation)} · Kulut ${euro(d.expenseTotal)}${d.purpose ? ' · ' + escapeHtml(d.purpose) : ''}</div>
+          ${(d.extraStops && d.extraStops.length) ? `<div class="chip-row" style="margin-top:10px">${d.extraStops.map((s,i)=>`<span class="chip">Pysähdys ${i+1}: ${escapeHtml(s.address)}</span>`).join('')}</div>` : ''}
+          ${(d.expenses && d.expenses.length) ? `<div class="chip-row" style="margin-top:10px">${d.expenses.map(e=>`<span class="chip">${escapeHtml(e.type)} ${euro(e.amount)}</span>`).join('')}</div>` : ''}
+          <div class="grid-2 no-print" style="margin-top:12px">
+            <button class="ghost" type="button" onclick="viewDrive('${d.id}')">Avaa</button>
+            <button class="danger" type="button" onclick="deleteDrive('${d.id}')">Poista</button>
+          </div>
+        </div>
+      `).join('');
+    }
 
-      const editingId = tripForm.dataset.editingId || "";
-      const trip = createTripFromForm();
-      if (!trip) return;
+    function viewDrive(id){
+      const d = state.drives.find(x=>x.id === id);
+      if(!d) return;
 
-      if (editingId) {
-        const index = trips.findIndex(t => t.id === editingId);
-        if (index !== -1) {
-          trip.id = editingId;
-          trip.createdAt = trips[index].createdAt || new Date().toISOString();
-          trips[index] = trip;
+      const stopsText = (d.extraStops || []).length
+        ? '\nLisäpysähdykset:\n' + d.extraStops.map((s,i) => `${i+1}. ${s.address}`).join('\n') + '\n'
+        : '';
+
+      alert(
+        `${formatDate(d.date)}\n\n` +
+        `Lähtö: ${d.startLabel}\n` +
+        `Kohde: ${d.placeName}\n` +
+        `Osoite: ${d.destinationAddress}\n` +
+        `${stopsText}` +
+        `Km: ${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}\n` +
+        `Km-korvaus: ${euro(d.kmCompensation)}\n` +
+        `Kulut: ${euro(d.expenseTotal)}\n` +
+        `Yhteensä: ${euro(d.total)}\n\n` +
+        `${d.notes ? 'Muistiinpano: ' + d.notes + '\n\n' : ''}` +
+        `Kulurivejä: ${(d.expenses||[]).length}`
+      );
+    }
+
+    function deleteDrive(id){
+      if(!confirm('Poistetaanko ajo?')) return;
+      state.drives = state.drives.filter(x=>x.id !== id);
+      saveState();
+      renderDrives();
+      renderHome();
+      refreshReport();
+      toast('Ajo poistettu.', 'bad');
+    }
+
+    function renderHome(){
+      const now = new Date();
+      document.getElementById('homeMonthLabel').textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+      const data = getMonthData(now.getMonth()+1, now.getFullYear());
+      document.getElementById('homeStats').innerHTML = `
+        <div class="stat"><div class="stat-label">Ajot</div><div class="stat-value">${data.drives.length}</div></div>
+        <div class="stat"><div class="stat-label">Kilometrit</div><div class="stat-value">${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</div></div>
+        <div class="stat"><div class="stat-label">Km-korvaukset</div><div class="stat-value">${euro(data.kmComp)}</div></div>
+        <div class="stat"><div class="stat-label">Yhteensä</div><div class="stat-value">${euro(data.total)}</div></div>
+      `;
+      document.getElementById('homeTotals').innerHTML = `
+        <div class="total"><span>Ajot</span><strong>${data.drives.length} kpl</strong></div>
+        <div class="total"><span>Kilometrit</span><strong>${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</strong></div>
+        <div class="total"><span>Km-korvaukset</span><strong>${euro(data.kmComp)}</strong></div>
+        <div class="total"><span>Muut kulut</span><strong>${euro(data.expenses)}</strong></div>
+        <div class="total"><span>Yhteensä</span><strong>${euro(data.total)}</strong></div>
+      `;
+      const recent = state.drives.slice(0,4);
+      const wrap = document.getElementById('recentDrives');
+      wrap.innerHTML = recent.length ? recent.map(d => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
+            </div>
+            <div class="right"><strong>${euro(d.total)}</strong></div>
+          </div>
+        </div>`).join('') : '<div class="empty">Ei ajoja vielä. Aloita kohdasta “Uusi ajo”.</div>';
+    }
+
+    function fillReportSelectors(){
+      const m = document.getElementById('reportMonth');
+      const y = document.getElementById('reportYear');
+      m.innerHTML = monthNames.map((name,idx)=>`<option value="${idx+1}">${name}</option>`).join('');
+      const currentYear = new Date().getFullYear();
+      const years = [currentYear-1,currentYear,currentYear+1];
+      y.innerHTML = years.map(v=>`<option value="${v}">${v}</option>`).join('');
+      m.value = String(new Date().getMonth()+1);
+      y.value = String(currentYear);
+    }
+
+    function getMonthData(month, year){
+      const filtered = state.drives.filter(d => {
+        const dt = new Date(d.date + 'T00:00:00');
+        return dt.getMonth()+1 === Number(month) && dt.getFullYear() === Number(year);
+      });
+      return {
+        drives: filtered,
+        km: filtered.reduce((s,d)=>s + Number(d.distanceKm||0),0),
+        kmComp: filtered.reduce((s,d)=>s + Number(d.kmCompensation||0),0),
+        expenses: filtered.reduce((s,d)=>s + Number(d.expenseTotal||0),0),
+        total: filtered.reduce((s,d)=>s + Number(d.total||0),0)
+      };
+    }
+
+    function refreshReport(){
+      const month = Number(document.getElementById('reportMonth').value);
+      const year = Number(document.getElementById('reportYear').value);
+      const data = getMonthData(month, year);
+      document.getElementById('reportTotals').innerHTML = `
+        <div class="total"><span>Ajot</span><strong>${data.drives.length} kpl</strong></div>
+        <div class="total"><span>Kilometrit</span><strong>${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</strong></div>
+        <div class="total"><span>Km-korvaukset</span><strong>${euro(data.kmComp)}</strong></div>
+        <div class="total"><span>Muut kulut</span><strong>${euro(data.expenses)}</strong></div>
+        <div class="total"><span>Yhteensä</span><strong>${euro(data.total)}</strong></div>
+      `;
+      const rows = document.getElementById('reportRows');
+      rows.innerHTML = data.drives.length ? data.drives.map(d => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
+            </div>
+            <div class="right"><strong>${euro(d.total)}</strong></div>
+          </div>
+          <div class="item-meta">${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})} km · ${euro(d.kmCompensation)}${d.purpose ? ' · ' + escapeHtml(d.purpose) : ''}</div>
+          ${(d.extraStops || []).length ? `<div class="chip-row" style="margin-top:10px">${d.extraStops.map((s,i)=>`<span class="chip">Pysähdys ${i+1}: ${escapeHtml(s.address)}</span>`).join('')}</div>` : ''}
+          ${(d.expenses || []).length ? `<div class="chip-row" style="margin-top:10px">${d.expenses.map(e=>`<span class="chip">${escapeHtml(e.type)} ${euro(e.amount)}</span>`).join('')}</div>` : ''}
+        </div>`).join('') : '<div class="empty">Ei ajoja valitulla kuukaudella.</div>';
+    }
+
+    function openPrintableReport(){
+      const month = Number(document.getElementById('reportMonth').value);
+      const year = Number(document.getElementById('reportYear').value);
+      const data = getMonthData(month, year);
+      const name = state.settings.userName || 'Käyttäjä';
+      const includeReceipts = !!document.getElementById('includeReceiptsInPdf').checked;
+
+      const receiptSections = includeReceipts
+        ? data.drives.map(d => {
+            const receipts = (d.expenses || []).filter(e => e.receiptDataUrl);
+            if(!receipts.length) return '';
+            return `
+              <div class="section receipt-break">
+                <h2>Kuitit · ${formatDate(d.date)} · ${escapeHtml(d.placeName)}</h2>
+                ${receipts.map((e, idx) => `
+                  <div class="receipt-card">
+                    <div><strong>${idx+1}. ${escapeHtml(e.type)}</strong> · ${euro(e.amount)}</div>
+                    <div class="small">${e.place ? escapeHtml(e.place) : ''}${e.description ? (e.place ? ' · ' : '') + escapeHtml(e.description) : ''}</div>
+                    <img src="${e.receiptDataUrl}" alt="Kuitti" />
+                  </div>
+                `).join('')}
+              </div>`;
+          }).join('')
+        : '';
+
+      const html = `<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajoraportti ${monthNames[month-1]} ${year}</title>
+<style>
+body{font-family:Arial,sans-serif;padding:24px;color:#111} h1{margin:0 0 6px} h2{margin:0 0 10px}.muted{color:#555}
+.summary{margin:18px 0 22px;padding:14px;border:1px solid #ccc;border-radius:10px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee} .row:last-child{border-bottom:0}
+table{width:100%;border-collapse:collapse;margin-top:18px} th,td{padding:8px;border:1px solid #ddd;text-align:left;font-size:13px;vertical-align:top} th{background:#f6f6f6}
+.small{font-size:12px;color:#444} .section{margin-top:22px}
+.receipt-card{margin:14px 0 18px;padding:12px;border:1px solid #ddd;border-radius:10px;page-break-inside:avoid}.receipt-card img{margin-top:10px;max-width:100%;height:auto;border:1px solid #ddd;border-radius:8px}.receipt-break{page-break-before:always}
+</style>
+</head>
+<body>
+<h1>Ajoraportti</h1>
+<div class="muted">${escapeHtml(name)} · ${monthNames[month-1]} ${year}</div>
+<div class="summary">
+  <div class="row"><span>Ajot</span><strong>${data.drives.length} kpl</strong></div>
+  <div class="row"><span>Kilometrit yhteensä</span><strong>${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</strong></div>
+  <div class="row"><span>Km-korvaukset</span><strong>${euro(data.kmComp)}</strong></div>
+  <div class="row"><span>Muut kulut</span><strong>${euro(data.expenses)}</strong></div>
+  <div class="row"><span>Kaikki yhteensä</span><strong>${euro(data.total)}</strong></div>
+  <div class="row"><span>Kuitit PDF:ssä</span><strong>${includeReceipts ? 'Kyllä' : 'Ei'}</strong></div>
+</div>
+<table>
+<thead><tr><th>Päivä</th><th>Lähtö</th><th>Kohde</th><th>Lisäpysähdykset</th><th>Tarkoitus</th><th>Km</th><th>€/km</th><th>Km-korvaus</th><th>Kulut</th><th>Yhteensä</th></tr></thead>
+<tbody>
+${data.drives.map(d => `
+<tr>
+<td>${formatDate(d.date)}</td>
+<td>${escapeHtml(d.startLabel)}<div class="small">${escapeHtml(d.startAddress)}</div></td>
+<td>${escapeHtml(d.placeName)}<div class="small">${escapeHtml(d.destinationAddress)}</div></td>
+<td>${(d.extraStops || []).length ? (d.extraStops.map((s,i)=>`${i+1}. ${escapeHtml(s.address)}`).join('<br>')) : ''}</td>
+<td>${escapeHtml(d.purpose || '')}</td>
+<td>${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}</td>
+<td>${dec(d.kmRate)} €</td>
+<td>${euro(d.kmCompensation)}</td>
+<td>${euro(d.expenseTotal)}</td>
+<td>${euro(d.total)}</td>
+</tr>
+${(d.expenses||[]).length ? `<tr><td></td><td colspan="9"><strong>Kuluerittely:</strong> ${(d.expenses||[]).map(e=>`${escapeHtml(e.type)} ${euro(e.amount)}${e.place ? ' · ' + escapeHtml(e.place) : ''}${e.description ? ' · ' + escapeHtml(e.description) : ''}${e.receiptDataUrl ? ' · kuitti mukana' : ''}`).join(' | ')}</td></tr>` : ''}
+${d.notes ? `<tr><td></td><td colspan="9"><strong>Muistiinpano:</strong> ${escapeHtml(d.notes)}</td></tr>` : ''}
+`).join('')}
+</tbody>
+</table>
+${receiptSections}
+<script>window.onload = () => window.print();<\/script>
+</body>
+</html>`;
+
+      const w = window.open('', '_blank');
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+    }
+
+    function exportJson(){
+      const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'opero-ajot-varmuuskopio.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importJson(event){
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if(!data.settings || !Array.isArray(data.drives)) throw new Error('Virheellinen tiedosto');
+          state = data;
+          saveState();
+          renderSettings();
+          renderHome();
+          renderDrives();
+          refreshReport();
+          prepareNewDrive();
+          alert('Varmuuskopio tuotu onnistuneesti.');
+        } catch(err){
+          alert('Tiedoston tuonti epäonnistui.');
         }
-        delete tripForm.dataset.editingId;
-        tripForm.querySelector('button[type="submit"]').textContent = "Tallenna ajo";
-      } else {
-        trips.push(trip);
-      }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
 
-      saveTrips();
-      renderTrips();
-      resetForm();
-    });
+    function formatDate(iso){
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('fi-FI');
+    }
 
-    addStopBtn.addEventListener("click", () => addStopField());
+    function escapeHtml(str){
+      return String(str || '').replace(/[&<>'"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s]));
+    }
 
-    tripList.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-action]");
-      if (!btn) return;
-
-      const id = btn.dataset.id;
-      const action = btn.dataset.action;
-      const trip = trips.find(t => t.id === id);
-      if (!trip) return;
-
-      if (action === "maps") {
-        openInMaps(buildRouteQuery(trip));
-      }
-
-      if (action === "delete") {
-        const ok = confirm(`Poistetaanko ajo:\n\n${trip.destination}`);
-        if (!ok) return;
-        trips = trips.filter(t => t.id !== id);
-        saveTrips();
-        renderTrips();
-      }
-
-      if (action === "edit") {
-        fillFormForEdit(trip);
-        tripForm.dataset.editingId = trip.id;
-        tripForm.querySelector('button[type="submit"]').textContent = "Tallenna muutokset";
-      }
-    });
-
-    clearAllBtn.addEventListener("click", () => {
-      if (!trips.length) return;
-      const ok = confirm("Poistetaanko kaikki ajot?");
-      if (!ok) return;
-      trips = [];
-      saveTrips();
-      renderTrips();
-      resetForm();
-    });
-
-    exportPdfBtn.addEventListener("click", () => {
-      try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({
-          orientation: "p",
-          unit: "mm",
-          format: "a4"
-        });
-
-        const margin = 15;
-        let y = 18;
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("Ajo – raportti", margin, y);
-        y += 8;
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text(`Luotu: ${new Date().toLocaleString("fi-FI")}`, margin, y);
-        y += 10;
-
-        if (!trips.length) {
-          doc.setFontSize(12);
-          doc.text("Ei tallennettuja ajoja.", margin, y);
-        } else {
-          const sorted = [...trips].sort((a, b) => {
-            const da = `${a.date || ""} ${a.createdAt || ""}`;
-            const db = `${b.date || ""} ${b.createdAt || ""}`;
-            return db.localeCompare(da);
-          });
-
-          sorted.forEach((trip, i) => {
-            const lines = [];
-            lines.push(`${i + 1}. ${trip.destination}`);
-            lines.push(`Päivä: ${formatDate(trip.date)}`);
-            if (trip.stops && trip.stops.length) {
-              lines.push(`Pysähdykset: ${trip.stops.join(" -> ")}`);
-            }
-            if (trip.notes) {
-              lines.push(`Muistiinpanot: ${trip.notes}`);
-            }
-            lines.push(`Karttahaku: ${buildRouteQuery(trip)}`);
-
-            const wrapped = [];
-            lines.forEach(line => {
-              const split = doc.splitTextToSize(line, 180);
-              wrapped.push(...split);
-            });
-
-            const needed = wrapped.length * 5 + 6;
-            if (y + needed > 285) {
-              doc.addPage();
-              y = 18;
-            }
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text(`${i + 1}. ${trip.destination}`, margin, y);
-            y += 6;
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-
-            const restLines = [];
-            restLines.push(`Päivä: ${formatDate(trip.date)}`);
-            if (trip.stops && trip.stops.length) restLines.push(`Pysähdykset: ${trip.stops.join(" -> ")}`);
-            if (trip.notes) restLines.push(`Muistiinpanot: ${trip.notes}`);
-            restLines.push(`Karttahaku: ${buildRouteQuery(trip)}`);
-
-            restLines.forEach(line => {
-              const split = doc.splitTextToSize(line, 180);
-              doc.text(split, margin, y);
-              y += split.length * 5;
-            });
-
-            y += 4;
-            doc.setDrawColor(210, 220, 235);
-            doc.line(margin, y, 195, y);
-            y += 7;
-          });
-        }
-
-        doc.save("ajo-raportti.pdf");
-      } catch (err) {
-        console.error(err);
-        alert("PDF:n luonti ei onnistunut.");
-      }
-    });
-
-    dateInput.value = todayISO();
-    addStopField();
-    renderTrips();
-    showSplash();
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
