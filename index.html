@@ -300,8 +300,7 @@
       <div class="splash-loader">
         <div class="splash-loader-bar"></div>
       </div>
-      <div class="splash-text">LADATAAN... 1.5 s</div>
-      <div class="splash-text small">Siirrytään sovellukseen</div>
+      <div class="splash-text">Loading...</div>
     </div>
   </div>
 
@@ -368,13 +367,13 @@
           </div>
 
           <div>
-            <label for="placeName">Paikan nimi</label>
-            <input id="placeName" type="text" placeholder="Esim. Konttila Iisalmi" />
+            <label for="placeName">Paikan nimi (valinnainen)</label>
+            <input id="placeName" type="text" placeholder="Esim. Pubituuri" />
           </div>
 
           <div>
-            <label for="destinationAddress">Kohdeosoite</label>
-            <input id="destinationAddress" type="text" placeholder="Esim. Kinttupolku 1, Iisalmi" />
+            <label for="destinationAddress">Kohde tai osoite</label>
+            <input id="destinationAddress" type="text" placeholder="Esim. Pubituuri, Lapinlahti" />
           </div>
 
           <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
@@ -642,6 +641,21 @@
       return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
     }
 
+    function normalizeText(value){
+      return String(value || '').trim().replace(/\s+/g, ' ');
+    }
+
+    function buildDestinationQuery(placeName, destinationAddress){
+      const name = normalizeText(placeName);
+      const address = normalizeText(destinationAddress);
+
+      if(name && address){
+        if(address.toLowerCase().includes(name.toLowerCase())) return address;
+        return `${name}, ${address}`;
+      }
+      return address || name || '';
+    }
+
     function go(screen){
       ui.currentScreen = screen;
       ['home','new','drives','report','settings'].forEach(s=>{
@@ -877,7 +891,7 @@
               <input
                 type="text"
                 value="${escapeHtml(stop.address || '')}"
-                placeholder="Esim. Puijonkatu 12, Kuopio"
+                placeholder="Esim. ABC Iisalmi"
                 oninput="updateDraftStop('${stop.id}', this.value)"
               />
             </div>
@@ -946,18 +960,19 @@
     async function lookupDistance(){
       const start = getSelectedStartLocation();
       const status = document.getElementById('distanceStatus');
+      const placeName = document.getElementById('placeName').value.trim();
+      const destinationAddress = document.getElementById('destinationAddress').value.trim();
 
       const filledStops = (ui.draftStops || [])
-        .map(s => (s.address || '').trim())
+        .map(s => normalizeText(s.address))
         .filter(Boolean);
 
-      const destination =
-        filledStops.length > 0
-          ? filledStops[filledStops.length - 1]
-          : document.getElementById('destinationAddress').value.trim();
+      const destination = filledStops.length > 0
+        ? filledStops[filledStops.length - 1]
+        : buildDestinationQuery(placeName, destinationAddress);
 
       if(!start.address || !destination){
-        alert('Anna lähtöosoite ja kohdeosoite.');
+        alert('Anna lähtöosoite ja kohde tai osoite.');
         return;
       }
 
@@ -983,7 +998,7 @@
       } catch(err){
         console.error(err);
         status.textContent = 'Km-haku ei onnistunut.';
-        alert('Km-haku ei onnistunut. Tarkista osoitteet tai syötä kilometrit käsin.');
+        alert('Km-haku ei onnistunut. Tarkista kohde tai syötä kilometrit käsin.');
       }
     }
 
@@ -1002,16 +1017,17 @@
     function saveDrive(){
       const date = document.getElementById('driveDate').value;
       const start = getSelectedStartLocation();
-      const placeName = document.getElementById('placeName').value.trim();
-      const destinationAddress = document.getElementById('destinationAddress').value.trim();
+      const placeName = normalizeText(document.getElementById('placeName').value);
+      const destinationAddress = normalizeText(document.getElementById('destinationAddress').value);
       const purpose = document.getElementById('purpose').value.trim();
       const baseKm = Number(document.getElementById('distanceKm').value || 0);
       const rate = Number(document.getElementById('kmRate').value || 0);
       const notes = document.getElementById('notes').value.trim();
-      const cleanStops = ui.draftStops.map(s => ({...s, address:(s.address || '').trim()})).filter(s => s.address);
+      const cleanStops = ui.draftStops.map(s => ({...s, address:normalizeText(s.address)})).filter(s => s.address);
+      const effectivePlaceName = placeName || destinationAddress;
 
-      if(!date || !start.address || !placeName || !destinationAddress){
-        alert('Täytä vähintään päivämäärä, lähtöpaikka, paikan nimi ja kohdeosoite.');
+      if(!date || !start.address || !destinationAddress){
+        alert('Täytä vähintään päivämäärä, lähtöpaikka ja kohde tai osoite.');
         return;
       }
 
@@ -1025,7 +1041,7 @@
         date,
         startLabel: start.label,
         startAddress: start.address,
-        placeName,
+        placeName: effectivePlaceName,
         destinationAddress,
         extraStops: cleanStops,
         purpose,
@@ -1101,7 +1117,7 @@
         `${formatDate(d.date)}\n\n` +
         `Lähtö: ${d.startLabel}\n` +
         `Kohde: ${d.placeName}\n` +
-        `Osoite: ${d.destinationAddress}\n` +
+        `Osoite / hakuteksti: ${d.destinationAddress}\n` +
         `${stopsText}` +
         `Km: ${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}\n` +
         `Km-korvaus: ${euro(d.kmCompensation)}\n` +
