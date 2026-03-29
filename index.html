@@ -3,10 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#07111f" />
   <title>Opero Ajo – v2</title>
+
   <style>
     :root{
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --shadow: 0 12px 32px rgba(0,0,0,.25);
+      --radius: 22px;
+      --radius-sm: 16px;
+    }
+
+    html[data-theme="dark"]{
       --bg:#07111f;
+      --bg2:#091726;
       --panel:#0d1b2f;
       --panel2:#10233d;
       --text:#eef4ff;
@@ -17,23 +30,80 @@
       --green:#22c55e;
       --yellow:#facc15;
       --red:#ef4444;
-      --shadow:0 12px 32px rgba(0,0,0,.25);
-      --radius:22px;
-      --radius-sm:16px;
+      --icon:#a9c8ff;
+      --heroGlow:rgba(47,128,255,.18);
+      --inputBg:#091525;
+      --navBg:rgba(7,17,31,.78);
+      --bodyBg:
+        radial-gradient(circle at 50% 8%, rgba(20,72,160,.20), transparent 34%),
+        linear-gradient(180deg,#07111f 0%, #091726 100%);
+    }
+
+    html[data-theme="light"]{
+      --bg:#eaf1fb;
+      --bg2:#f6f9ff;
+      --panel:#ffffff;
+      --panel2:#edf4ff;
+      --text:#10213c;
+      --muted:#5f7397;
+      --line:rgba(76,112,173,.20);
+      --brand:#2f80ff;
+      --brand2:#6ea8ff;
+      --green:#16a34a;
+      --yellow:#ca8a04;
+      --red:#dc2626;
+      --icon:#4a78c7;
+      --heroGlow:rgba(47,128,255,.10);
+      --inputBg:#f7faff;
+      --navBg:rgba(234,241,251,.86);
+      --bodyBg:
+        radial-gradient(circle at 50% 8%, rgba(80,132,230,.13), transparent 34%),
+        linear-gradient(180deg,#eef4ff 0%, #e8f0fb 100%);
     }
 
     *{box-sizing:border-box}
+
     html,body{
       margin:0;
       padding:0;
-      background:
-        radial-gradient(circle at 50% 8%, rgba(20,72,160,.20), transparent 34%),
-        linear-gradient(180deg,#07111f 0%, #091726 100%);
-      color:var(--text);
-      font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif
+      min-height:100%;
+      background:var(--bg);
+      overscroll-behavior:none;
+      -webkit-overflow-scrolling:touch;
     }
-    body{min-height:100vh;background-attachment:fixed}
-    .app{max-width:760px;margin:0 auto;padding:18px 14px 110px}
+
+    html{
+      background:var(--bg);
+    }
+
+    body{
+      min-height:100vh;
+      background:var(--bodyBg);
+      background-attachment:fixed;
+      color:var(--text);
+      font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      overflow-x:hidden;
+      -webkit-touch-callout:none;
+      -webkit-user-select:none;
+      user-select:none;
+    }
+
+    input,textarea,select{
+      -webkit-user-select:text;
+      user-select:text;
+      -webkit-touch-callout:default;
+    }
+
+    button{
+      -webkit-touch-callout:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .app{
+      max-width:760px;
+      margin:0 auto;
+      padding:18px 14px calc(110px + var(--safe-bottom));
+    }
 
     .splash{
       position:fixed; inset:0; z-index:9999;
@@ -152,9 +222,10 @@
 
     .topbar{
       display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
-      position:sticky;top:0;z-index:5;padding:8px 0 10px;
-      background:linear-gradient(180deg,rgba(7,17,31,.94),rgba(7,17,31,.74),transparent);
-      backdrop-filter:blur(14px)
+      position:sticky;top:0;z-index:8;padding:8px 0 10px;
+      background:linear-gradient(180deg,var(--navBg),rgba(0,0,0,0));
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
     }
     .brand-wrap{
       display:flex;
@@ -199,39 +270,68 @@
       font-weight:700;
       letter-spacing:.22em;
       font-size:15px;
-      color:#f3f8ff;
+      color:var(--text);
       margin-left:.22em;
     }
 
-    .card{background:linear-gradient(180deg,rgba(18,38,66,.98),rgba(10,22,39,.98));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:14px;overflow:hidden}
-    .hero{padding:20px;background:radial-gradient(circle at top right, rgba(47,128,255,.18), transparent 34%), linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))}
-    .quick-grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-top:0;
-    }
-    .quick-icon-btn{
-      appearance:none;
+    .card{
+      background:linear-gradient(180deg,var(--panel),rgba(0,0,0,0.02));
       border:1px solid var(--line);
-      border-radius:18px;
-      background:rgba(255,255,255,.05);
-      min-height:96px;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      margin-bottom:14px;
+      overflow:hidden;
+    }
+
+    .hero{
+      padding:20px;
+      background:
+        radial-gradient(circle at top right, var(--heroGlow), transparent 34%),
+        linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));
+    }
+
+    .action-shell{
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:16px;
+      background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012));
+    }
+
+    .action-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .action-btn{
+      border:1px solid var(--line);
+      border-radius:24px;
+      min-height:150px;
+      background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));
       display:flex;
+      flex-direction:column;
       align-items:center;
       justify-content:center;
+      gap:12px;
       cursor:pointer;
       transition:.15s transform ease,.15s background ease,.15s border-color ease;
+      color:var(--text);
     }
-    .quick-icon-btn:hover{
-      background:rgba(47,128,255,.10);
+    .action-btn:hover{
+      background:rgba(255,255,255,.05);
       border-color:rgba(110,168,255,.34);
     }
-    .quick-icon-btn:active{transform:scale(.99)}
-    .quick-icon-btn svg{
-      width:42px;
-      height:42px;
+    .action-btn:active{transform:scale(.99)}
+    .action-btn svg{
+      width:54px;
+      height:54px;
       display:block;
+    }
+    .action-label{
+      font-weight:800;
+      font-size:22px;
+      color:var(--text);
     }
 
     .btn,.ghost,.danger,.small-btn,.tab{
@@ -242,46 +342,37 @@
     .btn{background:linear-gradient(180deg,var(--brand2),var(--brand));color:white;box-shadow:0 10px 20px rgba(47,128,255,.24)}
     .ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
     .danger{background:rgba(239,68,68,.12);color:#ffd2d2;border:1px solid rgba(239,68,68,.25)}
-    .small-btn{background:rgba(47,128,255,.12);color:#dbe8ff;border:1px solid rgba(47,128,255,.25);padding:10px 12px;font-size:14px}
+    .small-btn{background:rgba(47,128,255,.12);color:var(--text);border:1px solid rgba(47,128,255,.25);padding:10px 12px;font-size:14px}
     .section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
     .section-title h2{font-size:17px;margin:0}
     .hidden{display:none!important}
     .grid{display:grid;gap:12px}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    label{display:block;font-size:13px;color:#d8e5ff;margin:0 0 7px;font-weight:700}
+    label{display:block;font-size:13px;color:var(--text);margin:0 0 7px;font-weight:700}
     input,select,textarea{
-      width:100%;background:#091525;color:var(--text);border:1px solid var(--line);border-radius:14px;padding:13px 12px;font:inherit;outline:none;
+      width:100%;
+      background:var(--inputBg);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px 12px;
+      font:inherit;
+      outline:none;
     }
-    input::placeholder,textarea::placeholder{color:#7f95bc}
+    input::placeholder,textarea::placeholder{color:var(--muted)}
     textarea{min-height:90px;resize:vertical}
     .switch-row{display:flex;gap:10px}
     .switch-row .tab{flex:1;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
     .switch-row .tab.active{background:rgba(47,128,255,.18);color:white;border-color:rgba(47,128,255,.4)}
-    .result-box{background:linear-gradient(180deg,rgba(34,197,94,.12),rgba(34,197,94,.06));border:1px solid rgba(34,197,94,.22);color:#ecfff2;border-radius:16px;padding:12px}
-    .warn-box{background:linear-gradient(180deg,rgba(250,204,21,.12),rgba(250,204,21,.06));border:1px solid rgba(250,204,21,.22);color:#fff7d6;border-radius:16px;padding:12px}
+    .result-box{background:linear-gradient(180deg,rgba(34,197,94,.12),rgba(34,197,94,.06));border:1px solid rgba(34,197,94,.22);color:var(--text);border-radius:16px;padding:12px}
+    .warn-box{background:linear-gradient(180deg,rgba(250,204,21,.12),rgba(250,204,21,.06));border:1px solid rgba(250,204,21,.22);color:var(--text);border-radius:16px;padding:12px}
     .list{display:grid;gap:10px}
     .item{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:13px}
     .item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .item-title{font-weight:800}
-    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 9px;border-radius:999px;font-size:12px;color:#dfe9ff;background:rgba(255,255,255,.03)}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 9px;border-radius:999px;font-size:12px;color:var(--text);background:rgba(255,255,255,.03)}
     .item-meta{margin-top:8px;color:var(--muted);font-size:13px}
-    .bottom-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(7,17,31,.78);backdrop-filter:blur(22px);border-top:1px solid var(--line)}
-    .bottom-nav .inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .nav-btn{
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:11px 8px;
-      color:var(--muted);
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:58px;
-    }
-    .nav-btn.active{background:rgba(47,128,255,.16);color:#fff;border-color:rgba(47,128,255,.35)}
-    .nav-btn svg{width:28px;height:28px;display:block}
     .row{display:flex;gap:10px;align-items:center}
     .row-between{display:flex;justify-content:space-between;gap:12px;align-items:center}
     .right{text-align:right}
@@ -292,13 +383,13 @@
     .divider{height:1px;background:var(--line);margin:8px 0}
     .mini{font-size:12px;color:var(--muted)}
     .chip-row{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;color:#dce7ff}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;color:var(--text)}
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
     .stat{padding:13px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--line)}
     .stat-label{font-size:12px;color:var(--muted);margin-bottom:6px}
     .stat-value{font-size:20px;font-weight:900;letter-spacing:.01em}
     .toast-wrap{position:fixed;left:12px;right:12px;top:14px;z-index:30;display:grid;gap:8px;pointer-events:none}
-    .toast{margin-left:auto;max-width:520px;background:linear-gradient(180deg,rgba(13,27,47,.98),rgba(10,22,39,.98));border:1px solid var(--line);color:#eef4ff;padding:12px 14px;border-radius:16px;box-shadow:var(--shadow);transform:translateY(-10px);opacity:0;animation:toastIn .18s ease forwards}
+    .toast{margin-left:auto;max-width:520px;background:linear-gradient(180deg,var(--panel),rgba(0,0,0,.02));border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:16px;box-shadow:var(--shadow);transform:translateY(-10px);opacity:0;animation:toastIn .18s ease forwards}
     .toast.good{border-color:rgba(34,197,94,.25)}
     .toast.warn{border-color:rgba(250,204,21,.3)}
     .toast.bad{border-color:rgba(239,68,68,.3)}
@@ -313,16 +404,56 @@
     }
     @keyframes toastIn{to{transform:translateY(0);opacity:1}}
 
+    .bottom-nav{
+      position:fixed;
+      left:0;right:0;bottom:0;
+      padding:10px 12px calc(10px + var(--safe-bottom));
+      background:var(--navBg);
+      backdrop-filter:blur(22px);
+      -webkit-backdrop-filter:blur(22px);
+      border-top:1px solid var(--line);
+      z-index:12;
+    }
+    .bottom-nav .inner{
+      max-width:760px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+    .nav-btn{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 8px 8px;
+      color:var(--muted);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      min-height:72px;
+      gap:6px;
+    }
+    .nav-btn.active{background:rgba(47,128,255,.16);color:var(--text);border-color:rgba(47,128,255,.35)}
+    .nav-btn svg{width:28px;height:28px;display:block}
+    .nav-label{
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+    }
+
     @media (max-width:620px){
       .grid-2,.grid-3{grid-template-columns:1fr}
-      .quick-grid{grid-template-columns:repeat(4,1fr)}
       .brand-title{font-size:24px}
       .brand-sub{font-size:13px}
       .splash-word{font-size:38px}
       .splash-sub{font-size:24px}
-      .quick-icon-btn{min-height:82px}
-      .quick-icon-btn svg{width:36px;height:36px}
+      .action-btn{min-height:126px}
+      .action-btn svg{width:48px;height:48px}
+      .action-label{font-size:18px}
     }
+
     @media print{
       body{background:#fff;color:#000}
       .bottom-nav,.no-print,.topbar,.splash{display:none!important}
@@ -364,40 +495,50 @@
 
     <section id="screen-home">
       <div class="card hero">
-        <div class="quick-grid no-print">
-          <button class="quick-icon-btn" type="button" onclick="go('new')" aria-label="Uusi ajo" title="Uusi ajo">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <rect x="16" y="22" width="32" height="18" rx="8" fill="#ffffff"/>
-              <path d="M22 22l4-7h12l4 7z" fill="#ffffff"/>
-              <circle cx="23" cy="43" r="4" fill="#ffffff"/>
-              <circle cx="41" cy="43" r="4" fill="#ffffff"/>
-              <path d="M32 18v10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-              <path d="M27 23h10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-            </svg>
-          </button>
+        <div class="action-shell no-print">
+          <div class="action-grid">
 
-          <button class="quick-icon-btn" type="button" onclick="go('report')" aria-label="Raportti" title="Raportti">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
-              <path d="M38 10v12h12" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
-              <path d="M24 30h16M24 38h16M24 46h12" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
-            </svg>
-          </button>
+            <button class="action-btn" type="button" onclick="go('new')">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <rect x="14" y="22" width="30" height="18" rx="7" fill="#f5f8ff"/>
+                <path d="M19 22l4-7h12l4 7z" fill="#f5f8ff"/>
+                <circle cx="21" cy="43" r="4" fill="#f5f8ff"/>
+                <circle cx="39" cy="43" r="4" fill="#f5f8ff"/>
+                <path d="M48 15v18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
+                <path d="M39 24h18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
+              </svg>
+              <div class="action-label">Uusi ajo</div>
+            </button>
 
-          <button class="quick-icon-btn" type="button" onclick="go('drives')" aria-label="Ajot" title="Ajot">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M24 8c8 10 8 20 0 28s-8 18 0 20" fill="none" stroke="#8eb8ff" stroke-width="4.5" stroke-linecap="round"/>
-              <path d="M40 8c-8 10-8 20 0 28s8 18 0 20" fill="none" stroke="#8eb8ff" stroke-width="4.5" stroke-linecap="round"/>
-              <path d="M32 14v4M32 26v4M32 38v4M32 50v4" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
-            </svg>
-          </button>
+            <button class="action-btn" type="button" onclick="go('report')">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M38 10v12h12" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="32" cy="29" r="6" fill="none" stroke="var(--icon)" stroke-width="3"/>
+                <path d="M32 23v6h5" fill="none" stroke="var(--icon)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M24 41h16M24 47h12" fill="none" stroke="var(--icon)" stroke-width="3.2" stroke-linecap="round"/>
+              </svg>
+              <div class="action-label">Raportti</div>
+            </button>
 
-          <button class="quick-icon-btn" type="button" onclick="go('settings')" aria-label="Asetukset" title="Asetukset">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="10" fill="none" stroke="#8eb8ff" stroke-width="3.5"/>
-              <path d="M32 8v7M32 49v7M56 32h-7M15 32H8M48.97 15.03l-4.95 4.95M19.98 44.02l-4.95 4.95M48.97 48.97l-4.95-4.95M19.98 19.98l-4.95-4.95" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
-            </svg>
-          </button>
+            <button class="action-btn" type="button" onclick="go('drives')">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
+                <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
+                <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="var(--icon)" stroke-width="3.4" stroke-linecap="round"/>
+              </svg>
+              <div class="action-label">Ajot</div>
+            </button>
+
+            <button class="action-btn" type="button" onclick="go('settings')">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <circle cx="32" cy="32" r="10" fill="none" stroke="var(--icon)" stroke-width="4"/>
+                <path d="M32 8v7M32 49v7M56 32h-7M15 32H8M48.97 15.03l-4.95 4.95M19.98 44.02l-4.95 4.95M48.97 48.97l-4.95-4.95M19.98 19.98l-4.95-4.95" fill="none" stroke="var(--icon)" stroke-width="4" stroke-linecap="round"/>
+              </svg>
+              <div class="action-label">Asetukset</div>
+            </button>
+
+          </div>
         </div>
       </div>
 
@@ -571,6 +712,13 @@
             <label for="defaultKmRate">Oletus km-korvaus (€/km)</label>
             <input id="defaultKmRate" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Esim. 0.57" />
           </div>
+          <div>
+            <label for="themeSelect">Teema</label>
+            <select id="themeSelect">
+              <option value="dark">Tumma</option>
+              <option value="light">Vaalea</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -606,43 +754,49 @@
 
   <div class="bottom-nav no-print">
     <div class="inner">
-      <button class="nav-btn active" data-screen="home" onclick="go('home')" aria-label="Koti" title="Koti">
+      <button class="nav-btn active" data-screen="home" onclick="go('home')" aria-label="Koti">
         <svg viewBox="0 0 64 64" aria-hidden="true">
           <path d="M12 28L32 12l20 16v22a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V28z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
           <path d="M26 54V36h12v18" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
         </svg>
+        <div class="nav-label">Koti</div>
       </button>
 
-      <button class="nav-btn" data-screen="new" onclick="go('new')" aria-label="Uusi ajo" title="Uusi ajo">
+      <button class="nav-btn" data-screen="new" onclick="go('new')" aria-label="Uusi ajo">
         <svg viewBox="0 0 64 64" aria-hidden="true">
-          <rect x="16" y="22" width="32" height="18" rx="8" fill="#ffffff"/>
-          <path d="M22 22l4-7h12l4 7z" fill="#ffffff"/>
-          <circle cx="23" cy="43" r="4" fill="#ffffff"/>
-          <circle cx="41" cy="43" r="4" fill="#ffffff"/>
-          <path d="M32 18v10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-          <path d="M27 23h10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+          <rect x="14" y="22" width="30" height="18" rx="7" fill="#f5f8ff"/>
+          <path d="M19 22l4-7h12l4 7z" fill="#f5f8ff"/>
+          <circle cx="21" cy="43" r="4" fill="#f5f8ff"/>
+          <circle cx="39" cy="43" r="4" fill="#f5f8ff"/>
+          <path d="M48 15v18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M39 24h18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
         </svg>
+        <div class="nav-label">Uusi ajo</div>
       </button>
 
-      <button class="nav-btn" data-screen="drives" onclick="go('drives')" aria-label="Ajot" title="Ajot">
+      <button class="nav-btn" data-screen="drives" onclick="go('drives')" aria-label="Ajot">
         <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M24 8c8 10 8 20 0 28s-8 18 0 20" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
-          <path d="M40 8c-8 10-8 20 0 28s8 18 0 20" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
-          <path d="M32 14v4M32 26v4M32 38v4M32 50v4" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round"/>
+          <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round"/>
+          <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
         </svg>
+        <div class="nav-label">Ajot</div>
       </button>
 
-      <button class="nav-btn" data-screen="report" onclick="go('report')" aria-label="Raportti" title="Raportti">
+      <button class="nav-btn" data-screen="report" onclick="go('report')" aria-label="Raportti">
         <svg viewBox="0 0 64 64" aria-hidden="true">
           <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
           <path d="M38 10v12h12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
-          <path d="M24 30h16M24 38h16M24 46h12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="32" cy="29" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M32 23v6h5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M24 41h16M24 47h12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
         </svg>
+        <div class="nav-label">Raportti</div>
       </button>
     </div>
   </div>
 
-  <dialog id="expenseModal" style="max-width:560px;width:calc(100% - 24px);border:1px solid rgba(125,170,255,.18);border-radius:18px;background:#0d1b2f;color:#eef4ff;padding:0;box-shadow:0 20px 50px rgba(0,0,0,.45)">
+  <dialog id="expenseModal" style="max-width:560px;width:calc(100% - 24px);border:1px solid rgba(125,170,255,.18);border-radius:18px;background:var(--panel);color:var(--text);padding:0;box-shadow:0 20px 50px rgba(0,0,0,.45)">
     <form method="dialog" style="padding:16px">
       <div class="section-title"><h2>Lisää kulu</h2><button class="ghost" value="cancel" type="submit">Sulje</button></div>
       <div class="grid">
@@ -686,13 +840,14 @@
   </dialog>
 
   <script>
-    const STORAGE_KEY = 'opero-ajot-mvp-v2';
+    const STORAGE_KEY = 'opero-ajot-mvp-v3';
 
     let state = {
       settings: {
         userName: '',
         defaultKmRate: 0.57,
-        savedLocations: []
+        savedLocations: [],
+        theme: 'dark'
       },
       drives: []
     };
@@ -710,6 +865,15 @@
     const todayISO = () => new Date().toISOString().slice(0,10);
     const monthNames = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu','Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
 
+    function applyTheme(theme){
+      const safeTheme = (theme === 'light') ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', safeTheme);
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if(meta){
+        meta.setAttribute('content', safeTheme === 'light' ? '#eaf1fb' : '#07111f');
+      }
+    }
+
     function toast(message, type='good'){
       const wrap = document.getElementById('toastWrap');
       if(!wrap) return;
@@ -726,7 +890,7 @@
       if(!splash) return;
       setTimeout(() => {
         splash.classList.add('hidden');
-      }, 1500);
+      }, 1200);
     }
 
     function saveState(){
@@ -760,30 +924,23 @@
         try { state = JSON.parse(raw); } catch(e){ console.error(e); }
       }
 
-      if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[]};
+      if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[], theme:'dark'};
       if(!Array.isArray(state.settings.savedLocations)) state.settings.savedLocations = [];
       if(!Array.isArray(state.drives)) state.drives = [];
+      if(!state.settings.theme) state.settings.theme = 'dark';
 
       if(state.settings.savedLocations.length === 0){
         state.settings.savedLocations = [
           {id:cryptoRandom(), name:'Koti', address:'Testikatu 1, Helsinki'},
           {id:cryptoRandom(), name:'Toimisto', address:'Keskuskatu 10, Tampere'}
         ];
-      } else {
-        state.settings.savedLocations = state.settings.savedLocations.map(loc => {
-          const name = (loc.name || '').trim().toLowerCase();
-          let address = (loc.address || '').trim();
-
-          if(!address && name === 'koti') address = 'Testikatu 1, Helsinki';
-          if(!address && name === 'toimisto') address = 'Keskuskatu 10, Tampere';
-
-          return { ...loc, address };
-        });
       }
 
       if(state.settings.defaultKmRate === undefined || state.settings.defaultKmRate === null || state.settings.defaultKmRate === '') {
         state.settings.defaultKmRate = 0.57;
       }
+
+      applyTheme(state.settings.theme);
     }
 
     function go(screen){
@@ -819,7 +976,9 @@
       document.getElementById('kmRate').addEventListener('input', recalculateTotals);
       document.getElementById('distanceKm').addEventListener('input', recalculateTotals);
       document.getElementById('startLocationSelect').addEventListener('change', handleStartLocationChange);
-      ['userName','defaultKmRate'].forEach(id=>document.getElementById(id).addEventListener('change', saveSettingsFromForm));
+      ['userName','defaultKmRate','themeSelect'].forEach(id=>{
+        document.getElementById(id).addEventListener('change', saveSettingsFromForm);
+      });
       document.getElementById('reportMonth').addEventListener('change', refreshReport);
       document.getElementById('reportYear').addEventListener('change', refreshReport);
     }
@@ -879,6 +1038,8 @@
     function saveSettingsFromForm(){
       state.settings.userName = document.getElementById('userName').value.trim();
       state.settings.defaultKmRate = Number(document.getElementById('defaultKmRate').value || 0.57);
+      state.settings.theme = document.getElementById('themeSelect').value || 'dark';
+      applyTheme(state.settings.theme);
       saveState();
       toast('Asetukset tallennettu.');
       renderHome();
@@ -888,6 +1049,7 @@
     function renderSettings(){
       document.getElementById('userName').value = state.settings.userName || '';
       document.getElementById('defaultKmRate').value = Number(state.settings.defaultKmRate || 0.57).toFixed(2);
+      document.getElementById('themeSelect').value = state.settings.theme || 'dark';
       const wrap = document.getElementById('savedLocationsList');
       const arr = state.settings.savedLocations || [];
       if(arr.length === 0){
@@ -1585,6 +1747,8 @@ ${receiptSections}
           const data = JSON.parse(reader.result);
           if(!data.settings || !Array.isArray(data.drives)) throw new Error('Virheellinen tiedosto');
           state = data;
+          if(!state.settings.theme) state.settings.theme = 'dark';
+          applyTheme(state.settings.theme);
           saveState();
           renderSettings();
           renderHome();
