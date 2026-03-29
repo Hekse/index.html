@@ -1,169 +1,471 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Ajo</title>
 
-<title>Ajo</title>
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <rect width="64" height="64" rx="16" fill="%2307111f"/>
+    <rect x="16" y="22" width="32" height="18" rx="8" fill="%23ffffff"/>
+    <path d="M22 22l4-7h12l4 7z" fill="%23ffffff"/>
+    <circle cx="23" cy="43" r="4" fill="%23ffffff"/>
+    <circle cx="41" cy="43" r="4" fill="%23ffffff"/>
+    <path d="M32 18v10" stroke="%23000000" stroke-width="4" stroke-linecap="round"/>
+    <path d="M27 23h10" stroke="%23000000" stroke-width="4" stroke-linecap="round"/>
+  </svg>' />
 
-<style>
-:root{
-  --bg:#07111f;
-  --panel:#0d1b2f;
-  --line:rgba(125,170,255,.14);
-  --text:#eef4ff;
-  --brand:#2f80ff;
-}
+  <style>
+    :root{
+      --bg:#06101d;
+      --bg-2:#081729;
+      --panel:#0d1b2f;
+      --panel-2:#10233d;
+      --panel-3:#122844;
+      --line:rgba(125,170,255,.16);
+      --line-strong:rgba(125,170,255,.26);
+      --text:#eef4ff;
+      --muted:#99add1;
+      --icon:#8eb8ff;
+      --danger:#ff8fa3;
+      --danger-bg:rgba(255,80,110,.10);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:18px;
+      --radius-sm:14px;
+      --shadow:0 14px 34px rgba(0,0,0,.26);
+      --safe-bottom:env(safe-area-inset-bottom, 0px);
+      --nav-h:96px;
+    }
 
-body{
-  margin:0;
-  font-family:system-ui;
-  background:var(--bg);
-  color:var(--text);
-}
+    *{box-sizing:border-box}
 
-.app{
-  max-width:420px;
-  margin:auto;
-  padding:16px;
-  padding-bottom:100px;
-}
+    html,body{
+      margin:0;
+      padding:0;
+      background:
+        radial-gradient(900px 500px at -10% -10%, rgba(47,128,255,.10), transparent 45%),
+        radial-gradient(700px 500px at 120% 20%, rgba(47,128,255,.08), transparent 40%),
+        linear-gradient(180deg, var(--bg-2), var(--bg));
+      color:var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      min-height:100%;
+    }
 
-/* YLÄLAATIKOT */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
+    body{
+      min-height:100vh;
+    }
 
-.box{
-  height:90px;
-  border-radius:18px;
-  border:1px solid var(--line);
-  background:var(--panel);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    .app{
+      max-width:430px;
+      margin:0 auto;
+      padding:16px 14px calc(var(--nav-h) + var(--safe-bottom) + 18px);
+    }
 
-.icon{
-  width:36px;
-  height:36px;
-  stroke:#8eb8ff;
-}
+    .card{
+      background:linear-gradient(180deg, rgba(17,37,63,.96), rgba(10,23,39,.96));
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+    }
 
-/* ALAVALIKKO */
-.nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  max-width:420px;
-  margin:auto;
-  padding:10px;
-  background:var(--bg);
-}
+    .hero{
+      padding:16px;
+      margin-bottom:16px;
+    }
 
-.nav-inner{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  border-radius:20px;
-  background:var(--panel);
-  border:1px solid var(--line);
-}
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:12px;
+    }
 
-.nav-btn{
-  height:60px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    .quick-btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      min-height:96px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+    }
 
-.nav-btn svg{
-  width:26px;
-  height:26px;
-  stroke:#8eb8ff;
-}
-</style>
+    .quick-btn:active{
+      transform:scale(.99);
+    }
+
+    .quick-btn svg{
+      width:40px;
+      height:40px;
+      display:block;
+    }
+
+    .section{
+      padding:16px;
+      margin-bottom:16px;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .section-title{
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.01em;
+      margin:0;
+    }
+
+    .section-sub{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    .label{
+      display:block;
+      margin:0 0 7px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .input{
+      width:100%;
+      border:1px solid var(--line);
+      background:#091727;
+      color:var(--text);
+      border-radius:16px;
+      padding:15px 16px;
+      font-size:15px;
+      outline:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+    }
+
+    .input::placeholder{
+      color:#7f95bb;
+    }
+
+    .places-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .place-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .place-meta{
+      min-width:0;
+    }
+
+    .place-name{
+      font-size:15px;
+      font-weight:800;
+      margin:0 0 4px;
+    }
+
+    .place-address{
+      font-size:13px;
+      color:var(--muted);
+      margin:0;
+      word-break:break-word;
+    }
+
+    .delete-btn{
+      border:1px solid rgba(255,143,163,.28);
+      background:var(--danger-bg);
+      color:#ffc3cd;
+      border-radius:16px;
+      padding:12px 16px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+
+    .delete-btn:active{
+      transform:scale(.99);
+    }
+
+    .divider{
+      height:1px;
+      border:none;
+      background:var(--line);
+      margin:2px 0 14px;
+    }
+
+    .add-btn{
+      width:100%;
+      border:1px solid var(--line-strong);
+      background:linear-gradient(180deg, rgba(47,128,255,.18), rgba(47,128,255,.10));
+      color:var(--text);
+      border-radius:18px;
+      padding:16px;
+      font-size:17px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .add-btn:active{
+      transform:scale(.995);
+    }
+
+    .bottom-nav-wrap{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:0;
+      width:min(430px, 100%);
+      padding:8px 12px calc(10px + var(--safe-bottom));
+      background:linear-gradient(180deg, rgba(6,16,29,0), rgba(6,16,29,.75) 18%, rgba(6,16,29,.98));
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    }
+
+    .bottom-nav{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:8px;
+      padding:8px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(17,37,63,.95), rgba(10,23,39,.96));
+      box-shadow:var(--shadow);
+    }
+
+    .nav-btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:none;
+      background:transparent;
+      border-radius:18px;
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(180deg, rgba(47,128,255,.14), rgba(255,255,255,.03));
+      border:1px solid rgba(125,170,255,.18);
+    }
+
+    .nav-btn svg{
+      width:30px;
+      height:30px;
+      display:block;
+    }
+
+    @media (max-width:380px){
+      .quick-grid{
+        gap:10px;
+      }
+
+      .quick-btn{
+        min-height:88px;
+      }
+
+      .quick-btn svg{
+        width:36px;
+        height:36px;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="app">
+  <main class="app">
 
-<!-- YLÄLAATIKOT -->
-<div class="grid">
+    <!-- YLÄLAATIKOT -->
+    <section class="card hero">
+      <div class="quick-grid">
 
-<!-- UUSI AJO -->
-<div class="box">
-<svg viewBox="0 0 64 64">
-  <rect x="16" y="20" width="32" height="22" rx="9" fill="#fff"/>
-  <path d="M22 20l4-6h12l4 6z" fill="#fff"/>
-  <circle cx="23" cy="45" r="4" fill="#fff"/>
-  <circle cx="41" cy="45" r="4" fill="#fff"/>
-  <path d="M32 20v10" stroke="#000" stroke-width="4"/>
-  <path d="M27 25h10" stroke="#000" stroke-width="4"/>
-</svg>
-</div>
+        <!-- UUSI AJO -->
+        <button class="quick-btn" aria-label="Uusi ajo" onclick="setTab('new')">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="16" y="22" width="32" height="18" rx="8" fill="#ffffff"/>
+            <path d="M22 22l4-7h12l4 7z" fill="#ffffff"/>
+            <circle cx="23" cy="43" r="4" fill="#ffffff"/>
+            <circle cx="41" cy="43" r="4" fill="#ffffff"/>
+            <path d="M32 18v10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+            <path d="M27 23h10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </button>
 
-<!-- RAPORTTI -->
-<div class="box">
-<svg viewBox="0 0 64 64" class="icon">
-  <path d="M20 10h18l12 12v28H20z" fill="none" stroke-width="3"/>
-</svg>
-</div>
+        <!-- RAPORTTI -->
+        <button class="quick-btn" aria-label="Raportti" onclick="setTab('report')">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z"
+                  fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M38 10v12h12" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M24 30h16M24 38h16M24 46h12"
+                  fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </button>
 
-<!-- AJOT -->
-<div class="box">
-<svg viewBox="0 0 64 64" class="icon">
-  <path d="M24 8c8 10 8 20 0 28" stroke-width="4"/>
-  <path d="M40 8c-8 10-8 20 0 28" stroke-width="4"/>
-</svg>
-</div>
+        <!-- AJOT -->
+        <button class="quick-btn" aria-label="Ajot" onclick="setTab('trips')">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M24 8c8 10 8 20 0 28s-8 18 0 20"
+                  fill="none" stroke="#8eb8ff" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M40 8c-8 10-8 20 0 28s8 18 0 20"
+                  fill="none" stroke="#8eb8ff" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M32 14v4M32 26v4M32 38v4M32 50v4"
+                  fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </button>
 
-<!-- ASETUKSET -->
-<div class="box">
-<svg viewBox="0 0 64 64" class="icon">
-  <circle cx="32" cy="32" r="10" stroke-width="3"/>
-</svg>
-</div>
+        <!-- ASETUKSET -->
+        <button class="quick-btn" aria-label="Asetukset" onclick="setTab('settings')">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="10" fill="none" stroke="#8eb8ff" stroke-width="3.5"/>
+            <path d="M32 8v7M32 49v7M56 32h-7M15 32H8M48.97 15.03l-4.95 4.95M19.98 44.02l-4.95 4.95M48.97 48.97l-4.95-4.95M19.98 19.98l-4.95-4.95"
+                  fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </button>
 
-</div>
+      </div>
+    </section>
 
-</div>
+    <!-- ASETUKSET / SISÄLTÖESIMERKKI -->
+    <section class="card section">
+      <div class="section-head">
+        <h2 class="section-title">Perustiedot</h2>
+      </div>
 
-<!-- ALAVALIKKO -->
-<div class="nav">
-<div class="nav-inner">
+      <div class="field">
+        <label class="label" for="name">Nimi</label>
+        <input id="name" class="input" type="text" placeholder="Esim. Matti Meikäläinen" />
+      </div>
 
-<div class="nav-btn">
-<svg viewBox="0 0 64 64">
-  <path d="M12 28 32 12l20 16v24H12z" fill="none" stroke-width="3"/>
-</svg>
-</div>
+      <div class="field">
+        <label class="label" for="kmrate">Oletus km-korvaus (€/km)</label>
+        <input id="kmrate" class="input" type="text" placeholder="Esim. 0,57" />
+      </div>
+    </section>
 
-<div class="nav-btn">
-<svg viewBox="0 0 64 64">
-  <rect x="16" y="20" width="32" height="22" rx="9" fill="#fff"/>
-  <path d="M32 20v10" stroke="#000" stroke-width="4"/>
-  <path d="M27 25h10" stroke="#000" stroke-width="4"/>
-</svg>
-</div>
+    <section class="card section">
+      <div class="section-head">
+        <h2 class="section-title">Lähtöpaikat</h2>
+        <span class="section-sub">Max 5</span>
+      </div>
 
-<div class="nav-btn">
-<svg viewBox="0 0 64 64">
-  <path d="M24 8c8 10 8 20 0 28" stroke-width="4"/>
-</svg>
-</div>
+      <div class="places-list">
+        <article class="place-item">
+          <div class="place-meta">
+            <p class="place-name">Koti</p>
+            <p class="place-address">Esimerkkikatu 1 A 1, Helsinki</p>
+          </div>
+          <button class="delete-btn" type="button">Poista</button>
+        </article>
 
-<div class="nav-btn">
-<svg viewBox="0 0 64 64">
-  <path d="M20 10h18l12 12v28H20z" fill="none" stroke-width="3"/>
-</svg>
-</div>
+        <article class="place-item">
+          <div class="place-meta">
+            <p class="place-name">Toimisto</p>
+            <p class="place-address">Keskuskatu 10, Tampere</p>
+          </div>
+          <button class="delete-btn" type="button">Poista</button>
+        </article>
+      </div>
 
-</div>
-</div>
+      <hr class="divider" />
+
+      <div class="field">
+        <label class="label" for="placename">Paikan nimi</label>
+        <input id="placename" class="input" type="text" placeholder="Esim. Koti / Toimisto" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="address">Osoite</label>
+        <input id="address" class="input" type="text" placeholder="Esim. Testikatu 1, Helsinki" />
+      </div>
+
+      <button class="add-btn" type="button">+ Lisää lähtöpaikka</button>
+    </section>
+
+  </main>
+
+  <!-- ALAVALIKKO -->
+  <div class="bottom-nav-wrap">
+    <nav class="bottom-nav" aria-label="Päänavigaatio">
+
+      <!-- KOTI -->
+      <button class="nav-btn active" aria-label="Koti" onclick="setTab('home')">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M12 28L32 12l20 16v22a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V28z"
+                fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M26 54V36h12v18"
+                fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- UUSI AJO -->
+      <button class="nav-btn" aria-label="Uusi ajo" onclick="setTab('new')">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="16" y="22" width="32" height="18" rx="8" fill="#ffffff"/>
+          <path d="M22 22l4-7h12l4 7z" fill="#ffffff"/>
+          <circle cx="23" cy="43" r="4" fill="#ffffff"/>
+          <circle cx="41" cy="43" r="4" fill="#ffffff"/>
+          <path d="M32 18v10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+          <path d="M27 23h10" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- AJOT -->
+      <button class="nav-btn" aria-label="Ajot" onclick="setTab('trips')">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M24 8c8 10 8 20 0 28s-8 18 0 20"
+                fill="none" stroke="#8eb8ff" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M40 8c-8 10-8 20 0 28s8 18 0 20"
+                fill="none" stroke="#8eb8ff" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M32 14v4M32 26v4M32 38v4M32 50v4"
+                fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- RAPORTTI -->
+      <button class="nav-btn" aria-label="Raportti" onclick="setTab('report')">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z"
+                fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M38 10v12h12" fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M24 30h16M24 38h16M24 46h12"
+                fill="none" stroke="#8eb8ff" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+    </nav>
+  </div>
+
+  <script>
+    function setTab(tabName){
+      console.log("Valittu näkymä:", tabName);
+    }
+  </script>
 
 </body>
 </html>
