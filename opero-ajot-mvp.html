@@ -86,6 +86,1103 @@
     .mini{font-size:12px;color:var(--muted)}
     .chip-row{display:flex;gap:8px;flex-wrap:wrap}
     .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;color:#dce7ff}
+    .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+    .stat{padding:13px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--line)}
+    .stat-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .stat-value{font-size:20px;font-weight:900;letter-spacing:.01em}
+    .toast-wrap{position:fixed;left:12px;right:12px;top:14px;z-index:30;display:grid;gap:8px;pointer-events:none}
+    .toast{margin-left:auto;max-width:520px;background:linear-gradient(180deg,rgba(13,27,47,.98),rgba(10,22,39,.98));border:1px solid var(--line);color:#eef4ff;padding:12px 14px;border-radius:16px;box-shadow:var(--shadow);transform:translateY(-10px);opacity:0;animation:toastIn .18s ease forwards}
+    .toast.good{border-color:rgba(34,197,94,.25)}
+    .toast.warn{border-color:rgba(250,204,21,.3)}
+    .toast.bad{border-color:rgba(239,68,68,.3)}
+    @keyframes toastIn{to{transform:translateY(0);opacity:1}}
+    @media (max-width:620px){
+      .grid-2{grid-template-columns:1fr}
+      .quick-grid{grid-template-columns:1fr}
+    }
+    @media print{
+      body{background:#fff;color:#000}
+      .bottom-nav,.no-print{display:none!important}
+      .app{padding:0;max-width:none}
+      .card{box-shadow:none;border:1px solid #ccc;background:#fff;color:#000}
+      input,select,textarea,button{display:none!important}
+    }
+  </style>
+</head>
+<body>
+  <div id="toastWrap" class="toast-wrap no-print"></div>
+  <div class="app">
+    <div class="topbar no-print">
+      <div>
+        <div class="brand-badge"><span class="dot"></span><span class="brand">Opero Ajot</span></div>
+        <div class="sub">v2 visual polish · ajot, kulut ja PDF-koonti</div>
+      </div>
+    </div>
+
+    <section id="screen-home">
+      <div class="card hero">
+        <h1>Ajot ja matkakulut talteen kentällä.</h1>
+        <p>Kirjaa ajo, lisää pysäköinti tai muu kulu, ja tee kuukausikoonti PDF:ksi yhdellä napilla.</p>
+        <div class="quick-grid no-print">
+          <button class="btn" onclick="go('new')">➕ Uusi ajo</button>
+          <button class="ghost" onclick="go('report')">📄 Raportti</button>
+          <button class="ghost" onclick="go('drives')">📋 Ajot</button>
+          <button class="ghost" onclick="go('settings')">⚙️ Asetukset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>Tämän kuun koonti</h2><span class="mini" id="homeMonthLabel"></span></div>
+        <div id="homeStats" class="stats-grid"></div>
+        <div class="divider"></div>
+        <div class="totals" id="homeTotals"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>Viimeisimmät ajot</h2></div>
+        <div id="recentDrives" class="list"></div>
+      </div>
+    </section>
+
+    <section id="screen-new" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Uusi ajo</h2><span class="mini">1 ajo = 1 kohde + lisäpysähdykset</span></div>
+        <div class="grid">
+          <div>
+            <label for="driveDate">Päivämäärä</label>
+            <input id="driveDate" type="date" />
+          </div>
+
+          <div>
+            <label for="startLocationSelect">Lähtöpaikka</label>
+            <select id="startLocationSelect"></select>
+          </div>
+
+          <div class="no-print">
+            <button class="small-btn" type="button" onclick="useCurrentLocationAsStart()">📍 Paikanna sijainti</button>
+            <div id="geoStatus" class="mini" style="margin-top:8px"></div>
+          </div>
+
+          <div id="customStartWrap" class="hidden">
+            <label for="customStartAddress">Muu lähtöosoite</label>
+            <input id="customStartAddress" type="text" placeholder="Esim. Asemakatu 1, Kuopio" />
+          </div>
+
+          <div>
+            <label for="placeName">Paikan nimi</label>
+            <input id="placeName" type="text" placeholder="Esim. Konttila Iisalmi" />
+          </div>
+
+          <div>
+            <label for="destinationAddress">Kohdeosoite</label>
+            <input id="destinationAddress" type="text" placeholder="Esim. Kinttupolku 1, Iisalmi" />
+          </div>
+
+          <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
+            <div class="section-title">
+              <h2>Lisäpysähdykset</h2>
+              <button class="small-btn no-print" type="button" onclick="addDraftStop()">+ Lisää pysähdys</button>
+            </div>
+            <div class="mini" style="margin-bottom:10px">Voit lisätä enintään 5 lisäpysähdystä. Hae km käyttää viimeistä täytettyä pysähdystä määränpäänä.</div>
+            <div id="draftStopsList" class="list"></div>
+          </div>
+
+          <div>
+            <label for="purpose">Ajon tarkoitus</label>
+            <input id="purpose" type="text" placeholder="Esim. asiakaskäynti" />
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label for="kmRate">€/km</label>
+              <input id="kmRate" type="number" step="0.01" min="0" inputmode="decimal" />
+            </div>
+            <div>
+              <label for="distanceKm">Km</label>
+              <input id="distanceKm" type="number" step="0.1" min="0" inputmode="decimal" placeholder="0" />
+            </div>
+          </div>
+
+          <div class="switch-row no-print">
+            <button class="tab active" id="oneWayBtn" type="button">Meno</button>
+            <button class="tab" id="roundTripBtn" type="button">Meno-paluu</button>
+          </div>
+
+          <div class="grid-2 no-print">
+            <button class="small-btn" type="button" onclick="lookupDistance()">🗺️ Hae km</button>
+            <button class="ghost" type="button" onclick="recalculateTotals()">Laske summa</button>
+          </div>
+
+          <div id="distanceStatus" class="mini"></div>
+
+          <div class="result-box">
+            <div class="row-between"><strong>Km-korvaus</strong><strong id="kmCompValue">0,00 €</strong></div>
+          </div>
+
+          <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
+            <div class="section-title"><h2>Kulut</h2><button class="small-btn no-print" type="button" onclick="openExpenseModal()">+ Lisää kulu</button></div>
+            <div id="expenseDraftList" class="list"></div>
+          </div>
+
+          <div>
+            <label for="notes">Muistiinpano</label>
+            <textarea id="notes" placeholder="Esim. pysäköinti hallissa, tapaaminen venyi 30 min"></textarea>
+          </div>
+
+          <div class="result-box">
+            <div class="row-between"><span>Kulut yhteensä</span><strong id="expenseTotalValue">0,00 €</strong></div>
+            <div class="row-between" style="margin-top:6px"><span>Kaikki yhteensä</span><strong id="grandTotalValue">0,00 €</strong></div>
+          </div>
+
+          <div class="grid-2 no-print">
+            <button class="btn" type="button" onclick="saveDrive()">✅ Tallenna ajo</button>
+            <button class="ghost" type="button" onclick="resetDriveForm()">Tyhjennä</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-drives" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Ajot</h2><span class="mini" id="driveCountLabel"></span></div>
+        <div id="drivesList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="screen-report" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Raportti</h2><span class="mini">Kalenterikuukausi</span></div>
+        <div class="grid">
+          <div class="grid-2">
+            <div>
+              <label for="reportMonth">Kuukausi</label>
+              <select id="reportMonth"></select>
+            </div>
+            <div>
+              <label for="reportYear">Vuosi</label>
+              <select id="reportYear"></select>
+            </div>
+          </div>
+
+          <div class="totals" id="reportTotals"></div>
+
+          <div class="no-print">
+            <label class="row" style="align-items:center;gap:10px">
+              <input id="includeReceiptsInPdf" type="checkbox" style="width:auto" />
+              <span>Sisällytä kuittikuvat PDF:ään</span>
+            </label>
+          </div>
+
+          <div class="grid-2 no-print">
+            <button class="btn" type="button" onclick="openPrintableReport()">📄 Luo PDF / tulostusnäkymä</button>
+            <button class="ghost" type="button" onclick="refreshReport()">Päivitä koonti</button>
+          </div>
+
+          <div class="warn-box mini">Vinkki: PDF syntyy avaamalla tulostusnäkymä ja valitsemalla puhelimen tai selaimen tulostusjako → Tallenna PDF.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>Raportin rivit</h2></div>
+        <div id="reportRows" class="list"></div>
+      </div>
+    </section>
+
+    <section id="screen-settings" class="hidden">
+      <div class="card">
+        <div class="section-title"><h2>Asetukset</h2></div>
+        <div class="grid">
+          <div>
+            <label for="userName">Nimi</label>
+            <input id="userName" type="text" placeholder="Esim. Pasi Valta" />
+          </div>
+          <div>
+            <label for="defaultKmRate">Oletus km-korvaus (€/km)</label>
+            <input id="defaultKmRate" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Esim. 0.57" />
+          </div>
+          <div class="mini">Aseta tähän oma käytössä oleva €/km-arvo. Uusi ajo käyttää tätä oletuksena, mutta arvoa voi muuttaa ajokohtaisesti.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>Lähtöpaikat</h2><span class="mini">Max 5</span></div>
+        <div id="savedLocationsList" class="list"></div>
+        <div class="divider"></div>
+        <div class="grid">
+          <div>
+            <label for="newLocationName">Paikan nimi</label>
+            <input id="newLocationName" type="text" placeholder="Esim. Koti / Toimisto" />
+          </div>
+          <div>
+            <label for="newLocationAddress">Osoite</label>
+            <input id="newLocationAddress" type="text" placeholder="Esim. Poskipuronkatu 9 A 3, Iisalmi" />
+          </div>
+          <button class="small-btn no-print" type="button" onclick="addSavedLocation()">+ Lisää lähtöpaikka</button>
+        </div>
+      </div>
+
+      <div class="card no-print">
+        <div class="section-title"><h2>Data</h2></div>
+        <div class="grid-2">
+          <button class="ghost" type="button" onclick="exportJson()">Vie varmuuskopio (JSON)</button>
+          <label class="ghost" style="display:flex;align-items:center;justify-content:center;min-height:48px;cursor:pointer">
+            Tuo varmuuskopio
+            <input id="importJsonInput" type="file" accept="application/json" style="display:none" onchange="importJson(event)" />
+          </label>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="bottom-nav no-print">
+    <div class="inner">
+      <button class="nav-btn active" data-screen="home" onclick="go('home')">Koti</button>
+      <button class="nav-btn" data-screen="new" onclick="go('new')">Uusi ajo</button>
+      <button class="nav-btn" data-screen="drives" onclick="go('drives')">Ajot</button>
+      <button class="nav-btn" data-screen="settings" onclick="go('settings')">Asetukset</button>
+    </div>
+  </div>
+
+  <dialog id="expenseModal" style="max-width:560px;width:calc(100% - 24px);border:1px solid rgba(125,170,255,.18);border-radius:18px;background:#0d1b2f;color:#eef4ff;padding:0;box-shadow:0 20px 50px rgba(0,0,0,.45)">
+    <form method="dialog" style="padding:16px">
+      <div class="section-title"><h2>Lisää kulu</h2><button class="ghost" value="cancel">Sulje</button></div>
+      <div class="grid">
+        <div>
+          <label for="expenseType">Tyyppi</label>
+          <select id="expenseType">
+            <option>Pysäköinti</option>
+            <option>Tietulli</option>
+            <option>Majoitus</option>
+            <option>Muu kulu</option>
+          </select>
+        </div>
+        <div>
+          <label for="expenseAmount">Summa (€)</label>
+          <input id="expenseAmount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00" />
+        </div>
+        <div>
+          <label for="expensePlace">Paikka</label>
+          <input id="expensePlace" type="text" placeholder="Esim. Kuopio keskusta" />
+        </div>
+        <div>
+          <label for="expenseDesc">Selite</label>
+          <input id="expenseDesc" type="text" placeholder="Esim. Halliparkki" />
+        </div>
+        <div>
+          <label for="expenseReceipt">Kuitti (kuva)</label>
+          <input id="expenseReceipt" type="file" accept="image/*" capture="environment" />
+        </div>
+        <div class="grid-2">
+          <button class="btn" type="button" onclick="addDraftExpense()">Tallenna kulu</button>
+          <button class="ghost" value="cancel">Peruuta</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const STORAGE_KEY = 'opero-ajot-mvp-v1';
+    let state = {
+      settings: {
+        userName: '',
+        defaultKmRate: 0.57,
+        savedLocations: []
+      },
+      drives: []
+    };
+
+    let ui = {
+      currentScreen: 'home',
+      roundTrip: false,
+      draftExpenses: [],
+      draftStops: []
+    };
+
+    const euro = n => new Intl.NumberFormat('fi-FI',{style:'currency',currency:'EUR'}).format(Number(n||0));
+    const dec = n => Number(n||0).toLocaleString('fi-FI',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const todayISO = () => new Date().toISOString().slice(0,10);
+    const monthNames = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu','Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
+
+    function toast(message, type='good'){
+      const wrap = document.getElementById('toastWrap');
+      if(!wrap) return;
+      const el = document.createElement('div');
+      el.className = 'toast ' + type;
+      el.textContent = message;
+      wrap.appendChild(el);
+      setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(-10px)'; }, 2200);
+      setTimeout(()=> el.remove(), 2600);
+    }
+
+    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try { state = JSON.parse(raw); } catch(e){ console.error(e); }
+      }
+      if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[]};
+      if(!Array.isArray(state.settings.savedLocations)) state.settings.savedLocations = [];
+      if(!Array.isArray(state.drives)) state.drives = [];
+      if(state.settings.savedLocations.length === 0){
+        state.settings.savedLocations = [
+          {id:cryptoRandom(), name:'Koti', address:''},
+          {id:cryptoRandom(), name:'Toimisto', address:''}
+        ];
+      }
+      if(state.settings.defaultKmRate === undefined || state.settings.defaultKmRate === null || state.settings.defaultKmRate === '') {
+        state.settings.defaultKmRate = 0.57;
+      }
+    }
+
+    function cryptoRandom(){
+      return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+    }
+
+    function go(screen){
+      ui.currentScreen = screen;
+      ['home','new','drives','report','settings'].forEach(s=>{
+        document.getElementById('screen-'+s).classList.toggle('hidden', s !== screen);
+      });
+      document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.screen === screen));
+      if(screen === 'home') renderHome();
+      if(screen === 'new') prepareNewDrive();
+      if(screen === 'drives') renderDrives();
+      if(screen === 'report') refreshReport();
+      if(screen === 'settings') renderSettings();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function init(){
+      loadState();
+      fillReportSelectors();
+      bindNewDriveEvents();
+      renderSettings();
+      prepareNewDrive();
+      renderHome();
+      renderDrives();
+      refreshReport();
+      go('home');
+    }
+
+    function bindNewDriveEvents(){
+      document.getElementById('oneWayBtn').addEventListener('click',()=>setTripType(false));
+      document.getElementById('roundTripBtn').addEventListener('click',()=>setTripType(true));
+      document.getElementById('kmRate').addEventListener('input', recalculateTotals);
+      document.getElementById('distanceKm').addEventListener('input', recalculateTotals);
+      document.getElementById('startLocationSelect').addEventListener('change', handleStartLocationChange);
+      ['userName','defaultKmRate'].forEach(id=>document.getElementById(id).addEventListener('change', saveSettingsFromForm));
+      document.getElementById('reportMonth').addEventListener('change', refreshReport);
+      document.getElementById('reportYear').addEventListener('change', refreshReport);
+    }
+
+    function setTripType(round){
+      ui.roundTrip = round;
+      document.getElementById('oneWayBtn').classList.toggle('active', !round);
+      document.getElementById('roundTripBtn').classList.toggle('active', round);
+      recalculateTotals();
+    }
+
+    function handleStartLocationChange(){
+      const value = document.getElementById('startLocationSelect').value;
+      document.getElementById('customStartWrap').classList.toggle('hidden', value !== '__custom__');
+    }
+
+    function prepareNewDrive(){
+      populateStartSelect();
+      document.getElementById('driveDate').value = todayISO();
+      document.getElementById('placeName').value = '';
+      document.getElementById('destinationAddress').value = '';
+      document.getElementById('purpose').value = '';
+      document.getElementById('distanceKm').value = '';
+      document.getElementById('kmRate').value = Number(state.settings.defaultKmRate || 0.57).toFixed(2);
+      document.getElementById('notes').value = '';
+      document.getElementById('customStartAddress').value = '';
+      document.getElementById('distanceStatus').textContent = '';
+      ui.draftExpenses = [];
+      ui.draftStops = [];
+      handleStartLocationChange();
+      renderDraftExpenses();
+      renderDraftStops();
+      setTripType(false);
+      recalculateTotals();
+    }
+
+    function resetDriveForm(){
+      prepareNewDrive();
+    }
+
+    function populateStartSelect(){
+      const select = document.getElementById('startLocationSelect');
+      select.innerHTML = '';
+      (state.settings.savedLocations || []).forEach((loc, idx)=>{
+        const opt = document.createElement('option');
+        opt.value = loc.id;
+        opt.textContent = loc.name || ('Paikka ' + (idx+1));
+        select.appendChild(opt);
+      });
+      const customOpt = document.createElement('option');
+      customOpt.value = '__custom__';
+      customOpt.textContent = 'Muu osoite';
+      select.appendChild(customOpt);
+    }
+
+    function saveSettingsFromForm(){
+      state.settings.userName = document.getElementById('userName').value.trim();
+      state.settings.defaultKmRate = Number(document.getElementById('defaultKmRate').value || 0.57);
+      saveState();
+      toast('Asetukset tallennettu.');
+      renderHome();
+      refreshReport();
+    }
+
+    function renderSettings(){
+      document.getElementById('userName').value = state.settings.userName || '';
+      document.getElementById('defaultKmRate').value = Number(state.settings.defaultKmRate || 0.57).toFixed(2);
+      const wrap = document.getElementById('savedLocationsList');
+      const arr = state.settings.savedLocations || [];
+      if(arr.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei tallennettuja lähtöpaikkoja.</div>';
+      } else {
+        wrap.innerHTML = arr.map(loc => `
+          <div class="item">
+            <div class="item-head">
+              <div>
+                <div class="item-title">${escapeHtml(loc.name || '')}</div>
+                <div class="item-meta">${escapeHtml(loc.address || '') || 'Osoite puuttuu'}</div>
+              </div>
+              <button class="danger" type="button" onclick="removeSavedLocation('${loc.id}')">Poista</button>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    function addSavedLocation(){
+      const name = document.getElementById('newLocationName').value.trim();
+      const address = document.getElementById('newLocationAddress').value.trim();
+      if(!name || !address){ alert('Anna sekä paikan nimi että osoite.'); return; }
+      if((state.settings.savedLocations || []).length >= 5){ alert('Maksimimäärä on 5 tallennettua lähtöpaikkaa.'); return; }
+      state.settings.savedLocations.push({id:cryptoRandom(), name, address});
+      document.getElementById('newLocationName').value = '';
+      document.getElementById('newLocationAddress').value = '';
+      saveState();
+      renderSettings();
+      populateStartSelect();
+      toast('Lähtöpaikka lisätty.');
+    }
+
+    function removeSavedLocation(id){
+      state.settings.savedLocations = (state.settings.savedLocations || []).filter(x=>x.id !== id);
+      saveState();
+      renderSettings();
+      populateStartSelect();
+    }
+
+    function openExpenseModal(){
+      document.getElementById('expenseType').value = 'Pysäköinti';
+      document.getElementById('expenseAmount').value = '';
+      document.getElementById('expensePlace').value = '';
+      document.getElementById('expenseDesc').value = '';
+      document.getElementById('expenseReceipt').value = '';
+      document.getElementById('expenseModal').showModal();
+    }
+
+    function addDraftExpense(){
+      const type = document.getElementById('expenseType').value;
+      const amount = Number(document.getElementById('expenseAmount').value || 0);
+      const place = document.getElementById('expensePlace').value.trim();
+      const description = document.getElementById('expenseDesc').value.trim();
+      if(!amount){ alert('Anna kululle summa.'); return; }
+
+      const file = document.getElementById('expenseReceipt').files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = () => {
+          ui.draftExpenses.push({ id: cryptoRandom(), type, amount, place, description, receiptDataUrl: reader.result || '' });
+          renderDraftExpenses();
+          recalculateTotals();
+          document.getElementById('expenseModal').close();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        ui.draftExpenses.push({ id: cryptoRandom(), type, amount, place, description, receiptDataUrl: '' });
+        renderDraftExpenses();
+        recalculateTotals();
+        document.getElementById('expenseModal').close();
+      }
+    }
+
+    function removeDraftExpense(id){
+      ui.draftExpenses = ui.draftExpenses.filter(x=>x.id !== id);
+      renderDraftExpenses();
+      recalculateTotals();
+    }
+
+    function renderDraftExpenses(){
+      const wrap = document.getElementById('expenseDraftList');
+      if(ui.draftExpenses.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei lisättyjä kuluja.</div>';
+        return;
+      }
+      wrap.innerHTML = ui.draftExpenses.map(ex => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${escapeHtml(ex.type)} · ${euro(ex.amount)}</div>
+              <div class="item-meta">${escapeHtml(ex.place || 'Paikka ei annettu')} ${ex.description ? '· ' + escapeHtml(ex.description) : ''}</div>
+              ${ex.receiptDataUrl ? '<div class="mini">Kuitti lisätty</div>' : ''}
+            </div>
+            <button class="danger" type="button" onclick="removeDraftExpense('${ex.id}')">Poista</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function addDraftStop(){
+      if(ui.draftStops.length >= 5){
+        toast('Maksimi on 5 lisäpysähdystä.', 'warn');
+        return;
+      }
+      ui.draftStops.push({ id: cryptoRandom(), address: '' });
+      renderDraftStops();
+    }
+
+    function updateDraftStop(id, value){
+      const stop = ui.draftStops.find(x => x.id === id);
+      if(!stop) return;
+      stop.address = value;
+    }
+
+    function removeDraftStop(id){
+      ui.draftStops = ui.draftStops.filter(x => x.id !== id);
+      renderDraftStops();
+    }
+
+    function renderDraftStops(){
+      const wrap = document.getElementById('draftStopsList');
+      if(!wrap) return;
+
+      if(ui.draftStops.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei lisättyjä pysähdyksiä.</div>';
+        return;
+      }
+
+      wrap.innerHTML = ui.draftStops.map((stop, idx) => `
+        <div class="item">
+          <div class="item-head">
+            <div style="width:100%">
+              <div class="item-title">Pysähdys ${idx + 1}</div>
+              <div class="item-meta" style="margin-bottom:8px">Kirjoita pysähdyksen osoite tai paikka.</div>
+              <input
+                type="text"
+                value="${escapeHtml(stop.address || '')}"
+                placeholder="Esim. Puijonkatu 12, Kuopio"
+                oninput="updateDraftStop('${stop.id}', this.value)"
+              />
+            </div>
+            <button class="danger no-print" type="button" onclick="removeDraftStop('${stop.id}')">Poista</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getSelectedStartLocation(){
+      const val = document.getElementById('startLocationSelect').value;
+      if(val === '__custom__'){
+        return { label: 'Muu osoite', address: document.getElementById('customStartAddress').value.trim() };
+      }
+      const found = (state.settings.savedLocations || []).find(x=>x.id === val);
+      return found ? { label: found.name, address: found.address } : { label:'', address:'' };
+    }
+
+    async function geocodeAddress(address){
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(address)}`;
+      const res = await fetch(url, { headers: { 'Accept':'application/json' } });
+      if(!res.ok) throw new Error('Osoitteen haku epäonnistui');
+      const data = await res.json();
+      if(!data || !data.length) throw new Error('Osoitetta ei löytynyt');
+      return { lat: Number(data[0].lat), lon: Number(data[0].lon), displayName: data[0].display_name };
+    }
+
+    async function reverseGeocode(lat, lon){
+      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+      const res = await fetch(url, { headers: { 'Accept':'application/json' } });
+      if(!res.ok) throw new Error('Sijainnin osoitteen haku epäonnistui');
+      const data = await res.json();
+      if(!data || !data.display_name) throw new Error('Osoitetta ei löytynyt nykyisestä sijainnista');
+      return data.display_name;
+    }
+
+    async function useCurrentLocationAsStart(){
+      const status = document.getElementById('geoStatus');
+      if(!navigator.geolocation){
+        status.textContent = 'Tämä selain ei tue paikannusta.';
+        alert('Tämä selain ei tue paikannusta.');
+        return;
+      }
+      status.textContent = 'Haetaan nykyistä sijaintia...';
+      try {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 300000
+          });
+        });
+        const address = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+        const select = document.getElementById('startLocationSelect');
+        select.value = '__custom__';
+        handleStartLocationChange();
+        document.getElementById('customStartAddress').value = address;
+        status.textContent = 'Nykyinen sijainti asetettu lähtöosoitteeksi.';
+        toast('Nykyinen sijainti lisätty lähtöpaikaksi.');
+      } catch(err){
+        console.error(err);
+        status.textContent = 'Paikannus ei onnistunut. Voit kirjoittaa osoitteen käsin.';
+        alert('Paikannus ei onnistunut. Tarkista selaimen sijaintilupa tai kirjoita osoite käsin.');
+      }
+    }
+
+    async function lookupDistance(){
+      const start = getSelectedStartLocation();
+      const status = document.getElementById('distanceStatus');
+
+      const filledStops = (ui.draftStops || [])
+        .map(s => (s.address || '').trim())
+        .filter(Boolean);
+
+      const destination =
+        filledStops.length > 0
+          ? filledStops[filledStops.length - 1]
+          : document.getElementById('destinationAddress').value.trim();
+
+      if(!start.address || !destination){
+        alert('Anna lähtöosoite ja kohdeosoite.');
+        return;
+      }
+
+      status.textContent = 'Haetaan kilometrejä...';
+
+      try {
+        const [from,to] = await Promise.all([
+          geocodeAddress(start.address),
+          geocodeAddress(destination)
+        ]);
+
+        const url = `https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Reittihaku epäonnistui');
+
+        const data = await res.json();
+        if(!data.routes || !data.routes.length) throw new Error('Reittiä ei löytynyt');
+
+        const km = data.routes[0].distance / 1000;
+        document.getElementById('distanceKm').value = km.toFixed(1);
+        status.textContent = `Haettu reitti: ${km.toFixed(1).replace('.',',')} km`;
+        recalculateTotals();
+      } catch(err){
+        console.error(err);
+        status.textContent = 'Km-haku ei onnistunut. Voit syöttää kilometrit myös käsin.';
+        alert('Km-haku ei onnistunut. Tarkista osoitteet tai syötä kilometrit käsin.');
+      }
+    }
+
+    function recalculateTotals(){
+      const km = Number(document.getElementById('distanceKm').value || 0);
+      const rate = Number(document.getElementById('kmRate').value || 0);
+      const effectiveKm = ui.roundTrip ? km * 2 : km;
+      const kmComp = effectiveKm * rate;
+      const expenseTotal = ui.draftExpenses.reduce((sum,x)=>sum + Number(x.amount || 0), 0);
+      const grand = kmComp + expenseTotal;
+      document.getElementById('kmCompValue').textContent = euro(kmComp);
+      document.getElementById('expenseTotalValue').textContent = euro(expenseTotal);
+      document.getElementById('grandTotalValue').textContent = euro(grand);
+    }
+
+    function saveDrive(){
+      const date = document.getElementById('driveDate').value;
+      const start = getSelectedStartLocation();
+      const placeName = document.getElementById('placeName').value.trim();
+      const destinationAddress = document.getElementById('destinationAddress').value.trim();
+      const purpose = document.getElementById('purpose').value.trim();
+      const baseKm = Number(document.getElementById('distanceKm').value || 0);
+      const rate = Number(document.getElementById('kmRate').value || 0);
+      const notes = document.getElementById('notes').value.trim();
+      const cleanStops = ui.draftStops.map(s => ({...s, address:(s.address || '').trim()})).filter(s => s.address);
+
+      if(!date || !start.address || !placeName || !destinationAddress){
+        alert('Täytä vähintään päivämäärä, lähtöpaikka, paikan nimi ja kohdeosoite.');
+        return;
+      }
+
+      const distanceKm = ui.roundTrip ? baseKm * 2 : baseKm;
+      const kmCompensation = distanceKm * rate;
+      const expenseTotal = ui.draftExpenses.reduce((sum,x)=>sum + Number(x.amount || 0), 0);
+      const total = kmCompensation + expenseTotal;
+
+      const drive = {
+        id: cryptoRandom(),
+        date,
+        startLabel: start.label,
+        startAddress: start.address,
+        placeName,
+        destinationAddress,
+        extraStops: cleanStops,
+        purpose,
+        roundTrip: ui.roundTrip,
+        distanceKm,
+        kmRate: rate,
+        kmCompensation,
+        expenses: JSON.parse(JSON.stringify(ui.draftExpenses)),
+        expenseTotal,
+        total,
+        notes,
+        createdAt: new Date().toISOString()
+      };
+
+      state.drives.unshift(drive);
+      saveState();
+      resetDriveForm();
+      renderHome();
+      renderDrives();
+      refreshReport();
+      toast('Ajo tallennettu.');
+      go('drives');
+    }
+
+    function buildRouteText(d){
+      const parts = [
+        d.startLabel || d.startAddress || '',
+        ...((d.extraStops || []).map(s => s.address).filter(Boolean)),
+        d.destinationAddress || ''
+      ].filter(Boolean);
+      return parts.join(' → ');
+    }
+
+    function renderDrives(){
+      const wrap = document.getElementById('drivesList');
+      document.getElementById('driveCountLabel').textContent = `${state.drives.length} ajoa`;
+      if(state.drives.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei tallennettuja ajoja vielä.</div>';
+        return;
+      }
+      wrap.innerHTML = state.drives.map(d => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
+            </div>
+            <div class="right">
+              <div class="pill">${Number(d.distanceKm||0).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</div>
+              <div style="margin-top:8px;font-weight:800">${euro(d.total)}</div>
+            </div>
+          </div>
+          <div class="item-meta">Km-korvaus ${euro(d.kmCompensation)} · Kulut ${euro(d.expenseTotal)}${d.purpose ? ' · ' + escapeHtml(d.purpose) : ''}</div>
+          ${(d.extraStops && d.extraStops.length) ? `<div class="chip-row" style="margin-top:10px">${d.extraStops.map((s,i)=>`<span class="chip">Pysähdys ${i+1}: ${escapeHtml(s.address)}</span>`).join('')}</div>` : ''}
+          ${(d.expenses && d.expenses.length) ? `<div class="chip-row" style="margin-top:10px">${d.expenses.map(e=>`<span class="chip">${escapeHtml(e.type)} ${euro(e.amount)}</span>`).join('')}</div>` : ''}
+          <div class="grid-2 no-print" style="margin-top:12px">
+            <button class="ghost" type="button" onclick="viewDrive('${d.id}')">Avaa</button>
+            <button class="danger" type="button" onclick="deleteDrive('${d.id}')">Poista</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function viewDrive(id){
+      const d = state.drives.find(x=>x.id === id);
+      if(!d) return;
+
+      const stopsText = (d.extraStops || []).length
+        ? '\nLisäpysähdykset:\n' + d.extraStops.map((s,i) => `${i+1}. ${s.address}`).join('\n') + '\n'
+        : '';
+
+      alert(
+        `${formatDate(d.date)}\n\n` +
+        `Lähtö: ${d.startLabel}\n` +
+        `Kohde: ${d.placeName}\n` +
+        `Osoite: ${d.destinationAddress}\n` +
+        `${stopsText}` +
+        `Km: ${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}\n` +
+        `Km-korvaus: ${euro(d.kmCompensation)}\n` +
+        `Kulut: ${euro(d.expenseTotal)}\n` +
+        `Yhteensä: ${euro(d.total)}\n\n` +
+        `${d.notes ? 'Muistiinpano: ' + d.notes + '\n\n' : ''}` +
+        `Kulurivejä: ${(d.expenses||[]).length}`
+      );
+    }
+
+    function deleteDrive(id){
+      if(!confirm('Poistetaanko ajo?')) return;
+      state.drives = state.drives.filter(x=>x.id !== id);
+      saveState();
+      renderDrives();
+      renderHome();
+      refreshReport();
+      toast('Ajo poistettu.', 'bad');
+    }
+
+    function renderHome(){
+      const now = new Date();
+      document.getElementById('homeMonthLabel').textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+      const data = getMonthData(now.getMonth()+1, now.getFullYear());
+      document.getElementById('homeStats').innerHTML = `
+        <div class="stat"><div class="stat-label">Ajot</div><div class="stat-value">${data.drives.length}</div></div>
+        <div class="stat"><div class="stat-label">Kilometrit</div><div class="stat-value">${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</div></div>
+        <div class="stat"><div class="stat-label">Km-korvaukset</div><div class="stat-value">${euro(data.kmComp)}</div></div>
+        <div class="stat"><div class="stat-label">Yhteensä</div><div class="stat-value">${euro(data.total)}</div></div>
+      `;
+      document.getElementById('homeTotals').innerHTML = `
+        <div class="total"><span>Ajot</span><strong>${data.drives.length} kpl</strong></div>
+        <div class="total"><span>Kilometrit</span><strong>${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</strong></div>
+        <div class="total"><span>Km-korvaukset</span><strong>${euro(data.kmComp)}</strong></div>
+        <div class="total"><span>Muut kulut</span><strong>${euro(data.expenses)}</strong></div>
+        <div class="total"><span>Yhteensä</span><strong>${euro(data.total)}</strong></div>
+      `;
+      const recent = state.drives.slice(0,4);
+      const wrap = document.getElementById('recentDrives');
+      wrap.innerHTML = recent.length ? recent.map(d => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
+            </div>
+            <div class="right"><strong>${euro(d.total)}</strong></div>
+          </div>
+        </div>`).join('') : '<div class="empty">Ei ajoja vielä. Aloita kohdasta “Uusi ajo”.</div>';
+    }
+
+    function fillReportSelectors(){
+      const m = document.getElementById('reportMonth');
+      const y = document.getElementById('reportYear');
+      m.innerHTML = monthNames.map((name,idx)=>`<option value="${idx+1}">${name}</option>`).join('');
+      const currentYear = new Date().getFullYear();
+      const years = [currentYear-1,currentYear,currentYear+1];
+      y.innerHTML = years.map(v=>`<option value="${v}">${v}</option>`).join('');
+      m.value = String(new Date().getMonth()+1);
+      y.value = String(currentYear);
+    }
+
+    function getMonthData(month, year){
+      const filtered = state.drives.filter(d => {
+        const dt = new Date(d.date + 'T00:00:00');
+        return dt.getMonth()+1 === Number(month) && dt.getFullYear() === Number(year);
+      });
+      return {
+        drives: filtered,
+        km: filtered.reduce((s,d)=>s + Number(d.distanceKm||0),0),
+        kmComp: filtered.reduce((s,d)=>s + Number(d.kmCompensation||0),0),
+        expenses: filtered.reduce((s,d)=>s + Number(d.expenseTotal||0),0),
+        total: filtered.reduce((s,d)=>s + Number(d.total||0),0)
+      };
+    }
+
+    function refreshReport(){
+      const month = Number(document.getElementById('reportMonth').value);
+      const year = Number(document.getElementById('reportYear').value);
+      const data = getMonthData(month, year);
+      document.getElementById('reportTotals').innerHTML = `
+        <div class="total"><span>Ajot</span><strong>${data.drives.length} kpl</strong></div>
+        <div class="total"><span>Kilometrit</span><strong>${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</strong></div>
+        <div class="total"><span>Km-korvaukset</span><strong>${euro(data.kmComp)}</strong></div>
+        <div class="total"><span>Muut kulut</span><strong>${euro(data.expenses)}</strong></div>
+        <div class="total"><span>Yhteensä</span><strong>${euro(data.total)}</strong></div>
+      `;
+      const rows = document.getElementById('reportRows');
+      rows.innerHTML = data.drives.length ? data.drives.map(d => `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
+            </div>
+            <div class="right"><strong>${euro(d.total)}</strong></div>
+          </div>
+          <div class="item-meta">${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})} km · ${euro(d.kmCompensation)}${d.purpose ? ' · ' + escapeHtml(d.purpose) : ''}</div>
+          ${(d.extraStops || []).length ? `<div class="chip-row" style="margin-top:10px">${d.extraStops.map((s,i)=>`<span class="chip">Pysähdys ${i+1}: ${escapeHtml(s.address)}</span>`).join('')}</div>` : ''}
+          ${(d.expenses || []).length ? `<div class="chip-row" style="margin-top:10px">${d.expenses.map(e=>`<span class="chip">${escapeHtml(e.type)} ${euro(e.amount)}</span>`).join('')}</div>` : ''}
+        </div>`).join('') : '<div class="empty">Ei ajoja valitulla kuukaudella.</div>';
+    }
+
+    function openPrintableReport(){
+      const month = Number(document.getElementById('reportMonth').value);
+      const year = Number(document.getElementById('reportYear').value);
+      const data = getMonthData(month, year);
+      const name = state.settings.userName || 'Käyttäjä';
+      const includeReceipts = !!document.getElementById('includeReceiptsInPdf').checked;
+
+      const receiptSections = includeReceipts
+        ? data.drives.map(d => {
+            const receipts = (d.expenses || []).filter(e => e.receiptDataUrl);
+            if(!receipts.length) return '';
+            return `
+              <div class="section receipt-break">
+                <h2>Kuitit · ${formatDate(d.date)} · ${escapeHtml(d.placeName)}</h2>
+                ${receipts.map((e, idx) => `
+                  <div class="receipt-card">
+                    <div><strong>${idx+1}. ${escapeHtml(e.type)}</strong> · ${euro(e.amount)}</div>
+                    <div class="small">${e.place ? escapeHtml(e.place) : ''}${e.description ? (e.place ? ' · ' : '') + escapeHtml(e.description) : ''}</div>
+                    <img src="${e.receiptDataUrl}" alt="Kuitti" />
+                  </div>
+                `).join('')}
+              </div>`;
+          }).join('')
+        : '';
+
+      const html = `<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajoraportti ${monthNames[month-1]} ${year}</title>
+<style>
+body{font-family:Arial,sans-serif;padding:24px;color:#111} h1{margin:0 0 6px} h2{margin:0 0 10px}.muted{color:#555}
+.summary{margin:18px 0 22px;padding:14px;border:1px solid #ccc;border-radius:10px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee} .row:last-child{border-bottom:0}
+table{width:100%;border-collapse:collapse;margin-top:18px} th,td{padding:8px;border:1px solid #ddd;text-align:left;font-size:13px;vertical-align:top} th{background:#f6f6f6}
+.small{font-size:12px;color:#444} .section{margin-top:22px}
+.receipt-card{margin:14px 0 18px;padding:12px;border:1px solid #ddd;border-radius:10px;page-break-inside:avoid}.receipt-card img{margin-top:10px;max-width:100%;height:auto;border:1px solid #ddd;border-radius:8px}.receipt-break{page-break-before:always}
+</style>
+</head>
+<body>
+<h1>Ajoraportti</h1>
+<div class="muted">${escapeHtml(name)} · ${monthNames[month-1]} ${year}</div>
+<div class="summary">
+  <div class="row"><span>Ajot</span><strong>${data.drives.length} kpl</strong></div>
+  <div class="row"><span>Kilometrit yhteensä</span><strong>${Number(data.km).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</strong></div>
+  <div class="row"><span>Km-korvaukset</span><strong>${euro(data.kmComp)}</strong></div>
+  <div class="row"><span>Muut kulut</span><strong>${euro(data.expenses)}</strong></div>
+  <div class="row"><span>Kaikki yhteensä</span><strong>${euro(data.total)}</strong></div>
+  <div class="row"><span>Kuitit PDF:ssä</span><strong>${includeReceipts ? 'Kyllä' : 'Ei'}</strong></div>
+</div>
+<table>
+<thead><tr><th>Päivä</th><th>Lähtö</th><th>Kohde</th><th>Lisäpysähdykset</th><th>Tarkoitus</th><th>Km</th><th>€/km</th><th>Km-korvaus</th><th>Kulut</th><th>Yhteensä</th></tr></thead>
+<tbody>
+${data.drives.map(d => `
+<tr>
+<td>${formatDate(d.date)}</td>
+<td>${escapeHtml(d.startLabel)}<div class="small">${escapeHtml(d.startAddress)}</div></td>
+<td>${escapeHtml(d.placeName)}<div class="small">${escapeHtml(d.destinationAddress)}</div></td>
+<td>${(d.extraStops || []).length ? (d.extraStops.map((s,i)=>`${i+1}. ${escapeHtml(s.address)}`).join('<br>')) : ''}</td>
+<td>${escapeHtml(d.purpose || '')}</td>
+<td>${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}</td>
+<td>${dec(d.kmRate)} €</td>
+<td>${euro(d.kmCompensation)}</td>
+<td>${euro(d.expenseTotal)}</td>
+<td>${euro(d.total)}</td>
+</tr>
+${(d.expenses||[]).length ? `<tr><td></td><td colspan="9"><strong>Kuluerittely:</strong> ${(d.expenses||[]).map(e=>`${escapeHtml(e.type)} ${euro(e.amount)}${e.place ? ' · ' + escapeHtml(e.place) : ''}${e.description ? ' · ' + escapeHtml(e.description) : ''}${e.receiptDataUrl ? ' · kuitti mukana' : ''}`).join(' | ')}</td></tr>` : ''}
+${d.notes ? `<tr><td></td><td colspan="9"><strong>Muistiinpano:</strong> ${escapeHtml(d.notes)}</td></tr>` : ''}
+`).join('')}
+</tbody>
+</table>
+${receiptSections}
+<script>window.onload = () => window.print();<\/script>
+</body>
+</html>`;
+
+      const w = window.open('', '_blank');
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+    }
+
+    function exportJson(){
+      const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'opero-ajot-varmuuskopio.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importJson(event){
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if(!data.settings || !Array.isArray(data.drives)) throw new Error('Virheellinen tiedosto');
+          state = data;
+          saveState();
+          renderSettings();
+          renderHome();
+          renderDrives();
+          refreshReport();
+          prepareNewDrive();
+          alert('Varmuuskopio tuotu onnistuneesti.');
+        } catch(err){
+          alert('Tiedoston tuonti epäonnistui.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function formatDate(iso){
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('fi-FI');
+    }
+
+    function escapeHtml(str){
+      return String(str || '').replace(/[&<>'"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s]));
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>    .hero h1{font-size:24px;line-height:1.15;margin:0 0 8px}
+    .hero p{margin:0;color:var(--muted)}
+    .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .btn,.ghost,.danger,.small-btn,.tab{
+      border:0;border-radius:14px;padding:13px 14px;font-weight:700;cursor:pointer;font-size:15px;
+      transition:.15s transform ease,.15s opacity ease,.15s background ease;
+    }
+    .btn:active,.ghost:active,.danger:active,.small-btn:active,.tab:active{transform:scale(.99)}
+    .btn{background:linear-gradient(180deg,var(--brand2),var(--brand));color:white;box-shadow:0 10px 20px rgba(47,128,255,.24)}
+    .ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
+    .ghost.soft{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02))}
+    .danger{background:rgba(239,68,68,.12);color:#ffd2d2;border:1px solid rgba(239,68,68,.25)}
+    .small-btn{background:rgba(47,128,255,.12);color:#dbe8ff;border:1px solid rgba(47,128,255,.25);padding:10px 12px;font-size:14px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+    .section-title h2{font-size:17px;margin:0}
+    .muted{color:var(--muted)}
+    .hidden{display:none!important}
+    .grid{display:grid;gap:12px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;color:#d8e5ff;margin:0 0 7px;font-weight:700}
+    input,select,textarea{
+      width:100%;background:#091525;color:var(--text);border:1px solid var(--line);border-radius:14px;padding:13px 12px;font:inherit;outline:none;
+    }
+    input::placeholder,textarea::placeholder{color:#7f95bc}
+    textarea{min-height:90px;resize:vertical}
+    .switch-row{display:flex;gap:10px}
+    .switch-row .tab{flex:1;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+    .switch-row .tab.active{background:rgba(47,128,255,.18);color:white;border-color:rgba(47,128,255,.4)}
+    .result-box{background:linear-gradient(180deg,rgba(34,197,94,.12),rgba(34,197,94,.06));border:1px solid rgba(34,197,94,.22);color:#ecfff2;border-radius:16px;padding:12px}
+    .warn-box{background:linear-gradient(180deg,rgba(250,204,21,.12),rgba(250,204,21,.06));border:1px solid rgba(250,204,21,.25);color:#fff7d6;border-radius:16px;padding:12px}
+    .list{display:grid;gap:10px}
+    .item{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:13px}
+    .item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .item-title{font-weight:800}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 9px;border-radius:999px;font-size:12px;color:#dfe9ff;background:rgba(255,255,255,.03)}
+    .item-meta{margin-top:8px;color:var(--muted);font-size:13px}
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(7,17,31,.78);backdrop-filter:blur(22px);border-top:1px solid var(--line)}
+    .bottom-nav .inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .nav-btn{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:11px 8px;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer}
+    .nav-btn.active{background:rgba(47,128,255,.16);color:#fff;border-color:rgba(47,128,255,.35)}
+    .row{display:flex;gap:10px;align-items:center}
+    .row-between{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .right{text-align:right}
+    .totals{display:grid;gap:10px}
+    .total{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dashed var(--line)}
+    .total:last-child{border-bottom:0;padding-bottom:0}
+    .empty{padding:18px;text-align:center;color:var(--muted)}
+    .expense-img{margin-top:8px;max-width:100%;border-radius:12px;border:1px solid var(--line)}
+    .divider{height:1px;background:var(--line);margin:8px 0}
+    .mini{font-size:12px;color:var(--muted)}
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;color:#dce7ff}
 
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
     .stat{padding:13px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--line)}
