@@ -219,10 +219,10 @@
     .small-btn{background:rgba(47,128,255,.12);color:#dbe8ff;border:1px solid rgba(47,128,255,.25);padding:10px 12px;font-size:14px}
     .section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
     .section-title h2{font-size:17px;margin:0}
-    .muted{color:var(--muted)}
     .hidden{display:none!important}
     .grid{display:grid;gap:12px}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     label{display:block;font-size:13px;color:#d8e5ff;margin:0 0 7px;font-weight:700}
     input,select,textarea{
       width:100%;background:#091525;color:var(--text);border:1px solid var(--line);border-radius:14px;padding:13px 12px;font:inherit;outline:none;
@@ -233,6 +233,7 @@
     .switch-row .tab{flex:1;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
     .switch-row .tab.active{background:rgba(47,128,255,.18);color:white;border-color:rgba(47,128,255,.4)}
     .result-box{background:linear-gradient(180deg,rgba(34,197,94,.12),rgba(34,197,94,.06));border:1px solid rgba(34,197,94,.22);color:#ecfff2;border-radius:16px;padding:12px}
+    .warn-box{background:linear-gradient(180deg,rgba(250,204,21,.12),rgba(250,204,21,.06));border:1px solid rgba(250,204,21,.22);color:#fff7d6;border-radius:16px;padding:12px}
     .list{display:grid;gap:10px}
     .item{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:13px}
     .item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -263,10 +264,19 @@
     .toast.good{border-color:rgba(34,197,94,.25)}
     .toast.warn{border-color:rgba(250,204,21,.3)}
     .toast.bad{border-color:rgba(239,68,68,.3)}
+    .receipt-thumb{
+      margin-top:10px;
+      max-width:100%;
+      max-height:160px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      display:block;
+      object-fit:cover;
+    }
     @keyframes toastIn{to{transform:translateY(0);opacity:1}}
 
     @media (max-width:620px){
-      .grid-2{grid-template-columns:1fr}
+      .grid-2,.grid-3{grid-template-columns:1fr}
       .quick-grid{grid-template-columns:1fr}
       .brand-title{font-size:24px}
       .brand-sub{font-size:13px}
@@ -315,7 +325,7 @@
     <section id="screen-home">
       <div class="card hero">
         <h1>Ajot ja matkakulut talteen kentällä.</h1>
-        <p>Kirjaa ajo, lisää pysäköinti tai muu kulu, ja tee kuukausikoonti PDF:ksi yhdellä napilla.</p>
+        <p>Kirjaa ajo, lisää kulu, laske matka tai avaa reitti suoraan karttaan.</p>
         <div class="quick-grid no-print">
           <button class="btn" onclick="go('new')">➕ Uusi ajo</button>
           <button class="ghost" onclick="go('report')">📄 Raportti</button>
@@ -368,7 +378,7 @@
 
           <div>
             <label for="destinationAddress">Kohde tai osoite</label>
-            <input id="destinationAddress" type="text" placeholder="Esim. Pubituuri, Lapinlahti tai Kinttupolku 1, Iisalmi" />
+            <input id="destinationAddress" type="text" placeholder="Esim. ABC Siilinjärvi tai Pubituuri, Lapinlahti" />
           </div>
 
           <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
@@ -401,8 +411,8 @@
           </div>
 
           <div class="grid-2 no-print">
-            <button class="small-btn" type="button" onclick="lookupDistance()">🗺️ Hae km</button>
-            <button class="ghost" type="button" onclick="recalculateTotals()">Laske summa</button>
+            <button class="small-btn" type="button" onclick="lookupDistance()">🧮 Laske matka</button>
+            <button class="ghost" type="button" onclick="openRouteInMaps()">🗺️ Avaa reitti kartassa</button>
           </div>
 
           <div id="distanceStatus" class="mini"></div>
@@ -419,6 +429,10 @@
           <div>
             <label for="notes">Muistiinpano</label>
             <textarea id="notes" placeholder="Esim. pysäköinti hallissa, tapaaminen venyi 30 min"></textarea>
+          </div>
+
+          <div class="warn-box">
+            <div>Jos automaattinen matkan laskenta ei onnistu, voit avata reitin kartassa ja syöttää kilometrit käsin.</div>
           </div>
 
           <div class="result-box">
@@ -534,43 +548,50 @@
 
   <dialog id="expenseModal" style="max-width:560px;width:calc(100% - 24px);border:1px solid rgba(125,170,255,.18);border-radius:18px;background:#0d1b2f;color:#eef4ff;padding:0;box-shadow:0 20px 50px rgba(0,0,0,.45)">
     <form method="dialog" style="padding:16px">
-      <div class="section-title"><h2>Lisää kulu</h2><button class="ghost" value="cancel">Sulje</button></div>
+      <div class="section-title"><h2>Lisää kulu</h2><button class="ghost" value="cancel" type="submit">Sulje</button></div>
       <div class="grid">
         <div>
           <label for="expenseType">Tyyppi</label>
-          <select id="expenseType">
+          <select id="expenseType" onchange="handleExpenseTypeChange()">
             <option>Pysäköinti</option>
+            <option>Polttoaine</option>
             <option>Tietulli</option>
             <option>Majoitus</option>
             <option>Muu kulu</option>
           </select>
         </div>
+
+        <div id="expenseCustomTypeWrap" class="hidden">
+          <label for="expenseCustomType">Kuvaus</label>
+          <input id="expenseCustomType" type="text" placeholder="Esim. pesu, lautta, toimistotarvike" />
+        </div>
+
         <div>
           <label for="expenseAmount">Summa (€)</label>
           <input id="expenseAmount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00" />
         </div>
+
         <div>
-          <label for="expensePlace">Paikka</label>
-          <input id="expensePlace" type="text" placeholder="Esim. Kuopio keskusta" />
+          <label for="expenseDescription">Kuvaus</label>
+          <input id="expenseDescription" type="text" placeholder="Esim. halliparkki, diesel, lautta" />
         </div>
-        <div>
-          <label for="expenseDesc">Selite</label>
-          <input id="expenseDesc" type="text" placeholder="Esim. Halliparkki" />
-        </div>
+
         <div>
           <label for="expenseReceipt">Kuitti (kuva)</label>
-          <input id="expenseReceipt" type="file" accept="image/*" capture="environment" />
+          <input id="expenseReceipt" type="file" accept=".jpg,.jpeg,.png,.webp,image/*" />
         </div>
+
         <div class="grid-2">
           <button class="btn" type="button" onclick="addDraftExpense()">Tallenna kulu</button>
-          <button class="ghost" value="cancel">Peruuta</button>
+          <button class="ghost" value="cancel" type="submit">Peruuta</button>
         </div>
       </div>
     </form>
   </dialog>
 
   <script>
-    const STORAGE_KEY = 'opero-ajot-mvp-v1';
+    const STORAGE_KEY = 'opero-ajot-mvp-v2';
+
     let state = {
       settings: {
         userName: '',
@@ -584,7 +605,8 @@
       currentScreen: 'home',
       roundTrip: false,
       draftExpenses: [],
-      draftStops: []
+      draftStops: [],
+      isCalculatingDistance: false
     };
 
     const euro = n => new Intl.NumberFormat('fi-FI',{style:'currency',currency:'EUR'}).format(Number(n||0));
@@ -611,27 +633,8 @@
       }, 1500);
     }
 
-    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
-    function loadState(){
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){
-        try { state = JSON.parse(raw); } catch(e){ console.error(e); }
-      }
-      if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[]};
-      if(!Array.isArray(state.settings.savedLocations)) state.settings.savedLocations = [];
-      if(!Array.isArray(state.drives)) state.drives = [];
-
-      if(state.settings.savedLocations.length === 0){
-        state.settings.savedLocations = [
-          {id:cryptoRandom(), name:'Koti', address:'Poskipuronkatu 9 A 3, Iisalmi'},
-          {id:cryptoRandom(), name:'Toimisto', address:'Iisalmi'}
-        ];
-      }
-
-      if(state.settings.defaultKmRate === undefined || state.settings.defaultKmRate === null || state.settings.defaultKmRate === '') {
-        state.settings.defaultKmRate = 0.57;
-      }
+    function saveState(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     function cryptoRandom(){
@@ -655,60 +658,36 @@
         });
     }
 
-    function buildDestinationQuery(placeName, destinationAddress){
-      const name = normalizeText(placeName);
-      const address = normalizeText(destinationAddress);
-
-      if(name && address){
-        if(address.toLowerCase().includes(name.toLowerCase())) return address;
-        return `${name}, ${address}`;
-      }
-      return address || name || '';
-    }
-
-    function buildGeocodeCandidates(placeName, destinationAddress){
-      const name = normalizeText(placeName);
-      const address = normalizeText(destinationAddress);
-
-      return uniqueQueries([
-        address && name ? `${name}, ${address}` : '',
-        address,
-        name
-      ]);
-    }
-
-    async function geocodeSingleQuery(query){
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
-      const res = await fetch(url, {
-        headers: {
-          'Accept':'application/json'
-        }
-      });
-      if(!res.ok) throw new Error('Hakupalvelu ei vastannut');
-      const data = await res.json();
-      if(!data || !data.length) return null;
-
-      return {
-        lat: Number(data[0].lat),
-        lon: Number(data[0].lon),
-        displayName: data[0].display_name,
-        queryUsed: query
-      };
-    }
-
-    async function geocodeAddressSmart(input, fallbackQueries = []){
-      const queries = uniqueQueries([input, ...fallbackQueries]);
-
-      for(const q of queries){
-        try {
-          const result = await geocodeSingleQuery(q);
-          if(result) return result;
-        } catch(err){
-          console.error('Geocode failed for query:', q, err);
-        }
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try { state = JSON.parse(raw); } catch(e){ console.error(e); }
       }
 
-      throw new Error('Osoitetta tai paikkaa ei löytynyt');
+      if(!state.settings) state.settings = {userName:'', defaultKmRate:0.57, savedLocations:[]};
+      if(!Array.isArray(state.settings.savedLocations)) state.settings.savedLocations = [];
+      if(!Array.isArray(state.drives)) state.drives = [];
+
+      if(state.settings.savedLocations.length === 0){
+        state.settings.savedLocations = [
+          {id:cryptoRandom(), name:'Koti', address:'Poskipuronkatu 9 A 3, Iisalmi'},
+          {id:cryptoRandom(), name:'Toimisto', address:'Iisalmi'}
+        ];
+      } else {
+        state.settings.savedLocations = state.settings.savedLocations.map(loc => {
+          const name = (loc.name || '').trim().toLowerCase();
+          let address = (loc.address || '').trim();
+
+          if(!address && name === 'koti') address = 'Poskipuronkatu 9 A 3, Iisalmi';
+          if(!address && name === 'toimisto') address = 'Iisalmi';
+
+          return { ...loc, address };
+        });
+      }
+
+      if(state.settings.defaultKmRate === undefined || state.settings.defaultKmRate === null || state.settings.defaultKmRate === '') {
+        state.settings.defaultKmRate = 0.57;
+      }
     }
 
     function go(screen){
@@ -774,6 +753,7 @@
       document.getElementById('distanceStatus').textContent = '';
       ui.draftExpenses = [];
       ui.draftStops = [];
+      ui.isCalculatingDistance = false;
       handleStartLocationChange();
       renderDraftExpenses();
       renderDraftStops();
@@ -851,34 +831,60 @@
       populateStartSelect();
     }
 
+    function handleExpenseTypeChange(){
+      const type = document.getElementById('expenseType').value;
+      document.getElementById('expenseCustomTypeWrap').classList.toggle('hidden', type !== 'Muu kulu');
+    }
+
     function openExpenseModal(){
       document.getElementById('expenseType').value = 'Pysäköinti';
+      document.getElementById('expenseCustomType').value = '';
       document.getElementById('expenseAmount').value = '';
-      document.getElementById('expensePlace').value = '';
-      document.getElementById('expenseDesc').value = '';
+      document.getElementById('expenseDescription').value = '';
       document.getElementById('expenseReceipt').value = '';
+      handleExpenseTypeChange();
       document.getElementById('expenseModal').showModal();
     }
 
     function addDraftExpense(){
-      const type = document.getElementById('expenseType').value;
+      let type = document.getElementById('expenseType').value;
+      const customType = normalizeText(document.getElementById('expenseCustomType').value);
       const amount = Number(document.getElementById('expenseAmount').value || 0);
-      const place = document.getElementById('expensePlace').value.trim();
-      const description = document.getElementById('expenseDesc').value.trim();
-      if(!amount){ alert('Anna kululle summa.'); return; }
+      const description = normalizeText(document.getElementById('expenseDescription').value);
+
+      if(type === 'Muu kulu' && customType){
+        type = customType;
+      }
+
+      if(!amount){
+        alert('Anna kululle summa.');
+        return;
+      }
 
       const file = document.getElementById('expenseReceipt').files[0];
       if(file){
         const reader = new FileReader();
         reader.onload = () => {
-          ui.draftExpenses.push({ id: cryptoRandom(), type, amount, place, description, receiptDataUrl: reader.result || '' });
+          ui.draftExpenses.push({
+            id: cryptoRandom(),
+            type,
+            amount,
+            description,
+            receiptDataUrl: reader.result || ''
+          });
           renderDraftExpenses();
           recalculateTotals();
           document.getElementById('expenseModal').close();
         };
         reader.readAsDataURL(file);
       } else {
-        ui.draftExpenses.push({ id: cryptoRandom(), type, amount, place, description, receiptDataUrl: '' });
+        ui.draftExpenses.push({
+          id: cryptoRandom(),
+          type,
+          amount,
+          description,
+          receiptDataUrl: ''
+        });
         renderDraftExpenses();
         recalculateTotals();
         document.getElementById('expenseModal').close();
@@ -900,9 +906,10 @@
       wrap.innerHTML = ui.draftExpenses.map(ex => `
         <div class="item">
           <div class="item-head">
-            <div>
+            <div style="width:100%">
               <div class="item-title">${escapeHtml(ex.type)} · ${euro(ex.amount)}</div>
-              <div class="item-meta">${escapeHtml(ex.place || 'Paikka ei annettu')} ${ex.description ? '· ' + escapeHtml(ex.description) : ''}</div>
+              <div class="item-meta">${escapeHtml(ex.description || 'Ei kuvausta')}</div>
+              ${ex.receiptDataUrl ? `<img class="receipt-thumb" src="${ex.receiptDataUrl}" alt="Kuitti" />` : ''}
             </div>
             <button class="danger" type="button" onclick="removeDraftExpense('${ex.id}')">Poista</button>
           </div>
@@ -958,10 +965,72 @@
     function getSelectedStartLocation(){
       const val = document.getElementById('startLocationSelect').value;
       if(val === '__custom__'){
-        return { label: 'Muu osoite', address: document.getElementById('customStartAddress').value.trim() };
+        return { label: 'Muu osoite', address: normalizeText(document.getElementById('customStartAddress').value) };
       }
       const found = (state.settings.savedLocations || []).find(x=>x.id === val);
-      return found ? { label: found.name, address: found.address } : { label:'', address:'' };
+      return found ? { label: found.name, address: normalizeText(found.address) } : { label:'', address:'' };
+    }
+
+    function buildSearchCandidates(text){
+      const q = normalizeText(text);
+      if(!q) return [];
+      return uniqueQueries([
+        q,
+        `${q}, Finland`,
+        `${q}, Suomi`
+      ]);
+    }
+
+    function buildDestinationCandidates(placeName, destinationAddress){
+      const name = normalizeText(placeName);
+      const address = normalizeText(destinationAddress);
+
+      return uniqueQueries([
+        address && name ? `${name}, ${address}` : '',
+        address,
+        name,
+        address ? `${address}, Finland` : '',
+        name ? `${name}, Finland` : '',
+        address ? `${address}, Suomi` : '',
+        name ? `${name}, Suomi` : ''
+      ]);
+    }
+
+    async function geocodeSingleQuery(query){
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
+      const res = await fetch(url, {
+        headers: { 'Accept':'application/json' }
+      });
+
+      if(!res.ok) throw new Error('Hakupalvelu ei vastannut');
+
+      const data = await res.json();
+      if(!data || !data.length) return null;
+
+      return {
+        lat: Number(data[0].lat),
+        lon: Number(data[0].lon),
+        displayName: data[0].display_name,
+        queryUsed: query
+      };
+    }
+
+    async function geocodeAddressSmart(input, fallbackQueries = []){
+      const queries = uniqueQueries([
+        ...buildSearchCandidates(input),
+        ...fallbackQueries
+      ]);
+
+      for (const q of queries){
+        try {
+          const result = await geocodeSingleQuery(q);
+          if(result) return result;
+        } catch(err){
+          console.error('Geocode failed for query:', q, err);
+        }
+      }
+
+      throw new Error('Osoitetta tai paikkaa ei löytynyt');
     }
 
     async function reverseGeocode(lat, lon){
@@ -1003,52 +1072,102 @@
       }
     }
 
+    async function fetchRouteKm(points){
+      const coords = points.map(p => `${p.lon},${p.lat}`).join(';');
+      const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=false`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('Reittihaku epäonnistui');
+      const data = await res.json();
+      if(!data.routes || !data.routes.length) throw new Error('Reittiä ei löytynyt');
+      return data.routes[0].distance / 1000;
+    }
+
     async function lookupDistance(){
+      if(ui.isCalculatingDistance) return;
+
       const start = getSelectedStartLocation();
       const status = document.getElementById('distanceStatus');
-      const placeName = document.getElementById('placeName').value.trim();
-      const destinationAddress = document.getElementById('destinationAddress').value.trim();
+      const placeName = normalizeText(document.getElementById('placeName').value);
+      const destinationAddress = normalizeText(document.getElementById('destinationAddress').value);
 
-      const filledStops = (ui.draftStops || [])
+      const cleanStops = (ui.draftStops || [])
         .map(s => normalizeText(s.address))
         .filter(Boolean);
 
-      const destinationCandidates = buildGeocodeCandidates(placeName, destinationAddress);
-
-      const destinationPrimary = filledStops.length > 0
-        ? filledStops[filledStops.length - 1]
-        : destinationCandidates[0] || '';
+      const destinationCandidates = buildDestinationCandidates(placeName, destinationAddress);
+      const destinationPrimary = destinationCandidates[0] || '';
 
       if(!start.address || !destinationPrimary){
         alert('Anna lähtöosoite ja kohde tai osoite.');
         return;
       }
 
-      status.textContent = 'Haetaan kilometrejä...';
+      ui.isCalculatingDistance = true;
+      status.textContent = 'Lasketaan matkaa...';
 
       try {
+        const routePoints = [];
         const from = await geocodeAddressSmart(start.address, [start.label]);
-        const to = filledStops.length > 0
-          ? await geocodeAddressSmart(destinationPrimary)
-          : await geocodeAddressSmart(destinationPrimary, destinationCandidates.slice(1));
+        routePoints.push(from);
 
-        const url = `https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`;
-        const res = await fetch(url);
+        for(const stopText of cleanStops){
+          const stopPoint = await geocodeAddressSmart(stopText);
+          routePoints.push(stopPoint);
+        }
 
-        if(!res.ok) throw new Error('Reittihaku epäonnistui');
+        const to = await geocodeAddressSmart(destinationPrimary, destinationCandidates.slice(1));
+        routePoints.push(to);
 
-        const data = await res.json();
-        if(!data.routes || !data.routes.length) throw new Error('Reittiä ei löytynyt');
-
-        const km = data.routes[0].distance / 1000;
+        const km = await fetchRouteKm(routePoints);
         document.getElementById('distanceKm').value = km.toFixed(1);
-        status.textContent = `Haettu reitti: ${km.toFixed(1).replace('.',',')} km (${to.queryUsed})`;
+
+        const viaText = cleanStops.length ? ` · ${cleanStops.length} pysähdystä` : '';
+        status.textContent = `Matka laskettu: ${km.toFixed(1).replace('.',',')} km (${to.queryUsed}${viaText})`;
         recalculateTotals();
       } catch(err){
         console.error(err);
-        status.textContent = 'Km-haku ei onnistunut.';
-        alert('Km-haku ei onnistunut. Tarkista lähtöpaikan osoite asetuksista tai syötä kilometrit käsin.');
+        status.textContent = 'Matkaa ei voitu laskea automaattisesti.';
+        toast('Matkaa ei voitu laskea automaattisesti.', 'warn');
+      } finally {
+        ui.isCalculatingDistance = false;
       }
+    }
+
+    function buildRouteParts(){
+      const start = getSelectedStartLocation();
+      const placeName = normalizeText(document.getElementById('placeName').value);
+      const destinationAddress = normalizeText(document.getElementById('destinationAddress').value);
+      const stopTexts = (ui.draftStops || []).map(s => normalizeText(s.address)).filter(Boolean);
+      const destinationCandidates = buildDestinationCandidates(placeName, destinationAddress);
+      const destination = destinationCandidates[0] || '';
+
+      return {
+        origin: start.address,
+        destination,
+        waypoints: stopTexts
+      };
+    }
+
+    function openRouteInMaps(){
+      const { origin, destination, waypoints } = buildRouteParts();
+
+      if(!origin || !destination){
+        alert('Anna lähtöosoite ja kohde tai osoite.');
+        return;
+      }
+
+      const params = new URLSearchParams();
+      params.set('api', '1');
+      params.set('travelmode', 'driving');
+      params.set('origin', origin);
+      params.set('destination', destination);
+
+      if(waypoints.length){
+        params.set('waypoints', waypoints.join('|'));
+      }
+
+      const url = `https://www.google.com/maps/dir/?${params.toString()}`;
+      window.open(url, '_blank');
     }
 
     function recalculateTotals(){
@@ -1068,10 +1187,10 @@
       const start = getSelectedStartLocation();
       const placeName = normalizeText(document.getElementById('placeName').value);
       const destinationAddress = normalizeText(document.getElementById('destinationAddress').value);
-      const purpose = document.getElementById('purpose').value.trim();
+      const purpose = normalizeText(document.getElementById('purpose').value);
       const baseKm = Number(document.getElementById('distanceKm').value || 0);
       const rate = Number(document.getElementById('kmRate').value || 0);
-      const notes = document.getElementById('notes').value.trim();
+      const notes = normalizeText(document.getElementById('notes').value);
       const cleanStops = ui.draftStops.map(s => ({...s, address:normalizeText(s.address)})).filter(s => s.address);
       const effectivePlaceName = placeName || destinationAddress;
 
@@ -1287,7 +1406,7 @@
                 ${receipts.map((e, idx) => `
                   <div class="receipt-card">
                     <div><strong>${idx+1}. ${escapeHtml(e.type)}</strong> · ${euro(e.amount)}</div>
-                    <div class="small">${e.place ? escapeHtml(e.place) : ''}${e.description ? (e.place ? ' · ' : '') + escapeHtml(e.description) : ''}</div>
+                    <div class="small">${e.description ? escapeHtml(e.description) : ''}</div>
                     <img src="${e.receiptDataUrl}" alt="Kuitti" />
                   </div>
                 `).join('')}
@@ -1336,7 +1455,7 @@ ${data.drives.map(d => `
 <td>${euro(d.expenseTotal)}</td>
 <td>${euro(d.total)}</td>
 </tr>
-${(d.expenses||[]).length ? `<tr><td></td><td colspan="9"><strong>Kuluerittely:</strong> ${(d.expenses||[]).map(e=>`${escapeHtml(e.type)} ${euro(e.amount)}${e.place ? ' · ' + escapeHtml(e.place) : ''}${e.description ? ' · ' + escapeHtml(e.description) : ''}${e.receiptDataUrl ? ' · kuitti mukana' : ''}`).join(' | ')}</td></tr>` : ''}
+${(d.expenses||[]).length ? `<tr><td></td><td colspan="9"><strong>Kuluerittely:</strong> ${(d.expenses||[]).map(e=>`${escapeHtml(e.type)} ${euro(e.amount)}${e.description ? ' · ' + escapeHtml(e.description) : ''}${e.receiptDataUrl ? ' · kuitti mukana' : ''}`).join(' | ')}</td></tr>` : ''}
 ${d.notes ? `<tr><td></td><td colspan="9"><strong>Muistiinpano:</strong> ${escapeHtml(d.notes)}</td></tr>` : ''}
 `).join('')}
 </tbody>
