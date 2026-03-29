@@ -86,7 +86,7 @@
     .mini{font-size:12px;color:var(--muted)}
     .chip-row{display:flex;gap:8px;flex-wrap:wrap}
     .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12px;color:#dce7ff}
-    
+
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
     .stat{padding:13px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--line)}
     .stat-label{font-size:12px;color:var(--muted);margin-bottom:6px}
@@ -148,7 +148,7 @@
 
     <section id="screen-new" class="hidden">
       <div class="card">
-        <div class="section-title"><h2>Uusi ajo</h2><span class="mini">1 ajo = 1 kohde</span></div>
+        <div class="section-title"><h2>Uusi ajo</h2><span class="mini">1 ajo = 1 kohde + lisäpysähdykset</span></div>
         <div class="grid">
           <div>
             <label for="driveDate">Päivämäärä</label>
@@ -178,6 +178,16 @@
           <div>
             <label for="destinationAddress">Kohdeosoite</label>
             <input id="destinationAddress" type="text" placeholder="Esim. Kinttupolku 1, Iisalmi" />
+          </div>
+
+          <!-- UUSI: lisäpysähdykset -->
+          <div class="card" style="margin:0;background:rgba(255,255,255,.02)">
+            <div class="section-title">
+              <h2>Lisäpysähdykset</h2>
+              <button class="small-btn no-print" type="button" onclick="addDraftStop()">+ Lisää pysähdys</button>
+            </div>
+            <div class="mini" style="margin-bottom:10px">Voit lisätä enintään 5 lisäpysähdystä nykyisen kohteen lisäksi.</div>
+            <div id="draftStopsList" class="list"></div>
           </div>
 
           <div>
@@ -387,7 +397,8 @@
     let ui = {
       currentScreen: 'home',
       roundTrip: false,
-      draftExpenses: []
+      draftExpenses: [],
+      draftStops: []
     };
 
     const euro = n => new Intl.NumberFormat('fi-FI',{style:'currency',currency:'EUR'}).format(Number(n||0));
@@ -405,7 +416,6 @@
       setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(-10px)'; }, 2200);
       setTimeout(()=> el.remove(), 2600);
     }
-
 
     function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
     function loadState(){
@@ -485,6 +495,7 @@
       handleStartLocationChange();
       recalculateTotals();
       renderDraftExpenses();
+      renderDraftStops();
     }
 
     function resetDriveForm(){
@@ -498,9 +509,11 @@
       document.getElementById('customStartAddress').value = '';
       document.getElementById('distanceStatus').textContent = '';
       ui.draftExpenses = [];
+      ui.draftStops = [];
       setTripType(false);
       populateStartSelect();
       renderDraftExpenses();
+      renderDraftStops();
       recalculateTotals();
     }
 
@@ -526,7 +539,7 @@
       if(ui.currentScreen === 'new' && !document.getElementById('kmRate').value) document.getElementById('kmRate').value = Number(state.settings.defaultKmRate || 0.57).toFixed(2);
       renderHome();
       refreshReport();
-      toast('Ajo poistettu.', 'bad');
+      toast('Asetukset tallennettu.');
     }
 
     function renderSettings(){
@@ -627,6 +640,55 @@
             <button class="danger" type="button" onclick="removeDraftExpense('${ex.id}')">Poista</button>
           </div>
         </div>`).join('');
+    }
+
+    // UUSI: lisäpysähdykset
+    function addDraftStop(){
+      if(ui.draftStops.length >= 5){
+        toast('Maksimi on 5 lisäpysähdystä.', 'warn');
+        return;
+      }
+      ui.draftStops.push({ id: cryptoRandom(), address: '' });
+      renderDraftStops();
+    }
+
+    function updateDraftStop(id, value){
+      const stop = ui.draftStops.find(x => x.id === id);
+      if(!stop) return;
+      stop.address = value;
+    }
+
+    function removeDraftStop(id){
+      ui.draftStops = ui.draftStops.filter(x => x.id !== id);
+      renderDraftStops();
+    }
+
+    function renderDraftStops(){
+      const wrap = document.getElementById('draftStopsList');
+      if(!wrap) return;
+
+      if(ui.draftStops.length === 0){
+        wrap.innerHTML = '<div class="empty">Ei lisättyjä pysähdyksiä.</div>';
+        return;
+      }
+
+      wrap.innerHTML = ui.draftStops.map((stop, idx) => `
+        <div class="item">
+          <div class="item-head">
+            <div style="width:100%">
+              <div class="item-title">Pysähdys ${idx + 1}</div>
+              <div class="item-meta" style="margin-bottom:8px">Kirjoita pysähdyksen osoite tai paikka.</div>
+              <input
+                type="text"
+                value="${escapeHtml(stop.address || '')}"
+                placeholder="Esim. Puijonkatu 12, Kuopio"
+                oninput="updateDraftStop('${stop.id}', this.value)"
+              />
+            </div>
+            <button class="danger no-print" type="button" onclick="removeDraftStop('${stop.id}')">Poista</button>
+          </div>
+        </div>
+      `).join('');
     }
 
     function getSelectedStartLocation(){
@@ -731,14 +793,18 @@
       const baseKm = Number(document.getElementById('distanceKm').value || 0);
       const rate = Number(document.getElementById('kmRate').value || 0);
       const notes = document.getElementById('notes').value.trim();
+      const cleanStops = ui.draftStops.map(s => ({...s, address:(s.address || '').trim()})).filter(s => s.address);
+
       if(!date || !start.address || !placeName || !destinationAddress){
         alert('Täytä vähintään päivämäärä, lähtöpaikka, paikan nimi ja kohdeosoite.');
         return;
       }
+
       const distanceKm = ui.roundTrip ? baseKm * 2 : baseKm;
       const kmCompensation = distanceKm * rate;
       const expenseTotal = ui.draftExpenses.reduce((sum,x)=>sum + Number(x.amount || 0), 0);
       const total = kmCompensation + expenseTotal;
+
       const drive = {
         id: cryptoRandom(),
         date,
@@ -746,6 +812,7 @@
         startAddress: start.address,
         placeName,
         destinationAddress,
+        extraStops: cleanStops,
         purpose,
         roundTrip: ui.roundTrip,
         distanceKm,
@@ -757,6 +824,7 @@
         notes,
         createdAt: new Date().toISOString()
       };
+
       state.drives.unshift(drive);
       saveState();
       resetDriveForm();
@@ -765,6 +833,15 @@
       refreshReport();
       toast('Ajo tallennettu.');
       go('drives');
+    }
+
+    function buildRouteText(d){
+      const parts = [
+        d.startLabel || d.startAddress || '',
+        ...((d.extraStops || []).map(s => s.address).filter(Boolean)),
+        d.destinationAddress || ''
+      ].filter(Boolean);
+      return parts.join(' → ');
     }
 
     function renderDrives(){
@@ -779,7 +856,7 @@
           <div class="item-head">
             <div>
               <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
-              <div class="item-meta">${escapeHtml(d.startLabel)} → ${escapeHtml(d.destinationAddress)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
             </div>
             <div class="right">
               <div class="pill">${Number(d.distanceKm||0).toLocaleString('fi-FI',{maximumFractionDigits:1})} km</div>
@@ -787,6 +864,7 @@
             </div>
           </div>
           <div class="item-meta">Km-korvaus ${euro(d.kmCompensation)} · Kulut ${euro(d.expenseTotal)}${d.purpose ? ' · ' + escapeHtml(d.purpose) : ''}</div>
+          ${(d.extraStops && d.extraStops.length) ? `<div class="chip-row" style="margin-top:10px">${d.extraStops.map((s,i)=>`<span class="chip">Pysähdys ${i+1}: ${escapeHtml(s.address)}</span>`).join('')}</div>` : ''}
           ${(d.expenses && d.expenses.length) ? `<div class="chip-row" style="margin-top:10px">${d.expenses.map(e=>`<span class="chip">${escapeHtml(e.type)} ${euro(e.amount)}</span>`).join('')}</div>` : ''}
           <div class="grid-2 no-print" style="margin-top:12px">
             <button class="ghost" type="button" onclick="viewDrive('${d.id}')">Avaa</button>
@@ -799,14 +877,17 @@
     function viewDrive(id){
       const d = state.drives.find(x=>x.id === id);
       if(!d) return;
-      let expenseHtml = (d.expenses || []).length
-        ? d.expenses.map(e => `<li>${escapeHtml(e.type)} · ${euro(e.amount)}${e.place ? ' · ' + escapeHtml(e.place) : ''}${e.description ? ' · ' + escapeHtml(e.description) : ''}</li>`).join('')
-        : '<li>Ei kuluja</li>';
+
+      const stopsText = (d.extraStops || []).length
+        ? '\nLisäpysähdykset:\n' + d.extraStops.map((s,i) => `${i+1}. ${s.address}`).join('\n') + '\n'
+        : '';
+
       alert(
         `${formatDate(d.date)}\n\n` +
         `Lähtö: ${d.startLabel}\n` +
         `Kohde: ${d.placeName}\n` +
         `Osoite: ${d.destinationAddress}\n` +
+        `${stopsText}` +
         `Km: ${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}\n` +
         `Km-korvaus: ${euro(d.kmCompensation)}\n` +
         `Kulut: ${euro(d.expenseTotal)}\n` +
@@ -823,6 +904,7 @@
       renderDrives();
       renderHome();
       refreshReport();
+      toast('Ajo poistettu.', 'bad');
     }
 
     function renderHome(){
@@ -849,7 +931,7 @@
           <div class="item-head">
             <div>
               <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
-              <div class="item-meta">${escapeHtml(d.startLabel)} → ${escapeHtml(d.destinationAddress)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
             </div>
             <div class="right"><strong>${euro(d.total)}</strong></div>
           </div>
@@ -898,11 +980,12 @@
           <div class="item-head">
             <div>
               <div class="item-title">${formatDate(d.date)} · ${escapeHtml(d.placeName)}</div>
-              <div class="item-meta">${escapeHtml(d.startLabel)} → ${escapeHtml(d.destinationAddress)}</div>
+              <div class="item-meta">${escapeHtml(buildRouteText(d))}</div>
             </div>
             <div class="right"><strong>${euro(d.total)}</strong></div>
           </div>
           <div class="item-meta">${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})} km · ${euro(d.kmCompensation)}${d.purpose ? ' · ' + escapeHtml(d.purpose) : ''}</div>
+          ${(d.extraStops || []).length ? `<div class="chip-row" style="margin-top:10px">${d.extraStops.map((s,i)=>`<span class="chip">Pysähdys ${i+1}: ${escapeHtml(s.address)}</span>`).join('')}</div>` : ''}
           ${(d.expenses || []).length ? `<div class="chip-row" style="margin-top:10px">${d.expenses.map(e=>`<span class="chip">${escapeHtml(e.type)} ${euro(e.amount)}</span>`).join('')}</div>` : ''}
         </div>`).join('') : '<div class="empty">Ei ajoja valitulla kuukaudella.</div>';
     }
@@ -956,13 +1039,14 @@ table{width:100%;border-collapse:collapse;margin-top:18px} th,td{padding:8px;bor
   <div class="row"><span>Kuitit PDF:ssä</span><strong>${includeReceipts ? 'Kyllä' : 'Ei'}</strong></div>
 </div>
 <table>
-<thead><tr><th>Päivä</th><th>Lähtö</th><th>Kohde</th><th>Tarkoitus</th><th>Km</th><th>€/km</th><th>Km-korvaus</th><th>Kulut</th><th>Yhteensä</th></tr></thead>
+<thead><tr><th>Päivä</th><th>Lähtö</th><th>Kohde</th><th>Lisäpysähdykset</th><th>Tarkoitus</th><th>Km</th><th>€/km</th><th>Km-korvaus</th><th>Kulut</th><th>Yhteensä</th></tr></thead>
 <tbody>
 ${data.drives.map(d => `
 <tr>
 <td>${formatDate(d.date)}</td>
 <td>${escapeHtml(d.startLabel)}<div class="small">${escapeHtml(d.startAddress)}</div></td>
 <td>${escapeHtml(d.placeName)}<div class="small">${escapeHtml(d.destinationAddress)}</div></td>
+<td>${(d.extraStops || []).length ? (d.extraStops.map((s,i)=>`${i+1}. ${escapeHtml(s.address)}`).join('<br>')) : ''}</td>
 <td>${escapeHtml(d.purpose || '')}</td>
 <td>${Number(d.distanceKm).toLocaleString('fi-FI',{maximumFractionDigits:1})}</td>
 <td>${dec(d.kmRate)} €</td>
@@ -970,8 +1054,8 @@ ${data.drives.map(d => `
 <td>${euro(d.expenseTotal)}</td>
 <td>${euro(d.total)}</td>
 </tr>
-${(d.expenses||[]).length ? `<tr><td></td><td colspan="8"><strong>Kuluerittely:</strong> ${(d.expenses||[]).map(e=>`${escapeHtml(e.type)} ${euro(e.amount)}${e.place ? ' · ' + escapeHtml(e.place) : ''}${e.description ? ' · ' + escapeHtml(e.description) : ''}${e.receiptDataUrl ? ' · kuitti mukana' : ''}`).join(' | ')}</td></tr>` : ''}
-${d.notes ? `<tr><td></td><td colspan="8"><strong>Muistiinpano:</strong> ${escapeHtml(d.notes)}</td></tr>` : ''}
+${(d.expenses||[]).length ? `<tr><td></td><td colspan="9"><strong>Kuluerittely:</strong> ${(d.expenses||[]).map(e=>`${escapeHtml(e.type)} ${euro(e.amount)}${e.place ? ' · ' + escapeHtml(e.place) : ''}${e.description ? ' · ' + escapeHtml(e.description) : ''}${e.receiptDataUrl ? ' · kuitti mukana' : ''}`).join(' | ')}</td></tr>` : ''}
+${d.notes ? `<tr><td></td><td colspan="9"><strong>Muistiinpano:</strong> ${escapeHtml(d.notes)}</td></tr>` : ''}
 `).join('')}
 </tbody>
 </table>
