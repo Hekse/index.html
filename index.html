@@ -20,18 +20,39 @@
       --shadow:0 12px 32px rgba(0,0,0,.25);
       --radius:22px;
       --radius-sm:16px;
-      --glass:rgba(255,255,255,.04);
-      --glass2:rgba(255,255,255,.07);
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:linear-gradient(180deg,#07111f 0%, #091726 100%);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
     body{min-height:100vh;background-attachment:fixed}
     .app{max-width:760px;margin:0 auto;padding:18px 14px 110px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:sticky;top:0;z-index:5;padding:8px 0 10px;background:linear-gradient(180deg,rgba(7,17,31,.94),rgba(7,17,31,.74),transparent);backdrop-filter:blur(14px)}
-    .brand{font-weight:900;letter-spacing:.06em;font-size:22px}
-    .sub{font-size:12px;color:var(--muted)}
-    .brand-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));box-shadow:var(--shadow)}
-    .brand-badge .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(180deg,var(--brand2),var(--brand));box-shadow:0 0 0 4px rgba(47,128,255,.12)}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+      position:sticky;top:0;z-index:5;padding:8px 0 10px;
+      background:linear-gradient(180deg,rgba(7,17,31,.94),rgba(7,17,31,.74),transparent);
+      backdrop-filter:blur(14px)
+    }
+    .brand-wrap{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:42px;height:42px;border-radius:999px;position:relative;flex:0 0 auto;
+      background:radial-gradient(circle at 30% 30%, #35a7ff 0%, #1f7dff 34%, #0f4dd8 66%, #0b2d7a 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        0 0 24px rgba(47,128,255,.28);
+    }
+    .brand-logo::before{
+      content:"";position:absolute;inset:7px;border-radius:999px;
+      border:3px solid rgba(255,255,255,.92);
+      border-right-color:transparent;
+      transform:rotate(-18deg);
+      opacity:.92;
+    }
+    .brand-logo::after{
+      content:"";position:absolute;left:19px;top:4px;width:4px;height:34px;border-radius:4px;
+      background:linear-gradient(180deg,#e9f6ff,#bfe2ff 45%,#7bc0ff 100%);
+      transform:rotate(42deg);
+      box-shadow:0 0 10px rgba(130,200,255,.45);
+    }
+    .brand-title{font-weight:900;letter-spacing:.06em;font-size:22px;line-height:1}
     .card{background:linear-gradient(180deg,rgba(18,38,66,.98),rgba(10,22,39,.98));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:14px;overflow:hidden}
     .hero{padding:20px;background:radial-gradient(circle at top right, rgba(47,128,255,.18), transparent 34%), linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))}
     .hero h1{font-size:24px;line-height:1.15;margin:0 0 8px}
@@ -44,7 +65,6 @@
     .btn:active,.ghost:active,.danger:active,.small-btn:active,.tab:active{transform:scale(.99)}
     .btn{background:linear-gradient(180deg,var(--brand2),var(--brand));color:white;box-shadow:0 10px 20px rgba(47,128,255,.24)}
     .ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
-    .ghost.soft{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02))}
     .danger{background:rgba(239,68,68,.12);color:#ffd2d2;border:1px solid rgba(239,68,68,.25)}
     .small-btn{background:rgba(47,128,255,.12);color:#dbe8ff;border:1px solid rgba(47,128,255,.25);padding:10px 12px;font-size:14px}
     .section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
@@ -81,7 +101,6 @@
     .total{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dashed var(--line)}
     .total:last-child{border-bottom:0;padding-bottom:0}
     .empty{padding:18px;text-align:center;color:var(--muted)}
-    .expense-img{margin-top:8px;max-width:100%;border-radius:12px;border:1px solid var(--line)}
     .divider{height:1px;background:var(--line);margin:8px 0}
     .mini{font-size:12px;color:var(--muted)}
     .chip-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -96,6 +115,7 @@
     .toast.warn{border-color:rgba(250,204,21,.3)}
     .toast.bad{border-color:rgba(239,68,68,.3)}
     @keyframes toastIn{to{transform:translateY(0);opacity:1}}
+
     @media (max-width:620px){
       .grid-2{grid-template-columns:1fr}
       .quick-grid{grid-template-columns:1fr}
@@ -113,9 +133,9 @@
   <div id="toastWrap" class="toast-wrap no-print"></div>
   <div class="app">
     <div class="topbar no-print">
-      <div>
-        <div class="brand-badge"><span class="dot"></span><span class="brand">Opero Ajot</span></div>
-        <div class="sub">v2 visual polish · ajot, kulut ja PDF-koonti</div>
+      <div class="brand-wrap">
+        <div class="brand-logo"></div>
+        <div class="brand-title">OPERO</div>
       </div>
     </div>
 
@@ -146,7 +166,7 @@
 
     <section id="screen-new" class="hidden">
       <div class="card">
-        <div class="section-title"><h2>Uusi ajo</h2><span class="mini">1 ajo = 1 kohde + lisäpysähdykset</span></div>
+        <div class="section-title"><h2>Uusi ajo</h2></div>
         <div class="grid">
           <div>
             <label for="driveDate">Päivämäärä</label>
@@ -183,7 +203,6 @@
               <h2>Lisäpysähdykset</h2>
               <button class="small-btn no-print" type="button" onclick="addDraftStop()">+ Lisää pysähdys</button>
             </div>
-            <div class="mini" style="margin-bottom:10px">Voit lisätä enintään 5 lisäpysähdystä. Hae km käyttää viimeistä täytettyä pysähdystä määränpäänä.</div>
             <div id="draftStopsList" class="list"></div>
           </div>
 
@@ -251,7 +270,7 @@
 
     <section id="screen-report" class="hidden">
       <div class="card">
-        <div class="section-title"><h2>Raportti</h2><span class="mini">Kalenterikuukausi</span></div>
+        <div class="section-title"><h2>Raportti</h2></div>
         <div class="grid">
           <div class="grid-2">
             <div>
@@ -277,8 +296,6 @@
             <button class="btn" type="button" onclick="openPrintableReport()">📄 Luo PDF / tulostusnäkymä</button>
             <button class="ghost" type="button" onclick="refreshReport()">Päivitä koonti</button>
           </div>
-
-          <div class="warn-box mini">Vinkki: PDF syntyy avaamalla tulostusnäkymä ja valitsemalla puhelimen tai selaimen tulostusjako → Tallenna PDF.</div>
         </div>
       </div>
 
@@ -300,7 +317,6 @@
             <label for="defaultKmRate">Oletus km-korvaus (€/km)</label>
             <input id="defaultKmRate" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Esim. 0.57" />
           </div>
-          <div class="mini">Aseta tähän oma käytössä oleva €/km-arvo. Uusi ajo käyttää tätä oletuksena, mutta arvoa voi muuttaa ajokohtaisesti.</div>
         </div>
       </div>
 
@@ -630,7 +646,6 @@
             <div>
               <div class="item-title">${escapeHtml(ex.type)} · ${euro(ex.amount)}</div>
               <div class="item-meta">${escapeHtml(ex.place || 'Paikka ei annettu')} ${ex.description ? '· ' + escapeHtml(ex.description) : ''}</div>
-              ${ex.receiptDataUrl ? '<div class="mini">Kuitti lisätty</div>' : ''}
             </div>
             <button class="danger" type="button" onclick="removeDraftExpense('${ex.id}')">Poista</button>
           </div>
@@ -671,7 +686,6 @@
           <div class="item-head">
             <div style="width:100%">
               <div class="item-title">Pysähdys ${idx + 1}</div>
-              <div class="item-meta" style="margin-bottom:8px">Kirjoita pysähdyksen osoite tai paikka.</div>
               <input
                 type="text"
                 value="${escapeHtml(stop.address || '')}"
@@ -681,8 +695,7 @@
             </div>
             <button class="danger no-print" type="button" onclick="removeDraftStop('${stop.id}')">Poista</button>
           </div>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
 
     function getSelectedStartLocation(){
@@ -737,7 +750,7 @@
         toast('Nykyinen sijainti lisätty lähtöpaikaksi.');
       } catch(err){
         console.error(err);
-        status.textContent = 'Paikannus ei onnistunut. Voit kirjoittaa osoitteen käsin.';
+        status.textContent = 'Paikannus ei onnistunut.';
         alert('Paikannus ei onnistunut. Tarkista selaimen sijaintilupa tai kirjoita osoite käsin.');
       }
     }
@@ -781,7 +794,7 @@
         recalculateTotals();
       } catch(err){
         console.error(err);
-        status.textContent = 'Km-haku ei onnistunut. Voit syöttää kilometrit myös käsin.';
+        status.textContent = 'Km-haku ei onnistunut.';
         alert('Km-haku ei onnistunut. Tarkista osoitteet tai syötä kilometrit käsin.');
       }
     }
