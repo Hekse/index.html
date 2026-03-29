@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Opero Ajot – v2</title>
+  <title>Opero Ajo – v2</title>
   <style>
     :root{
       --bg:#07111f;
@@ -21,38 +21,192 @@
       --radius:22px;
       --radius-sm:16px;
     }
+
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:linear-gradient(180deg,#07111f 0%, #091726 100%);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    html,body{
+      margin:0;
+      padding:0;
+      background:
+        radial-gradient(circle at 50% 8%, rgba(20,72,160,.20), transparent 34%),
+        linear-gradient(180deg,#07111f 0%, #091726 100%);
+      color:var(--text);
+      font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif
+    }
     body{min-height:100vh;background-attachment:fixed}
     .app{max-width:760px;margin:0 auto;padding:18px 14px 110px}
+
+    .splash{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(36,104,255,.22), transparent 20%),
+        radial-gradient(circle at 50% 65%, rgba(35,123,255,.12), transparent 16%),
+        linear-gradient(180deg,#030814 0%, #041024 55%, #030814 100%);
+      transition:opacity .45s ease, visibility .45s ease;
+    }
+    .splash.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .splash-inner{
+      width:min(92vw,460px);
+      min-height:540px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      text-align:center;
+    }
+    .splash-glow{
+      position:absolute;
+      width:320px;height:320px;border-radius:999px;
+      border:1px solid rgba(114,171,255,.10);
+      box-shadow:
+        0 0 50px rgba(38,121,255,.10) inset,
+        0 0 80px rgba(38,121,255,.08);
+      top:88px;
+      left:50%;
+      transform:translateX(-50%);
+      pointer-events:none;
+    }
+    .splash-brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:10px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-logo{
+      width:78px;height:78px;border-radius:999px;position:relative;flex:0 0 auto;
+      background:radial-gradient(circle at 30% 30%, #33b1ff 0%, #1f7fff 35%, #0e56df 68%, #0a2f7d 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.16),
+        0 0 28px rgba(47,128,255,.28);
+    }
+    .splash-logo::before{
+      content:"";
+      position:absolute; inset:11px; border-radius:999px;
+      border:5px solid rgba(255,255,255,.96);
+      border-right-color:transparent;
+      transform:rotate(-18deg);
+    }
+    .splash-logo::after{
+      content:"";
+      position:absolute;
+      left:36px; top:8px;
+      width:6px; height:60px; border-radius:6px;
+      background:linear-gradient(180deg,#eef8ff,#c8e7ff 55%,#8ecbff 100%);
+      transform:rotate(41deg);
+      box-shadow:0 0 14px rgba(130,200,255,.45);
+    }
+    .splash-word{
+      font-size:44px;
+      font-weight:900;
+      letter-spacing:.02em;
+      color:white;
+      text-shadow:0 0 18px rgba(255,255,255,.06);
+    }
+    .splash-line{
+      width:170px;height:2px;border-radius:999px;
+      background:linear-gradient(90deg, transparent 0%, #1f85ff 18%, #6cc2ff 50%, #1f85ff 82%, transparent 100%);
+      margin:8px auto 10px;
+      box-shadow:0 0 16px rgba(79,165,255,.45);
+    }
+    .splash-sub{
+      font-size:28px;
+      font-weight:700;
+      letter-spacing:.18em;
+      color:white;
+      margin-left:.18em;
+      margin-bottom:150px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-loader{
+      width:220px;
+      margin:0 auto 18px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-loader-bar{
+      height:3px;border-radius:999px;
+      background:linear-gradient(90deg, transparent 0%, #1590ff 20%, #6fd0ff 50%, #1590ff 80%, transparent 100%);
+      box-shadow:0 0 16px rgba(83,173,255,.55);
+      animation:loaderPulse 1.5s ease-in-out infinite;
+    }
+    .splash-text{
+      color:rgba(255,255,255,.88);
+      font-size:15px;
+      letter-spacing:.03em;
+      margin-bottom:4px;
+      position:relative;
+      z-index:2;
+    }
+    .splash-text.small{
+      color:rgba(255,255,255,.65);
+      font-size:13px;
+    }
+    @keyframes loaderPulse{
+      0%,100%{transform:scaleX(.82); opacity:.75}
+      50%{transform:scaleX(1); opacity:1}
+    }
+
     .topbar{
       display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
       position:sticky;top:0;z-index:5;padding:8px 0 10px;
       background:linear-gradient(180deg,rgba(7,17,31,.94),rgba(7,17,31,.74),transparent);
       backdrop-filter:blur(14px)
     }
-    .brand-wrap{display:flex;align-items:center;gap:12px}
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
     .brand-logo{
-      width:42px;height:42px;border-radius:999px;position:relative;flex:0 0 auto;
-      background:radial-gradient(circle at 30% 30%, #35a7ff 0%, #1f7dff 34%, #0f4dd8 66%, #0b2d7a 100%);
+      width:54px;height:54px;border-radius:999px;position:relative;flex:0 0 auto;
+      background:radial-gradient(circle at 30% 30%, #33b1ff 0%, #1f7fff 35%, #0e56df 68%, #0a2f7d 100%);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.18),
-        0 0 24px rgba(47,128,255,.28);
+        inset 0 1px 0 rgba(255,255,255,.16),
+        0 0 22px rgba(47,128,255,.24);
     }
     .brand-logo::before{
-      content:"";position:absolute;inset:7px;border-radius:999px;
-      border:3px solid rgba(255,255,255,.92);
+      content:"";
+      position:absolute; inset:8px; border-radius:999px;
+      border:4px solid rgba(255,255,255,.94);
       border-right-color:transparent;
       transform:rotate(-18deg);
-      opacity:.92;
     }
     .brand-logo::after{
-      content:"";position:absolute;left:19px;top:4px;width:4px;height:34px;border-radius:4px;
-      background:linear-gradient(180deg,#e9f6ff,#bfe2ff 45%,#7bc0ff 100%);
-      transform:rotate(42deg);
-      box-shadow:0 0 10px rgba(130,200,255,.45);
+      content:"";
+      position:absolute;
+      left:24px; top:6px;
+      width:5px; height:42px; border-radius:5px;
+      background:linear-gradient(180deg,#eef8ff,#c8e7ff 55%,#8ecbff 100%);
+      transform:rotate(41deg);
+      box-shadow:0 0 10px rgba(130,200,255,.4);
     }
-    .brand-title{font-weight:900;letter-spacing:.06em;font-size:22px;line-height:1}
+    .brand-stack{
+      display:flex;
+      flex-direction:column;
+      line-height:1;
+      gap:6px;
+    }
+    .brand-title{
+      font-weight:900;
+      letter-spacing:.05em;
+      font-size:28px;
+    }
+    .brand-sub{
+      font-weight:700;
+      letter-spacing:.22em;
+      font-size:15px;
+      color:#f3f8ff;
+      margin-left:.22em;
+    }
+
     .card{background:linear-gradient(180deg,rgba(18,38,66,.98),rgba(10,22,39,.98));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:14px;overflow:hidden}
     .hero{padding:20px;background:radial-gradient(circle at top right, rgba(47,128,255,.18), transparent 34%), linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))}
     .hero h1{font-size:24px;line-height:1.15;margin:0 0 8px}
@@ -119,10 +273,14 @@
     @media (max-width:620px){
       .grid-2{grid-template-columns:1fr}
       .quick-grid{grid-template-columns:1fr}
+      .brand-title{font-size:24px}
+      .brand-sub{font-size:13px}
+      .splash-word{font-size:38px}
+      .splash-sub{font-size:24px}
     }
     @media print{
       body{background:#fff;color:#000}
-      .bottom-nav,.no-print{display:none!important}
+      .bottom-nav,.no-print,.topbar,.splash{display:none!important}
       .app{padding:0;max-width:none}
       .card{box-shadow:none;border:1px solid #ccc;background:#fff;color:#000}
       input,select,textarea,button{display:none!important}
@@ -130,12 +288,33 @@
   </style>
 </head>
 <body>
+  <div id="splashScreen" class="splash">
+    <div class="splash-inner">
+      <div class="splash-glow"></div>
+      <div class="splash-brand">
+        <div class="splash-logo"></div>
+        <div class="splash-word">OPERO</div>
+      </div>
+      <div class="splash-line"></div>
+      <div class="splash-sub">AJO</div>
+      <div class="splash-loader">
+        <div class="splash-loader-bar"></div>
+      </div>
+      <div class="splash-text">LADATAAN... 1.5 s</div>
+      <div class="splash-text small">Siirrytään sovellukseen</div>
+    </div>
+  </div>
+
   <div id="toastWrap" class="toast-wrap no-print"></div>
+
   <div class="app">
     <div class="topbar no-print">
       <div class="brand-wrap">
         <div class="brand-logo"></div>
-        <div class="brand-title">OPERO</div>
+        <div class="brand-stack">
+          <div class="brand-title">OPERO</div>
+          <div class="brand-sub">AJO</div>
+        </div>
       </div>
     </div>
 
@@ -430,6 +609,14 @@
       setTimeout(()=> el.remove(), 2600);
     }
 
+    function hideSplash(){
+      const splash = document.getElementById('splashScreen');
+      if(!splash) return;
+      setTimeout(() => {
+        splash.classList.add('hidden');
+      }, 1500);
+    }
+
     function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
     function loadState(){
@@ -479,6 +666,7 @@
       renderDrives();
       refreshReport();
       go('home');
+      hideSplash();
     }
 
     function bindNewDriveEvents(){
