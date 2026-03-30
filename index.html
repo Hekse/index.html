@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fi">
+<html lang="fi" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -291,13 +291,6 @@
         linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));
     }
 
-    .action-shell{
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:16px;
-      background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012));
-    }
-
     .action-grid{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -495,50 +488,46 @@
 
     <section id="screen-home">
       <div class="card hero">
-        <div class="action-shell no-print">
-          <div class="action-grid">
+        <div class="action-grid no-print">
 
-            <button class="action-btn" type="button" onclick="go('new')">
-              <svg viewBox="0 0 64 64" aria-hidden="true">
-                <rect x="14" y="22" width="30" height="18" rx="7" fill="#f5f8ff"/>
-                <path d="M19 22l4-7h12l4 7z" fill="#f5f8ff"/>
-                <circle cx="21" cy="43" r="4" fill="#f5f8ff"/>
-                <circle cx="39" cy="43" r="4" fill="#f5f8ff"/>
-                <path d="M48 15v18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
-                <path d="M39 24h18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
-              </svg>
-              <div class="action-label">Uusi ajo</div>
-            </button>
+          <button class="action-btn" type="button" onclick="go('new')">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18 39V27l6-9h16l6 9v12" fill="none" stroke="var(--icon)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 27h28" fill="none" stroke="var(--icon)" stroke-width="3.2" stroke-linecap="round"/>
+              <circle cx="23" cy="41" r="4" fill="none" stroke="var(--icon)" stroke-width="3.2"/>
+              <circle cx="41" cy="41" r="4" fill="none" stroke="var(--icon)" stroke-width="3.2"/>
+              <path d="M49 16v16" fill="none" stroke="var(--icon)" stroke-width="4.2" stroke-linecap="round"/>
+              <path d="M41 24h16" fill="none" stroke="var(--icon)" stroke-width="4.2" stroke-linecap="round"/>
+            </svg>
+            <div class="action-label">Uusi ajo</div>
+          </button>
 
-            <button class="action-btn" type="button" onclick="go('report')">
-              <svg viewBox="0 0 64 64" aria-hidden="true">
-                <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
-                <path d="M38 10v12h12" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
-                <circle cx="32" cy="29" r="6" fill="none" stroke="var(--icon)" stroke-width="3"/>
-                <path d="M32 23v6h5" fill="none" stroke="var(--icon)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M24 41h16M24 47h12" fill="none" stroke="var(--icon)" stroke-width="3.2" stroke-linecap="round"/>
-              </svg>
-              <div class="action-label">Raportti</div>
-            </button>
+          <button class="action-btn" type="button" onclick="go('report')">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
+              <path d="M38 10v12h12" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
+              <path d="M24 30h16M24 38h16M24 46h12" fill="none" stroke="var(--icon)" stroke-width="3.2" stroke-linecap="round"/>
+            </svg>
+            <div class="action-label">Raportti</div>
+          </button>
 
-            <button class="action-btn" type="button" onclick="go('drives')">
-              <svg viewBox="0 0 64 64" aria-hidden="true">
-                <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
-                <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
-                <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="var(--icon)" stroke-width="3.4" stroke-linecap="round"/>
-              </svg>
-              <div class="action-label">Ajot</div>
-            </button>
+          <button class="action-btn" type="button" onclick="go('drives')">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
+              <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
+              <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="var(--icon)" stroke-width="3.4" stroke-linecap="round"/>
+            </svg>
+            <div class="action-label">Ajot</div>
+          </button>
 
-            <button class="action-btn" type="button" onclick="go('settings')">
-              <svg viewBox="0 0 64 64" aria-hidden="true">
-                <circle cx="32" cy="32" r="10" fill="none" stroke="var(--icon)" stroke-width="4"/>
-                <path d="M32 8v7M32 49v7M56 32h-7M15 32H8M48.97 15.03l-4.95 4.95M19.98 44.02l-4.95 4.95M48.97 48.97l-4.95-4.95M19.98 19.98l-4.95-4.95" fill="none" stroke="var(--icon)" stroke-width="4" stroke-linecap="round"/>
-              </svg>
-              <div class="action-label">Asetukset</div>
-            </button>
+          <button class="action-btn" type="button" onclick="go('settings')">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="8.5" fill="none" stroke="var(--icon)" stroke-width="3.6"/>
+              <path d="M32 14v6M32 44v6M14 32h6M44 32h6M20 20l4 4M40 40l4 4M44 20l-4 4M24 40l-4 4" fill="none" stroke="var(--icon)" stroke-width="3.6" stroke-linecap="round"/>
+            </svg>
+            <div class="action-label">Asetukset</div>
+          </button>
 
-          </div>
         </div>
       </div>
 
@@ -764,32 +753,30 @@
 
       <button class="nav-btn" data-screen="new" onclick="go('new')" aria-label="Uusi ajo">
         <svg viewBox="0 0 64 64" aria-hidden="true">
-          <rect x="14" y="22" width="30" height="18" rx="7" fill="#f5f8ff"/>
-          <path d="M19 22l4-7h12l4 7z" fill="#f5f8ff"/>
-          <circle cx="21" cy="43" r="4" fill="#f5f8ff"/>
-          <circle cx="39" cy="43" r="4" fill="#f5f8ff"/>
-          <path d="M48 15v18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
-          <path d="M39 24h18" stroke="#f5f8ff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M18 39V27l6-9h16l6 9v12" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18 27h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="23" cy="41" r="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="41" cy="41" r="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M49 16v16" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/>
+          <path d="M41 24h16" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/>
         </svg>
         <div class="nav-label">Uusi ajo</div>
       </button>
 
       <button class="nav-btn" data-screen="drives" onclick="go('drives')" aria-label="Ajot">
         <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round"/>
-          <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round"/>
-          <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="currentColor" stroke-width="3.1" stroke-linecap="round"/>
         </svg>
         <div class="nav-label">Ajot</div>
       </button>
 
       <button class="nav-btn" data-screen="report" onclick="go('report')" aria-label="Raportti">
         <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
-          <path d="M38 10v12h12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
-          <circle cx="32" cy="29" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M32 23v6h5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M24 41h16M24 47h12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linejoin="round"/>
+          <path d="M38 10v12h12" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linejoin="round"/>
+          <path d="M24 30h16M24 38h16M24 46h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
         </svg>
         <div class="nav-label">Raportti</div>
       </button>
