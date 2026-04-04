@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#07111f" />
-  <title>Opero Ajo – v2</title>
+  <title>Opero Ajo – emoji versio</title>
 
   <style>
     :root{
@@ -30,7 +30,6 @@
       --green:#22c55e;
       --yellow:#facc15;
       --red:#ef4444;
-      --icon:#a9c8ff;
       --heroGlow:rgba(47,128,255,.18);
       --inputBg:#091525;
       --navBg:rgba(7,17,31,.78);
@@ -52,7 +51,6 @@
       --green:#16a34a;
       --yellow:#ca8a04;
       --red:#dc2626;
-      --icon:#4a78c7;
       --heroGlow:rgba(47,128,255,.10);
       --inputBg:#f7faff;
       --navBg:rgba(234,241,251,.86);
@@ -62,20 +60,11 @@
     }
 
     *{box-sizing:border-box}
-
     html,body{
-      margin:0;
-      padding:0;
-      min-height:100%;
-      background:var(--bg);
-      overscroll-behavior:none;
-      -webkit-overflow-scrolling:touch;
+      margin:0;padding:0;min-height:100%;background:var(--bg);
+      overscroll-behavior:none;-webkit-overflow-scrolling:touch;
     }
-
-    html{
-      background:var(--bg);
-    }
-
+    html{background:var(--bg)}
     body{
       min-height:100vh;
       background:var(--bodyBg);
@@ -99,11 +88,7 @@
       -webkit-tap-highlight-color:transparent;
     }
 
-    .app{
-      max-width:760px;
-      margin:0 auto;
-      padding:18px 14px calc(110px + var(--safe-bottom));
-    }
+    .app{max-width:760px;margin:0 auto;padding:18px 14px calc(110px + var(--safe-bottom))}
 
     .splash{
       position:fixed; inset:0; z-index:9999;
@@ -114,107 +99,44 @@
         linear-gradient(180deg,#030814 0%, #041024 55%, #030814 100%);
       transition:opacity .45s ease, visibility .45s ease;
     }
-    .splash.hidden{
-      opacity:0;
-      visibility:hidden;
-      pointer-events:none;
-    }
+    .splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
     .splash-inner{
-      width:min(92vw,460px);
-      min-height:540px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      text-align:center;
+      width:min(92vw,460px);min-height:540px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;text-align:center;
     }
     .splash-glow{
-      position:absolute;
-      width:320px;height:320px;border-radius:999px;
-      border:1px solid rgba(114,171,255,.10);
-      box-shadow:
-        0 0 50px rgba(38,121,255,.10) inset,
-        0 0 80px rgba(38,121,255,.08);
-      top:88px;
-      left:50%;
-      transform:translateX(-50%);
-      pointer-events:none;
+      position:absolute;width:320px;height:320px;border-radius:999px;border:1px solid rgba(114,171,255,.10);
+      box-shadow:0 0 50px rgba(38,121,255,.10) inset,0 0 80px rgba(38,121,255,.08);
+      top:88px;left:50%;transform:translateX(-50%);pointer-events:none;
     }
-    .splash-brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom:10px;
-      position:relative;
-      z-index:2;
-    }
+    .splash-brand{display:flex;align-items:center;gap:14px;margin-bottom:10px;position:relative;z-index:2}
     .splash-logo{
       width:78px;height:78px;border-radius:999px;position:relative;flex:0 0 auto;
       background:radial-gradient(circle at 30% 30%, #33b1ff 0%, #1f7fff 35%, #0e56df 68%, #0a2f7d 100%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.16),
-        0 0 28px rgba(47,128,255,.28);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 28px rgba(47,128,255,.28);
     }
     .splash-logo::before{
-      content:"";
-      position:absolute; inset:11px; border-radius:999px;
-      border:5px solid rgba(255,255,255,.96);
-      border-right-color:transparent;
-      transform:rotate(-18deg);
+      content:"";position:absolute; inset:11px; border-radius:999px;
+      border:5px solid rgba(255,255,255,.96);border-right-color:transparent;transform:rotate(-18deg);
     }
     .splash-logo::after{
-      content:"";
-      position:absolute;
-      left:36px; top:8px;
-      width:6px; height:60px; border-radius:6px;
+      content:"";position:absolute;left:36px; top:8px;width:6px; height:60px; border-radius:6px;
       background:linear-gradient(180deg,#eef8ff,#c8e7ff 55%,#8ecbff 100%);
-      transform:rotate(41deg);
-      box-shadow:0 0 14px rgba(130,200,255,.45);
+      transform:rotate(41deg);box-shadow:0 0 14px rgba(130,200,255,.45);
     }
-    .splash-word{
-      font-size:44px;
-      font-weight:900;
-      letter-spacing:.02em;
-      color:white;
-      text-shadow:0 0 18px rgba(255,255,255,.06);
-    }
+    .splash-word{font-size:44px;font-weight:900;letter-spacing:.02em;color:white;text-shadow:0 0 18px rgba(255,255,255,.06)}
     .splash-line{
       width:170px;height:2px;border-radius:999px;
       background:linear-gradient(90deg, transparent 0%, #1f85ff 18%, #6cc2ff 50%, #1f85ff 82%, transparent 100%);
-      margin:8px auto 10px;
-      box-shadow:0 0 16px rgba(79,165,255,.45);
+      margin:8px auto 10px;box-shadow:0 0 16px rgba(79,165,255,.45);
     }
-    .splash-sub{
-      font-size:28px;
-      font-weight:700;
-      letter-spacing:.18em;
-      color:white;
-      margin-left:.18em;
-      margin-bottom:150px;
-      position:relative;
-      z-index:2;
-    }
-    .splash-loader{
-      width:220px;
-      margin:0 auto 18px;
-      position:relative;
-      z-index:2;
-    }
+    .splash-sub{font-size:28px;font-weight:700;letter-spacing:.18em;color:white;margin-left:.18em;margin-bottom:150px;position:relative;z-index:2}
+    .splash-loader{width:220px;margin:0 auto 18px;position:relative;z-index:2}
     .splash-loader-bar{
       height:3px;border-radius:999px;
       background:linear-gradient(90deg, transparent 0%, #1590ff 20%, #6fd0ff 50%, #1590ff 80%, transparent 100%);
-      box-shadow:0 0 16px rgba(83,173,255,.55);
-      animation:loaderPulse 1.5s ease-in-out infinite;
+      box-shadow:0 0 16px rgba(83,173,255,.55);animation:loaderPulse 1.5s ease-in-out infinite;
     }
-    .splash-text{
-      color:rgba(255,255,255,.88);
-      font-size:15px;
-      letter-spacing:.03em;
-      margin-bottom:4px;
-      position:relative;
-      z-index:2;
-    }
+    .splash-text{color:rgba(255,255,255,.88);font-size:15px;letter-spacing:.03em;margin-bottom:4px;position:relative;z-index:2}
     @keyframes loaderPulse{
       0%,100%{transform:scaleX(.82); opacity:.75}
       50%{transform:scaleX(1); opacity:1}
@@ -224,55 +146,26 @@
       display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
       position:sticky;top:0;z-index:8;padding:8px 0 10px;
       background:linear-gradient(180deg,var(--navBg),rgba(0,0,0,0));
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     }
-    .brand-wrap{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
+    .brand-wrap{display:flex;align-items:center;gap:14px}
     .brand-logo{
       width:54px;height:54px;border-radius:999px;position:relative;flex:0 0 auto;
       background:radial-gradient(circle at 30% 30%, #33b1ff 0%, #1f7fff 35%, #0e56df 68%, #0a2f7d 100%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.16),
-        0 0 22px rgba(47,128,255,.24);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 22px rgba(47,128,255,.24);
     }
     .brand-logo::before{
-      content:"";
-      position:absolute; inset:8px; border-radius:999px;
-      border:4px solid rgba(255,255,255,.94);
-      border-right-color:transparent;
-      transform:rotate(-18deg);
+      content:"";position:absolute; inset:8px; border-radius:999px;
+      border:4px solid rgba(255,255,255,.94);border-right-color:transparent;transform:rotate(-18deg);
     }
     .brand-logo::after{
-      content:"";
-      position:absolute;
-      left:24px; top:6px;
-      width:5px; height:42px; border-radius:5px;
+      content:"";position:absolute;left:24px; top:6px;width:5px; height:42px; border-radius:5px;
       background:linear-gradient(180deg,#eef8ff,#c8e7ff 55%,#8ecbff 100%);
-      transform:rotate(41deg);
-      box-shadow:0 0 10px rgba(130,200,255,.4);
+      transform:rotate(41deg);box-shadow:0 0 10px rgba(130,200,255,.4);
     }
-    .brand-stack{
-      display:flex;
-      flex-direction:column;
-      line-height:1;
-      gap:6px;
-    }
-    .brand-title{
-      font-weight:900;
-      letter-spacing:.05em;
-      font-size:28px;
-    }
-    .brand-sub{
-      font-weight:700;
-      letter-spacing:.22em;
-      font-size:15px;
-      color:var(--text);
-      margin-left:.22em;
-    }
+    .brand-stack{display:flex;flex-direction:column;line-height:1;gap:6px}
+    .brand-title{font-weight:900;letter-spacing:.05em;font-size:28px}
+    .brand-sub{font-weight:700;letter-spacing:.22em;font-size:15px;color:var(--text);margin-left:.22em}
 
     .card{
       background:linear-gradient(180deg,var(--panel),rgba(0,0,0,0.02));
@@ -291,41 +184,24 @@
         linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));
     }
 
-    .action-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-    }
-
+    .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .action-btn{
-      border:1px solid var(--line);
-      border-radius:24px;
-      min-height:150px;
+      border:1px solid var(--line);border-radius:24px;min-height:150px;
       background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
-      cursor:pointer;
-      transition:.15s transform ease,.15s background ease,.15s border-color ease;
-      color:var(--text);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+      cursor:pointer;transition:.15s transform ease,.15s background ease,.15s border-color ease;color:var(--text);
     }
-    .action-btn:hover{
-      background:rgba(255,255,255,.05);
-      border-color:rgba(110,168,255,.34);
-    }
+    .action-btn:hover{background:rgba(255,255,255,.05);border-color:rgba(110,168,255,.34)}
     .action-btn:active{transform:scale(.99)}
-    .action-btn svg{
-      width:54px;
-      height:54px;
-      display:block;
+    .emoji-icon{
+      font-size:44px; line-height:1; display:block;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,.18));
     }
-    .action-label{
-      font-weight:800;
-      font-size:22px;
-      color:var(--text);
+    .nav-emoji{
+      font-size:24px; line-height:1; display:block;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,.14));
     }
+    .action-label{font-weight:800;font-size:22px;color:var(--text)}
 
     .btn,.ghost,.danger,.small-btn,.tab{
       border:0;border-radius:14px;padding:13px 14px;font-weight:700;cursor:pointer;font-size:15px;
@@ -344,14 +220,8 @@
     .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     label{display:block;font-size:13px;color:var(--text);margin:0 0 7px;font-weight:700}
     input,select,textarea{
-      width:100%;
-      background:var(--inputBg);
-      color:var(--text);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:13px 12px;
-      font:inherit;
-      outline:none;
+      width:100%;background:var(--inputBg);color:var(--text);border:1px solid var(--line);
+      border-radius:14px;padding:13px 12px;font:inherit;outline:none;
     }
     input::placeholder,textarea::placeholder{color:var(--muted)}
     textarea{min-height:90px;resize:vertical}
@@ -386,55 +256,24 @@
     .toast.good{border-color:rgba(34,197,94,.25)}
     .toast.warn{border-color:rgba(250,204,21,.3)}
     .toast.bad{border-color:rgba(239,68,68,.3)}
-    .receipt-thumb{
-      margin-top:10px;
-      max-width:100%;
-      max-height:160px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      display:block;
-      object-fit:cover;
-    }
+    .receipt-thumb{margin-top:10px;max-width:100%;max-height:160px;border-radius:12px;border:1px solid var(--line);display:block;object-fit:cover}
     @keyframes toastIn{to{transform:translateY(0);opacity:1}}
 
     .bottom-nav{
-      position:fixed;
-      left:0;right:0;bottom:0;
+      position:fixed;left:0;right:0;bottom:0;
       padding:10px 12px calc(10px + var(--safe-bottom));
-      background:var(--navBg);
-      backdrop-filter:blur(22px);
-      -webkit-backdrop-filter:blur(22px);
-      border-top:1px solid var(--line);
-      z-index:12;
+      background:var(--navBg);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+      border-top:1px solid var(--line);z-index:12;
     }
     .bottom-nav .inner{
-      max-width:760px;
-      margin:0 auto;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:10px;
+      max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
     }
     .nav-btn{
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:10px 8px 8px;
-      color:var(--muted);
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      min-height:72px;
-      gap:6px;
+      background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:10px 8px 8px;
+      color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;gap:6px;
     }
     .nav-btn.active{background:rgba(47,128,255,.16);color:var(--text);border-color:rgba(47,128,255,.35)}
-    .nav-btn svg{width:28px;height:28px;display:block}
-    .nav-label{
-      font-size:12px;
-      font-weight:800;
-      line-height:1;
-    }
+    .nav-label{font-size:12px;font-weight:800;line-height:1}
 
     @media (max-width:620px){
       .grid-2,.grid-3{grid-template-columns:1fr}
@@ -443,7 +282,7 @@
       .splash-word{font-size:38px}
       .splash-sub{font-size:24px}
       .action-btn{min-height:126px}
-      .action-btn svg{width:48px;height:48px}
+      .emoji-icon{font-size:38px}
       .action-label{font-size:18px}
     }
 
@@ -466,9 +305,7 @@
       </div>
       <div class="splash-line"></div>
       <div class="splash-sub">AJO</div>
-      <div class="splash-loader">
-        <div class="splash-loader-bar"></div>
-      </div>
+      <div class="splash-loader"><div class="splash-loader-bar"></div></div>
       <div class="splash-text">Loading...</div>
     </div>
   </div>
@@ -489,45 +326,25 @@
     <section id="screen-home">
       <div class="card hero">
         <div class="action-grid no-print">
-
           <button class="action-btn" type="button" onclick="go('new')">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M18 39V27l6-9h16l6 9v12" fill="none" stroke="var(--icon)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M18 27h28" fill="none" stroke="var(--icon)" stroke-width="3.2" stroke-linecap="round"/>
-              <circle cx="23" cy="41" r="4" fill="none" stroke="var(--icon)" stroke-width="3.2"/>
-              <circle cx="41" cy="41" r="4" fill="none" stroke="var(--icon)" stroke-width="3.2"/>
-              <path d="M49 16v16" fill="none" stroke="var(--icon)" stroke-width="4.2" stroke-linecap="round"/>
-              <path d="M41 24h16" fill="none" stroke="var(--icon)" stroke-width="4.2" stroke-linecap="round"/>
-            </svg>
+            <span class="emoji-icon">🚗➕</span>
             <div class="action-label">Uusi ajo</div>
           </button>
 
           <button class="action-btn" type="button" onclick="go('report')">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
-              <path d="M38 10v12h12" fill="none" stroke="var(--icon)" stroke-width="3.5" stroke-linejoin="round"/>
-              <path d="M24 30h16M24 38h16M24 46h12" fill="none" stroke="var(--icon)" stroke-width="3.2" stroke-linecap="round"/>
-            </svg>
+            <span class="emoji-icon">📄</span>
             <div class="action-label">Raportti</div>
           </button>
 
           <button class="action-btn" type="button" onclick="go('drives')">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
-              <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="var(--icon)" stroke-width="4.6" stroke-linecap="round"/>
-              <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="var(--icon)" stroke-width="3.4" stroke-linecap="round"/>
-            </svg>
+            <span class="emoji-icon">🛣️</span>
             <div class="action-label">Ajot</div>
           </button>
 
           <button class="action-btn" type="button" onclick="go('settings')">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="8.5" fill="none" stroke="var(--icon)" stroke-width="3.6"/>
-              <path d="M32 14v6M32 44v6M14 32h6M44 32h6M20 20l4 4M40 40l4 4M44 20l-4 4M24 40l-4 4" fill="none" stroke="var(--icon)" stroke-width="3.6" stroke-linecap="round"/>
-            </svg>
+            <span class="emoji-icon">⚙️</span>
             <div class="action-label">Asetukset</div>
           </button>
-
         </div>
       </div>
 
@@ -744,40 +561,22 @@
   <div class="bottom-nav no-print">
     <div class="inner">
       <button class="nav-btn active" data-screen="home" onclick="go('home')" aria-label="Koti">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M12 28L32 12l20 16v22a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V28z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
-          <path d="M26 54V36h12v18" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
-        </svg>
+        <span class="nav-emoji">🏚️</span>
         <div class="nav-label">Koti</div>
       </button>
 
       <button class="nav-btn" data-screen="new" onclick="go('new')" aria-label="Uusi ajo">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M18 39V27l6-9h16l6 9v12" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M18 27h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="23" cy="41" r="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <circle cx="41" cy="41" r="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M49 16v16" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/>
-          <path d="M41 24h16" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/>
-        </svg>
+        <span class="nav-emoji">🚗➕</span>
         <div class="nav-label">Uusi ajo</div>
       </button>
 
       <button class="nav-btn" data-screen="drives" onclick="go('drives')" aria-label="Ajot">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M22 8c7 9 7 18 0 27s-7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round"/>
-          <path d="M42 8c-7 9-7 18 0 27s7 16 0 21" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round"/>
-          <path d="M32 14v4M32 24v4M32 34v4M32 44v4" fill="none" stroke="currentColor" stroke-width="3.1" stroke-linecap="round"/>
-        </svg>
+        <span class="nav-emoji">🛣️</span>
         <div class="nav-label">Ajot</div>
       </button>
 
       <button class="nav-btn" data-screen="report" onclick="go('report')" aria-label="Raportti">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M20 10h18l10 10v30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linejoin="round"/>
-          <path d="M38 10v12h12" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linejoin="round"/>
-          <path d="M24 30h16M24 38h16M24 46h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-        </svg>
+        <span class="nav-emoji">📄</span>
         <div class="nav-label">Raportti</div>
       </button>
     </div>
@@ -827,7 +626,7 @@
   </dialog>
 
   <script>
-    const STORAGE_KEY = 'opero-ajot-mvp-v3';
+    const STORAGE_KEY = 'opero-ajot-mvp-v3-emoji';
 
     let state = {
       settings: {
@@ -1003,9 +802,7 @@
       recalculateTotals();
     }
 
-    function resetDriveForm(){
-      prepareNewDrive();
-    }
+    function resetDriveForm(){ prepareNewDrive(); }
 
     function populateStartSelect(){
       const select = document.getElementById('startLocationSelect');
@@ -1097,25 +894,15 @@
       const amount = Number(document.getElementById('expenseAmount').value || 0);
       const description = normalizeText(document.getElementById('expenseDescription').value);
 
-      if(type === 'Muu kulu' && customType){
-        type = customType;
-      }
-
-      if(!amount){
-        alert('Anna kululle summa.');
-        return;
-      }
+      if(type === 'Muu kulu' && customType){ type = customType; }
+      if(!amount){ alert('Anna kululle summa.'); return; }
 
       const file = document.getElementById('expenseReceipt').files[0];
       if(file){
         const reader = new FileReader();
         reader.onload = () => {
           ui.draftExpenses.push({
-            id: cryptoRandom(),
-            type,
-            amount,
-            description,
-            receiptDataUrl: reader.result || ''
+            id: cryptoRandom(), type, amount, description, receiptDataUrl: reader.result || ''
           });
           renderDraftExpenses();
           recalculateTotals();
@@ -1124,11 +911,7 @@
         reader.readAsDataURL(file);
       } else {
         ui.draftExpenses.push({
-          id: cryptoRandom(),
-          type,
-          amount,
-          description,
-          receiptDataUrl: ''
+          id: cryptoRandom(), type, amount, description, receiptDataUrl: ''
         });
         renderDraftExpenses();
         recalculateTotals();
@@ -1184,7 +967,6 @@
     function renderDraftStops(){
       const wrap = document.getElementById('draftStopsList');
       if(!wrap) return;
-
       if(ui.draftStops.length === 0){
         wrap.innerHTML = '<div class="empty">Ei lisättyjä pysähdyksiä.</div>';
         return;
@@ -1195,12 +977,7 @@
           <div class="item-head">
             <div style="width:100%">
               <div class="item-title">Pysähdys ${idx + 1}</div>
-              <input
-                type="text"
-                value="${escapeHtml(stop.address || '')}"
-                placeholder="Esim. ABC Iisalmi"
-                oninput="updateDraftStop('${stop.id}', this.value)"
-              />
+              <input type="text" value="${escapeHtml(stop.address || '')}" placeholder="Esim. ABC Iisalmi" oninput="updateDraftStop('${stop.id}', this.value)" />
             </div>
             <button class="danger no-print" type="button" onclick="removeDraftStop('${stop.id}')">Poista</button>
           </div>
@@ -1219,17 +996,12 @@
     function buildSearchCandidates(text){
       const q = normalizeText(text);
       if(!q) return [];
-      return uniqueQueries([
-        q,
-        `${q}, Finland`,
-        `${q}, Suomi`
-      ]);
+      return uniqueQueries([q, `${q}, Finland`, `${q}, Suomi`]);
     }
 
     function buildDestinationCandidates(placeName, destinationAddress){
       const name = normalizeText(placeName);
       const address = normalizeText(destinationAddress);
-
       return uniqueQueries([
         address && name ? `${name}, ${address}` : '',
         address,
@@ -1243,29 +1015,15 @@
 
     async function geocodeSingleQuery(query){
       const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
-      const res = await fetch(url, {
-        headers: { 'Accept':'application/json' }
-      });
-
+      const res = await fetch(url, { headers: { 'Accept':'application/json' } });
       if(!res.ok) throw new Error('Hakupalvelu ei vastannut');
-
       const data = await res.json();
       if(!data || !data.length) return null;
-
-      return {
-        lat: Number(data[0].lat),
-        lon: Number(data[0].lon),
-        displayName: data[0].display_name,
-        queryUsed: query
-      };
+      return { lat: Number(data[0].lat), lon: Number(data[0].lon), displayName: data[0].display_name, queryUsed: query };
     }
 
     async function geocodeAddressSmart(input, fallbackQueries = []){
-      const queries = uniqueQueries([
-        ...buildSearchCandidates(input),
-        ...fallbackQueries
-      ]);
-
+      const queries = uniqueQueries([...buildSearchCandidates(input), ...fallbackQueries]);
       for (const q of queries){
         try {
           const result = await geocodeSingleQuery(q);
@@ -1274,7 +1032,6 @@
           console.error('Geocode failed for query:', q, err);
         }
       }
-
       throw new Error('Osoitetta tai paikkaa ei löytynyt');
     }
 
@@ -1298,9 +1055,7 @@
       try {
         const pos = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 300000
+            enableHighAccuracy: true, timeout: 15000, maximumAge: 300000
           });
         });
         const address = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
@@ -1334,11 +1089,7 @@
       const status = document.getElementById('distanceStatus');
       const placeName = normalizeText(document.getElementById('placeName').value);
       const destinationAddress = normalizeText(document.getElementById('destinationAddress').value);
-
-      const cleanStops = (ui.draftStops || [])
-        .map(s => normalizeText(s.address))
-        .filter(Boolean);
-
+      const cleanStops = (ui.draftStops || []).map(s => normalizeText(s.address)).filter(Boolean);
       const destinationCandidates = buildDestinationCandidates(placeName, destinationAddress);
       const destinationPrimary = destinationCandidates[0] || '';
 
@@ -1385,17 +1136,11 @@
       const stopTexts = (ui.draftStops || []).map(s => normalizeText(s.address)).filter(Boolean);
       const destinationCandidates = buildDestinationCandidates(placeName, destinationAddress);
       const destination = destinationCandidates[0] || '';
-
-      return {
-        origin: start.address,
-        destination,
-        waypoints: stopTexts
-      };
+      return { origin: start.address, destination, waypoints: stopTexts };
     }
 
     function openRouteInMaps(){
       const { origin, destination, waypoints } = buildRouteParts();
-
       if(!origin || !destination){
         alert('Anna lähtöosoite ja kohde tai osoite.');
         return;
@@ -1406,10 +1151,7 @@
       params.set('travelmode', 'driving');
       params.set('origin', origin);
       params.set('destination', destination);
-
-      if(waypoints.length){
-        params.set('waypoints', waypoints.join('|'));
-      }
+      if(waypoints.length){ params.set('waypoints', waypoints.join('|')); }
 
       const url = `https://www.google.com/maps/dir/?${params.toString()}`;
       window.open(url, '_blank');
