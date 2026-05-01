@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opero Ajo – Supabase save test v2</title>
+<style>
+body{margin:0;background:#07111f;color:#eef4ff;font:16px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif}.app{max-width:760px;margin:auto;padding:18px 12px}.card{background:#0d1b2f;border:1px solid rgba(125,170,255,.22);border-radius:22px;padding:16px;margin:14px 0;box-shadow:0 16px 38px rgba(0,0,0,.28)}h1,h2{margin:0 0 12px}.grid{display:grid;gap:12px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}input,button{font:inherit}input{width:100%;box-sizing:border-box;background:#091525;color:#eef4ff;border:1px solid rgba(125,170,255,.22);border-radius:15px;padding:13px}.btn{border:0;border-radius:15px;padding:14px;background:#2f80ff;color:white;font-weight:900}.ghost{border:1px solid rgba(125,170,255,.22);border-radius:15px;padding:14px;background:rgba(255,255,255,.055);color:white;font-weight:900}.muted{color:#9db0d3;font-size:13px}.ok{color:#9ff0b5}.warn{color:#ffe08a}.err{color:#ffb4b4}.item{border:1px solid rgba(125,170,255,.22);border-radius:16px;padding:12px;background:rgba(255,255,255,.035)}pre{white-space:pre-wrap;word-break:break-word;background:#06101e;border-radius:14px;padding:12px;color:#9db0d3}.toast{position:fixed;top:12px;left:12px;right:12px;max-width:560px;margin:auto;background:#0d1b2f;border:1px solid rgba(125,170,255,.22);border-radius:16px;padding:12px;box-shadow:0 16px 38px rgba(0,0,0,.28)}.hide{display:none}@media(max-width:560px){.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="toast" class="toast hide"></div>
+<div class="app">
+  <h1>OPERO AJO TEST v2</h1>
+  <div class="card"><h2>Tila</h2><div id="status" class="item warn">Ladataan...</div></div>
+  <div class="card"><h2>1. Kirjaudu</h2><div class="grid"><label>Sähköposti<input id="email" type="email" value="opero@opero.fi"></label><label>Salasana<input id="password" type="password"></label><div class="g2"><button class="btn" onclick="signIn()">Kirjaudu</button><button class="ghost" onclick="signOut()">Ulos</button></div></div></div>
+  <div class="card"><h2>2. Tallenna testiajo</h2><div class="grid"><label>Päivä<input id="date" type="date"></label><label>Lähtö<input id="start" value="Kuopio"></label><label>Kohde<input id="dest" value="Iisalmi"></label><div class="g2"><label>Km<input id="km" type="number" step="0.1" value="10"></label><label>€/km<input id="rate" type="number" step="0.01" value="0.57"></label></div><button class="btn" onclick="saveDrive()">TALLENNA PILVEEN</button></div></div>
+  <div class="card"><h2>3. Pilvessä olevat ajot</h2><button class="ghost" onclick="loadDrives()">Päivitä lista</button><div id="list" class="grid" style="margin-top:12px"></div></div>
+  <div class="card"><h2>Debug</h2><pre id="debug">Ei vielä tapahtumia.</pre></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://miahuckcphquawobehtk.supabase.co';
+const SUPABASE_KEY='sb_publishable_tY1y97VnFfhXyKJ_9XCNGw_-rEq2pLx';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null;
+const q=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const num=v=>Number(String(v||0).replace(',','.'))||0;
+const esc=s=>String(s??'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+function dbg(x){q('debug').textContent=typeof x==='string'?x:JSON.stringify(x,null,2)}
+function toast(t){q('toast').textContent=t;q('toast').classList.remove('hide');setTimeout(()=>q('toast').classList.add('hide'),3000)}
+function status(html,cls='warn'){q('status').className='item '+cls;q('status').innerHTML=html}
+async function refresh(){const res=await sb.auth.getUser();if(res.error||!res.data.user){currentUser=null;status('<span class="warn">Ei kirjautunut</span>','warn');return}currentUser=res.data.user;status('<span class="ok">✓ Kirjautunut: '+esc(currentUser.email)+'</span><br><span class="muted">'+esc(currentUser.id)+'</span>','ok');await loadDrives()}
+async function signIn(){const email=q('email').value.trim();const password=q('password').value;const res=await sb.auth.signInWithPassword({email,password});if(res.error){dbg(res.error);status('<span class="err">Kirjautuminen epäonnistui: '+esc(res.error.message)+'</span>','err');toast(res.error.message);return}toast('Kirjautunut');await refresh()}
+async function signOut(){await sb.auth.signOut();currentUser=null;await refresh();toast('Kirjauduttu ulos')}
+function row(){const km=num(q('km').value),rate=num(q('rate').value),total=km*rate;return{user_id:currentUser.id,local_id:uid(),date:q('date').value||today(),start_address:q('start').value.trim()||'Kuopio',destination:q('dest').value.trim()||'Iisalmi',purpose:'Supabase test v2',trip_type:'meno',base_km:km,km:km,rate:rate,km_comp:total,costs:[],cost_total:0,total:total,note:'index-test-v2.html',receipts:[],sync_status:'synced',updated_at:new Date().toISOString()}}
+async function saveDrive(){await refresh();if(!currentUser){toast('Kirjaudu ensin');return}const r=row();dbg({trying:r});status('<span class="warn">Tallennetaan...</span>','warn');const res=await sb.from('ajo_drives').insert(r).select('*').single();if(res.error){dbg({error:res.error,row:r});status('<span class="err">Tallennus epäonnistui: '+esc(res.error.message)+'</span>','err');toast('Tallennus epäonnistui');return}dbg({saved:res.data});status('<span class="ok">✓ Tallennettu pilveen.</span>','ok');toast('Tallennettu pilveen');await loadDrives()}
+async function loadDrives(){if(!currentUser)return;const res=await sb.from('ajo_drives').select('*').order('created_at',{ascending:false}).limit(20);if(res.error){q('list').innerHTML='<div class="item err">'+esc(res.error.message)+'</div>';dbg(res.error);return}q('list').innerHTML=(res.data||[]).map(d=>'<div class="item"><b>'+esc(d.destination)+'</b><div class="muted">'+esc(d.date)+' · '+esc(d.start_address)+' → '+esc(d.destination)+'</div><div class="muted">'+esc(d.km)+' km · '+esc(d.total)+' €</div></div>').join('')||'<div class="muted">Ei ajoja pilvessä.</div>';dbg({loaded:(res.data||[]).length})}
+q('date').value=today();
+refresh();
+</script>
+</body>
+</html>
