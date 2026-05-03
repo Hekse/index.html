@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Opero Kontakti icon">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="22%" r="80%">
+      <stop offset="0%" stop-color="#2f80ff"/>
+      <stop offset="45%" stop-color="#0d2f6f"/>
+      <stop offset="100%" stop-color="#07111f"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
+  <path d="M150 366 V136 H208 V238 L292 136 H360 L270 244 L368 366 H296 L228 278 L208 302 V366 Z" fill="#f4f8ff"/>
+  <path d="M352 300 Q388 300 388 332 Q388 364 352 364 H332 L306 390 V364 H300 Q268 364 268 332 Q268 300 300 300 Z" fill="#6ea8ff" filter="url(#glow)"/>
+  <circle cx="312" cy="332" r="7" fill="#ffffff"/>
+  <circle cx="344" cy="332" r="7" fill="#ffffff"/>
+</svg>
