@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Opero Pakki icon">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="22%" r="80%">
+      <stop offset="0%" stop-color="#2f80ff"/>
+      <stop offset="45%" stop-color="#0d2f6f"/>
+      <stop offset="100%" stop-color="#07111f"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
+  <path d="M154 366 V136 H258 Q310 136 338 162 Q366 188 366 232 Q366 276 338 302 Q310 328 258 328 H214 V366 Z M214 276 H254 Q278 276 291 265 Q304 254 304 232 Q304 210 291 199 Q278 188 254 188 H214 Z" fill="#f4f8ff"/>
+  <rect x="286" y="324" width="116" height="72" rx="18" fill="#6ea8ff" filter="url(#glow)"/>
+  <path d="M318 324 V308 Q318 292 334 292 H354 Q370 292 370 308 V324" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+  <path d="M286 350 H402" stroke="#ffffff" stroke-width="8" opacity=".85"/>
+</svg>
