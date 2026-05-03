@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Opero Ajo icon">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="22%" r="80%">
+      <stop offset="0%" stop-color="#2f80ff"/>
+      <stop offset="45%" stop-color="#0d2f6f"/>
+      <stop offset="100%" stop-color="#07111f"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
+  <path d="M142 366 L224 140 Q230 124 246 124 H266 Q282 124 288 140 L370 366 H312 L296 316 H216 L200 366 Z M232 268 H280 L256 192 Z" fill="#f4f8ff"/>
+  <path d="M142 402 C214 350 300 440 370 382" fill="none" stroke="#6ea8ff" stroke-width="20" stroke-linecap="round" filter="url(#glow)"/>
+  <circle cx="142" cy="402" r="10" fill="#ffffff"/>
+  <circle cx="370" cy="382" r="10" fill="#ffffff"/>
+</svg>
