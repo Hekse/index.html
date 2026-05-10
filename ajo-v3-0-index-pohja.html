@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="fi">
 <head>
@@ -18,13 +19,40 @@
 .report-screen-head{margin-bottom:10px}
 @media (max-width:680px){.opero-splash-wordmark{width:min(390px,82vw)}}@media(max-width:560px){.g2,.g3{grid-template-columns:1fr}.act{min-height:112px}.bt{font-size:24px}.stats{grid-template-columns:1fr 1fr}}
 @media print{
-  .top,.nav,.np,.report-controls,#report>.card:first-child>.title{display:none!important}
-  .report-screen-head,.report-brand{display:block!important}
-  body{background:white;color:black}
-  .app{padding:0}
-  .card,.item{box-shadow:none;background:white;color:black;border:1px solid #bbb;break-inside:avoid}
-  .muted,.im{color:#333}
-  .report-brand{color:#666}
+  html,body{
+    background:white!important;
+    color:black!important;
+    min-height:0!important;
+  }
+
+  .top,.nav,.np,.report-controls,#report>.card:first-child>.title{
+    display:none!important;
+  }
+
+  .report-screen-head,.report-brand{
+    display:block!important;
+  }
+
+  .app{
+    padding:0!important;
+    background:white!important;
+  }
+
+  .card,.item{
+    box-shadow:none!important;
+    background:white!important;
+    color:black!important;
+    border:1px solid #bbb;
+    break-inside:avoid;
+  }
+
+  .muted,.im{
+    color:#333!important;
+  }
+
+  .report-brand{
+    color:#666!important;
+  }
 }
 </style>
 </head>
@@ -60,7 +88,7 @@
   <div class="card report-rows-card">
     <div class="title"><h2>Raportin rivit</h2></div>
     <div id="rr" class="grid"></div>
-    <div class="report-brand">Luotu Opero Ajolla · opero.fi</div>
+    <div class="report-brand" id="reportBrand">Luotu Opero Ajolla · opero.fi</div>
   </div>
 </section>
   <section id="settings" class="hide"><div class="card"><div class="title"><h2>Asetukset</h2></div><div class="grid"><label>Nimi raportille<input id="name" /></label><label>Auto / rekisterinumero<input id="carReg" placeholder="ABC-123" /></label><label>Oletus €/km<input id="defrate" type="number" step="0.01" inputmode="decimal" /></label><button class="btn np" type="button" onclick="saveSettings()">Tallenna</button></div></div><div class="card"><div class="title"><h2>Lähtöpaikat</h2><span class="muted">max 5</span></div><div id="locs" class="grid"></div><div class="grid" style="margin-top:12px"><label>Nimi<input id="ln" placeholder="Koti / Toimisto" /></label><label>Osoite<input id="la" placeholder="Katuosoite, kaupunki" /></label><button class="small np" type="button" onclick="addLocation()">+ Lisää lähtöpaikka</button></div></div></section>
@@ -231,6 +259,7 @@ function applyLang(){
   q('la')&&(q('la').placeholder=appLang==='en'?'Street address, city':'Katuosoite, kaupunki');
   fillMonthOptions();
   if(q('reportTitle'))q('reportTitle').textContent=appLang==='en'?'Mileage reimbursement report':'Km-korvausraportti';
+  if(q('reportBrand'))q('reportBrand').textContent=appLang==='en'?'Created with Opero Drive · opero.fi':'Luotu Opero Ajolla · opero.fi';
 }
 function runTests(){
   console.assert(typeof t==='function','translation helper exists');
@@ -245,5 +274,3 @@ loadData().then(()=>{init();setLang(appLang);runTests();hideSplash()}).catch(()=
 </script>
 </body>
 </html>
-
-
