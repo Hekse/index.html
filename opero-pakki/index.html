@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)file:///C:/Users/XXX/Downloads/pakki_v3_7.html -->
+<html lang="fi"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pakki – Opero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./Pakki – Opero_files/css2" rel="stylesheet">
+<style>
+:root{
+  --bg:#080f1e;
+  --s0:#0c1728; --s1:#111f35; --s2:#162540; --s3:#1c2d4e;
+  --b0:rgba(80,130,220,.10); --b1:rgba(80,130,220,.20); --b2:rgba(80,130,220,.32);
+  --text:#d8e6ff; --mid:#8ea6cc; --dim:#6f86aa;
+  --acc:#4080ff;
+  --orange:#f97316; --orange-d:rgba(249,115,22,.12);
+  --green:#22c55e;  --green-d:rgba(34,197,94,.10);
+  --purple:#8b5cf6; --purple-d:rgba(139,92,246,.13);
+  --red:#ef4444;    --red-d:rgba(239,68,68,.09);
+  --r:10px; --rl:14px; --rx:20px;
+  --sh:0 20px 50px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.28);
+  --shs:0 2px 6px rgba(0,0,0,.25);
+  --f:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --tr:all .13s ease;
+}
+body.light{
+  --bg:#eaeff8; --s0:#fff; --s1:#f2f6fd; --s2:#e8edf8; --s3:#dde5f5;
+  --b0:rgba(10,30,100,.08); --b1:rgba(10,30,100,.16); --b2:rgba(10,30,100,.26);
+  --text:#0c1a36; --mid:#405070; --dim:#8898b8;
+  --sh:0 8px 30px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.05);
+  --shs:0 1px 3px rgba(0,0,0,.07);
+}
+body.light select option{background:#fff;color:#0c1a36}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--f);background:var(--bg);color:var(--text);overflow:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}
+
+/* LAYOUT */
+.app{height:100vh;display:grid;grid-template-columns:248px 370px 1fr;gap:10px;padding:10px}
+.panel,.sidebar{background:var(--s0);border:1px solid var(--b0);border-radius:var(--rx);box-shadow:var(--sh);min-height:0;overflow:hidden}
+.sidebar{display:flex;flex-direction:column;overflow-y:auto}
+
+/* BRAND */
+.brand{display:flex;align-items:center;gap:10px;padding:14px 15px 12px;border-bottom:1px solid var(--b0);flex-shrink:0}
+.logo{width:33px;height:33px;flex:0 0 33px;border-radius:9px;overflow:hidden}
+.logo img{width:100%;height:100%;display:block;object-fit:contain}
+.brand-text h1{font-size:15px;font-weight:600;letter-spacing:-.02em}
+.brand-text p{font-size:10px;color:var(--dim);margin-top:1px}
+.lang-switch{margin-left:auto;display:flex;gap:4px}
+.flag-btn{border:0;background:transparent;cursor:pointer;padding:2px;opacity:.35;border-radius:3px;transition:var(--tr)}
+.flag-btn.active,.flag-btn:hover{opacity:1}
+.flag-icon{display:inline-block;width:21px;height:14px;border-radius:2px;background-size:100% 100%}
+.flag-icon.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 12'%3E%3Crect width='18' height='12' fill='%23fff'/%3E%3Crect y='5' width='18' height='2' fill='%23002f6c'/%3E%3Crect x='5' width='2' height='12' fill='%23002f6c'/%3E%3C/svg%3E")}
+.flag-icon.gb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3CclipPath id='cp'%3E%3Cpath d='M0 0h60v30H0z'/%3E%3C/clipPath%3E%3Cpath d='M0 0h60v30H0z' fill='%23012169'/%3E%3Cg clip-path='url(%23cp)'%3E%3Cpath d='M0 0l60 30M60 0L0 30' stroke='%23fff' stroke-width='6'/%3E%3Cpath d='M0 0l60 30M60 0L0 30' stroke='%23C8102E' stroke-width='3.6'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23fff' stroke-width='10'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23C8102E' stroke-width='6'/%3E%3C/g%3E%3C/svg%3E")}
+
+/* SIDEBAR BLOCKS */
+.sb-blk{padding:12px 14px;border-bottom:1px solid var(--b0);flex-shrink:0}
+.sb-ttl{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+
+/* KOOSTE */
+.money{display:grid;gap:5px}
+.moneybox{border-radius:var(--r);padding:10px 12px;transition:var(--tr)}
+.moneybox.click{cursor:pointer}
+.moneybox.click:hover{filter:brightness(1.1)}
+.moneybox .lbl{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.moneybox .val{font-size:19px;font-weight:400;font-family:var(--mono);letter-spacing:-.03em}
+.moneybox .sub{font-size:10px;color:var(--dim);margin-top:2px}
+.moneybox-n{background:var(--s1);border:1px solid var(--b0)}
+.moneybox.unb{background:var(--orange-d);border:1px solid rgba(249,115,22,.2)}
+.moneybox.unb .lbl{color:rgba(249,115,22,.5)}
+.moneybox.unb .val{color:#fb923c}
+.moneybox.bil{background:var(--green-d);border:1px solid rgba(34,197,94,.16)}
+.moneybox.bil .lbl{color:rgba(34,197,94,.5)}
+.moneybox.bil .val{color:#4ade80}
+.money-row{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.moneybox-sm .val{font-size:15px!important}
+
+/* TOIMINNOT */
+.quick-actions{display:grid;gap:5px}
+.action-btn{width:100%;min-height:40px;border:1px solid var(--b0);background:var(--s1);color:var(--text);border-radius:var(--r);padding:8px 11px;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:var(--tr)}
+.action-btn:hover{background:var(--s2);border-color:var(--b1)}
+.action-icon{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;flex:0 0 24px;font-size:13px;background:rgba(255,255,255,.05)}
+body.light .action-icon{background:rgba(0,0,0,.04)}
+.action-primary{background:rgba(64,128,255,.14);border-color:rgba(64,128,255,.28);color:#93bbff}
+.action-primary .action-icon{background:rgba(64,128,255,.15)}
+.action-primary:hover{background:rgba(64,128,255,.24);border-color:rgba(64,128,255,.44)}
+.action-danger{background:var(--red-d);border-color:rgba(239,68,68,.15);color:#fca5a5}
+.action-danger .action-icon{background:rgba(239,68,68,.08)}
+.action-danger:hover{background:rgba(239,68,68,.14)}
+
+/* TÄNÄÄN-KALENTERIKORTTI */
+.today-card{display:grid;gap:8px}
+.today-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.today-date{font-size:10px;color:var(--mid);font-weight:500}
+.today-items{display:grid;gap:6px}
+.today-item{border:1px solid var(--b0);background:var(--s1);border-radius:var(--r);padding:8px 9px;display:grid;gap:3px;cursor:pointer;transition:var(--tr)}
+.today-item:hover{background:var(--s2);border-color:var(--b1)}
+.today-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.today-title{font-size:12.5px;font-weight:600;color:var(--text);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.today-time{font-family:var(--mono);font-size:10.5px;color:#93bbff;flex:0 0 auto}
+.today-sub{font-size:11px;color:#8ea6cc;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.today-google{margin-top:2px;border:1px dashed rgba(80,130,220,.22);background:rgba(64,128,255,.055);border-radius:var(--r);padding:8px 9px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.today-google span:first-child{font-size:11.5px;color:#9db5dc;font-weight:500}
+.today-google span:last-child{font-size:10.5px;color:#6f86aa}
+.today-empty{border:1px dashed var(--b0);border-radius:var(--r);padding:10px;color:#8ea6cc;font-size:11.5px;text-align:center;background:rgba(255,255,255,.018)}
+body.light .today-item{background:#f7f9fd}
+body.light .today-google{background:rgba(64,128,255,.06)}
+
+.sb-foot{padding:10px 14px;margin-top:auto;font-size:10px;color:var(--dim);line-height:1.5;border-top:1px solid var(--b0);flex-shrink:0}
+
+/* LIST */
+.list{display:grid;grid-template-rows:auto 1fr;min-height:0}
+.list-head{padding:8px 10px;border-bottom:1px solid var(--b0);display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center}
+.search-wrap{position:relative}
+.search-ic{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none;font-size:12px}
+input,select,textarea{border:1px solid var(--b0);background:var(--s1);border-radius:var(--r);padding:7px 9px;color:var(--text);font-size:13px;outline:none;transition:var(--tr);width:100%}
+input{padding-left:30px}
+input[type=date],input[type=number],input[type=file]{padding-left:9px}
+input:focus,select:focus,textarea:focus{border-color:var(--b1);background:var(--s2)}
+select option{background:var(--s0)}
+textarea{resize:vertical;min-height:70px;padding-left:9px}
+.filter-select{width:auto;min-width:82px;font-size:12px;padding:7px 8px}
+.scroll{overflow:auto;min-height:0;padding:7px;display:grid;gap:5px;align-content:start}
+
+/* CUSTOMER CARD — JS renders .customer class */
+.customer{border:1px solid var(--b0);border-radius:var(--rl);background:var(--s1);padding:11px 12px;cursor:pointer;transition:var(--tr)}
+.customer:hover{background:var(--s2);border-color:var(--b1)}
+.customer.active,.customer.prio,.customer.open,.customer.done{border-color:var(--b1)}
+.customer.active{border-color:rgba(64,128,255,.4)!important;background:rgba(64,128,255,.07)!important}
+/* Override JS-generated inner HTML styling */
+.ctop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.cname{font-size:13.5px;font-weight:600;letter-spacing:-.015em;color:var(--text)}
+.city{font-size:11px;color:var(--dim);margin-top:1px}
+.badge{border-radius:999px;padding:2px 8px;font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0;background:var(--s2);color:var(--dim);border:1px solid var(--b0)}
+.cbot{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--b0);margin-top:1px}
+.amtlbl{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px}
+.amt{font-family:var(--mono);font-size:14px;font-weight:400;letter-spacing:-.02em}
+
+/* DETAIL */
+.detail{display:grid;grid-template-rows:auto auto auto 1fr;min-height:0}
+.d-hd{padding:14px 18px;border-bottom:1px solid var(--b0);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.d-left{display:flex;align-items:center;gap:11px}
+.d-av-wrap{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;flex:0 0 42px;background:rgba(64,128,255,.12);color:#80aaff;border:1px solid rgba(64,128,255,.22);letter-spacing:.04em;text-transform:uppercase}
+.d-av-wrap.empty{color:transparent}
+.d-av-wrap.prio{background:rgba(139,92,246,.16);border-color:rgba(139,92,246,.30);color:#d8b4fe}
+.d-info h2{font-size:17px;font-weight:600;letter-spacing:-.025em;line-height:1.2}
+.d-info p{font-size:12px;color:var(--dim);margin-top:3px}
+.d-acts{display:flex;gap:6px;align-items:center;flex-shrink:0}
+
+/* Priority button — JS uses id=priority with className */
+#priority{border-radius:999px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(139,92,246,.26);background:rgba(139,92,246,.13);color:#c4b5fd;transition:var(--tr)}
+#priority:hover{background:rgba(139,92,246,.2)}
+
+/* Totals */
+.totals{padding:10px 18px;border-bottom:1px solid var(--b0);display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.tbox{border:1px solid var(--b0);border-radius:var(--r);padding:10px 12px;background:var(--s1);cursor:pointer;transition:var(--tr)}
+.tbox:hover{border-color:var(--b1)}
+.tbox .lbl{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.tbox .val{font-size:17px;font-weight:400;font-family:var(--mono);letter-spacing:-.025em}
+.tbox.unb{background:var(--orange-d);border-color:rgba(249,115,22,.18)}
+.tbox.unb .lbl{color:rgba(249,115,22,.5)}
+.tbox.unb .val{color:#fb923c}
+.tbox.bil{background:var(--green-d);border-color:rgba(34,197,94,.15)}
+.tbox.bil .lbl{color:rgba(34,197,94,.5)}
+.tbox.bil .val{color:#4ade80}
+
+/* Meta */
+.meta{padding:9px 18px;border-bottom:1px solid var(--b0);display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.meta div strong{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:2px}
+.meta div span{font-size:12px;color:var(--mid)}
+.meta a{color:var(--mid);text-underline-offset:2px}
+.detail-scroll{overflow:auto;min-height:0;padding:10px 18px;display:grid;gap:9px;align-content:start}
+
+/* Section */
+.section{border:1px solid var(--b0);border-radius:var(--rl);background:var(--s1);overflow:hidden}
+.sectionhead{padding:11px 13px;border-bottom:1px solid var(--b0);display:flex;justify-content:space-between;align-items:center}
+.sectionhead h3{font-size:10px;font-weight:600;color:var(--mid);letter-spacing:.08em;text-transform:uppercase}
+.section-actions{display:flex;gap:5px}
+.body{padding:9px;display:grid;gap:7px}
+
+/* Worksite — JS renders .work class */
+.work{border:1px solid var(--b0);border-radius:var(--r);background:var(--s0);overflow:hidden}
+.work-header{padding:11px 13px;border-bottom:1px solid var(--b0);display:flex;justify-content:space-between;align-items:flex-start;gap:9px}
+.work-header > div:first-child{flex:1;min-width:0}
+.work-title{font-size:13.5px;font-weight:600;letter-spacing:-.015em;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.work-title span:first-child{color:var(--text)}
+.work-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.work-total{font-size:15px;font-weight:400;font-family:var(--mono);color:#fb923c;white-space:nowrap}
+
+
+/* Worksite rendered header polish */
+.wtop{
+  padding:11px 13px;
+  border-bottom:1px solid var(--b0);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.wtop > div:first-child{
+  min-width:0;
+}
+.wname{
+  font-size:13.5px;
+  font-weight:600;
+  letter-spacing:-.015em;
+  color:var(--text);
+  margin:0;
+}
+.wsub{
+  font-size:11px;
+  color:#6f86aa;
+  margin-top:3px;
+}
+.work .wtop .badge{
+  background:rgba(64,128,255,.10);
+  border-color:rgba(64,128,255,.22);
+  color:#93bbff;
+  margin-top:0;
+}
+
+/* Status pills — JS sets className on spans */
+.status-pill,.pill-suunnitteilla,.pill-käynnissä,.pill-valmis,
+[class*="status"]{border-radius:999px;padding:2px 7px;font-size:10px;font-weight:600}
+.pill,.pill-suunnitteilla{display:inline-block!important;background:var(--s2);color:var(--dim);border:1px solid var(--b0)}
+
+/* Tabs — JS renders .tabs class with buttons */
+.tabs{padding:6px 8px;border-bottom:1px solid var(--b0);display:flex;gap:3px;background:var(--s1)}
+.tabs button{border:1px solid transparent;background:transparent;border-radius:6px;padding:4px 9px;color:var(--mid);font-size:12px;font-weight:500;cursor:pointer;transition:var(--tr);opacity:.92}
+.tabs button:hover{color:var(--mid);background:var(--s2)}
+.tabs button.active{background:var(--s0);border-color:var(--b0);color:var(--text);box-shadow:var(--shs)}
+.work-content{padding:9px}
+.work-footer{padding:7px 13px;border-top:1px solid var(--b0);display:flex;gap:5px;flex-wrap:wrap;background:var(--s1)}
+
+/* Buttons */
+.btn{border-radius:var(--r);padding:6px 11px;font-weight:500;font-size:12.5px;cursor:pointer;border:1px solid var(--b1);background:rgba(255,255,255,.035);color:#8ea6cc;transition:var(--tr);white-space:nowrap}
+.btn:hover{background:var(--s2);border-color:var(--b1);color:var(--text)}
+.btn.primary{border-color:rgba(64,128,255,.28);background:rgba(64,128,255,.12);color:#93bbff}
+.btn.primary:hover{background:rgba(64,128,255,.2);border-color:rgba(64,128,255,.44)}
+.btn.danger{background:var(--red-d);border-color:rgba(239,68,68,.15);color:#fca5a5}
+.btn.danger:hover{background:rgba(239,68,68,.14)}
+.btn.green{background:var(--green-d);border-color:rgba(34,197,94,.18);color:#86efac}
+.btn.green:hover{background:rgba(34,197,94,.15)}
+
+/* Rows */
+.rows{display:grid;gap:5px}
+.row{border:1px solid var(--b0);border-radius:var(--r);background:var(--s1);padding:8px 11px;display:flex;justify-content:space-between;gap:11px;transition:var(--tr)}
+.row:hover{border-color:var(--b1)}
+.row.open{border-left:2px solid var(--orange)}
+.row.invoiced{border-left:2px solid var(--green)}
+.row.gray{border-left:2px solid var(--dim);opacity:.65}
+.row > div:first-child{flex:1;min-width:0}
+.row strong{font-size:13px;font-weight:500;display:block}
+.row small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+.row > div:last-child{text-align:right;flex-shrink:0}
+.row > div:last-child > strong{font-family:var(--mono);font-weight:400;font-size:13px}
+.actions{display:flex;gap:4px;margin-top:5px;justify-content:flex-end;flex-wrap:wrap}
+small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+
+/* Empty */
+.empty{color:var(--dim);text-align:center;padding:18px;border:1px dashed var(--b0);border-radius:var(--r);font-size:12px}
+
+/* Legacy */
+.card{border:1px solid var(--b0);border-radius:var(--rl);background:var(--s1);padding:12px}
+.card h3{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.subcard{border:1px solid var(--b0);border-radius:var(--r);background:var(--s1);padding:9px}
+.prio{border-left:2px solid var(--purple)!important}
+
+/* Modal */
+.modalbg{position:fixed;inset:0;background:rgba(2,5,16,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+.modalbg.show{display:flex}
+.modal{width:min(800px,100%);max-height:90vh;overflow:auto;background:var(--s0);border:1px solid var(--b1);border-radius:var(--rx);box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.mhead{padding:14px 18px;border-bottom:1px solid var(--b0);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--s0);z-index:1}
+.mhead h3{font-size:15px;font-weight:600;letter-spacing:-.015em}
+.mbody{padding:14px 18px;display:grid;gap:11px}
+.mactions{padding:12px 18px 16px;display:flex;justify-content:flex-end;gap:7px;border-top:1px solid var(--b0)}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.full{grid-column:1/-1}
+.label{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;display:block}
+.info{border:1px solid rgba(64,128,255,.16);background:rgba(64,128,255,.06);border-radius:var(--r);padding:9px 11px;color:var(--mid);font-size:12px;line-height:1.6}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(14px);opacity:0;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:9px 15px;z-index:50;font-size:13px;font-weight:500;box-shadow:var(--sh);transition:.18s ease}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Splash */
+.opero-splash{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#030c1f 0%,#020810 100%);animation:splashFade 3.4s ease forwards;pointer-events:none}
+.opero-splash.hide{opacity:0;visibility:hidden}
+.splash-shell{display:flex;flex-direction:column;align-items:center;gap:15px;opacity:0;transform:translateY(7px);animation:splashRise 1s ease .2s forwards}
+.opero-splash-wordmark{display:block;width:min(440px,68vw);height:auto;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}
+.splash-line{width:140px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,#4d8fff,transparent)}
+.splash-product{font-size:19px;font-weight:300;letter-spacing:.32em;color:rgba(255,255,255,.58)}
+.splash-line-bottom{margin-top:80px}
+.splash-loading{font-size:11px;color:rgba(140,170,255,.38);letter-spacing:.07em}
+@keyframes splashRise{to{opacity:1;transform:translateY(0)}}
+@keyframes splashFade{0%,72%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
+
+
+/* ── Luettavuuskorjaus: himmeät tekstit kirkkaammiksi ───────────── */
+/* Käytettävä teksti ei saa näyttää disabled-tilalta. */
+body:not(.light){
+  --mid:#8ea6cc;
+  --dim:#6f86aa;
+}
+
+/* Pienet otsikot, lomakelabelit ja apu-/selitetekstit */
+.sb-ttl,
+.card h3,
+.label,
+.moneybox .lbl,
+.tbox .lbl,
+.meta div strong,
+.city,
+.d-info p,
+.work-sub,
+.row small,
+small,
+.empty,
+.sb-foot,
+.brand-text p,
+.search-ic{
+  color:#7890b5 !important;
+}
+
+/* Lomakkeiden sisällä tekstien pitää erottua selvästi */
+.mbody .label,
+.mbody small,
+.mbody .info,
+.info,
+input::placeholder,
+textarea::placeholder{
+  color:#849bc0 !important;
+}
+
+/* Ei-aktiiviset välilehdet ja tavalliset napit luettavammiksi */
+.tabs button:not(.active),
+.btn:not(.primary):not(.danger):not(.green),
+.action-btn:not(.action-primary):not(.action-danger){
+  color:#9aafd0 !important;
+}
+
+.tabs button:not(.active){
+  opacity:1;
+}
+
+.btn:not(.primary):not(.danger):not(.green){
+  border-color:rgba(125,170,255,.24) !important;
+  background:rgba(255,255,255,.045) !important;
+}
+
+.btn:not(.primary):not(.danger):not(.green):hover,
+.tabs button:not(.active):hover{
+  color:#d8e6ff !important;
+  border-color:rgba(125,170,255,.38) !important;
+  background:rgba(255,255,255,.075) !important;
+}
+
+/* Kenttien syötetty teksti ja valinnat */
+input,
+select,
+textarea{
+  color:#d8e6ff !important;
+  border-color:rgba(125,170,255,.20);
+}
+
+/* Badge/pill-tekstit eivät saa kadota tummaan taustaan */
+.badge,
+.pill,
+.pill-suunnitteilla,
+.pill-käynnissä,
+.pill-valmis,
+[class*="status"]{
+  color:#9fb6d8 !important;
+}
+
+/* Light-teemassa pidetään edelleen hillitty, mutta luettava kontrasti */
+body.light .sb-ttl,
+body.light .card h3,
+body.light .label,
+body.light .moneybox .lbl,
+body.light .tbox .lbl,
+body.light .meta div strong,
+body.light .city,
+body.light .d-info p,
+body.light .work-sub,
+body.light .row small,
+body.light small,
+body.light .empty,
+body.light .sb-foot,
+body.light .brand-text p,
+body.light .search-ic,
+body.light .mbody .info,
+body.light .info{
+  color:#52617a !important;
+}
+body.light .tabs button:not(.active),
+body.light .btn:not(.primary):not(.danger):not(.green),
+body.light .action-btn:not(.action-primary):not(.action-danger){
+  color:#405070 !important;
+}
+body.light input,
+body.light select,
+body.light textarea{
+  color:#0c1a36 !important;
+}
+
+@media(max-width:960px){
+  body{height:auto;overflow:auto}
+  .app{height:auto;grid-template-columns:1fr}
+  .panel,.sidebar{overflow:visible}
+  .scroll,.detail-scroll{overflow:visible;min-height:unset}
+  .totals,.meta{grid-template-columns:1fr}
+}
+
+
+/* Luettavuuskorjaus: ei-aktiiviset napit ja himmeät tekstit kirkkaammiksi */
+.wsub,
+.work-sub,
+.city,
+.meta div span,
+.row small,
+small{
+  color:#6f86aa;
+}
+
+.tabs button:not(.active){
+  color:#7f96bb;
+  opacity:1;
+}
+
+.tabs button:not(.active):hover{
+  color:#b7c8e6;
+  background:rgba(255,255,255,.045);
+}
+
+.work-footer .btn,
+.actions .btn,
+.section-actions .btn{
+  color:#8ea6cc;
+}
+
+.btn:not(.primary):not(.danger):not(.green){
+  color:#8ea6cc;
+  border-color:rgba(80,130,220,.20);
+}
+
+.btn:not(.primary):not(.danger):not(.green):hover{
+  color:#d8e6ff;
+  border-color:rgba(80,130,220,.38);
+  background:rgba(255,255,255,.065);
+}
+
+.badge,
+.pill,
+.pill-suunnitteilla{
+  color:#8ea6cc;
+  border-color:rgba(80,130,220,.18);
+  background:rgba(255,255,255,.035);
+}
+
+body.light .tabs button:not(.active),
+body.light .work-footer .btn,
+body.light .actions .btn,
+body.light .section-actions .btn,
+body.light .btn:not(.primary):not(.danger):not(.green){
+  color:#526684;
+}
+
+</style>
+</head>
+<body>
+
+<div class="opero-splash hide" id="splash">
+  <div class="splash-shell">
+    <img class="opero-splash-wordmark" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTgwIDMyMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4MT0iNTIiIHkxPSI0MCIgeDI9IjI2OCIgeTI9IjI4MCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzAwQzhGRiIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMEE4NEZGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDA0NkM4Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgxPSI5OCIgeTE9Ijc2IiB4Mj0iMjIyIiB5Mj0iMjM4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNzhFOEZGIi8+PHN0b3Agb2Zmc2V0PSIuMzUiIHN0b3AtY29sb3I9IiMwQTg0RkYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDM3QTgiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0idCIgeDE9IjAiIHkxPSI3NCIgeDI9IjAiIHkyPSIyNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiLz48c3RvcCBvZmZzZXQ9Ii41MiIgc3RvcC1jb2xvcj0iI2VlZjNmYSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2I5YzRkMyIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0iZyIgeD0iLTMwJSIgeT0iLTMwJSIgd2lkdGg9IjE2MCUiIGhlaWdodD0iMTYwJSI+PGZlR2F1c3NpYW5CbHVyIGluPSJTb3VyY2VHcmFwaGljIiBzdGREZXZpYXRpb249IjYiIHJlc3VsdD0iYiIvPjxmZUNvbG9yTWF0cml4IGluPSJiIiB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAuMDQgMCAwIDAgMCAuNTIgMCAwIDAgMCAxIDAgMCAwIC41IDAiIHJlc3VsdD0iZyIvPjxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iZyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT48L2ZpbHRlcj48ZmlsdGVyIGlkPSJzIiB4PSItMTAlIiB5PSItMjAlIiB3aWR0aD0iMTIwJSIgaGVpZ2h0PSIxNTAlIj48ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iOCIgc3RkRGV2aWF0aW9uPSI4IiBmbG9vZC1jb2xvcj0iIzAwMCIgZmxvb2Qtb3BhY2l0eT0iLjM0Ii8+PC9maWx0ZXI+PC9kZWZzPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI2IDI2KSI+PGNpcmNsZSBjeD0iMTM0IiBjeT0iMTM0IiByPSIxMDQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA1MjY1RiIgc3Ryb2tlLXdpZHRoPSIzNCIgb3BhY2l0eT0iLjU1Ii8+PGNpcmNsZSBjeD0iMTM0IiBjeT0iMTM0IiByPSIxMDQiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNhKSIgc3Ryb2tlLXdpZHRoPSIzMSIgZmlsdGVyPSJ1cmwoI2cpIi8+PGNpcmNsZSBjeD0iMTM0IiBjeT0iMTM0IiByPSI2OCIgZmlsbD0iIzA3MTIyNiIvPjxwYXRoIGQ9Ik03OCAxMzRjMC0zMiAyNC01NiA1Ni01NiAyMSAwIDQwIDEwIDUwIDI2IiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjYikiIHN0cm9rZS13aWR0aD0iMTciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xODQgMTY0Yy0xMCAxNi0yOSAyNi01MCAyNi0zMiAwLTU2LTI0LTU2LTU2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwQTg0RkYiIHN0cm9rZS13aWR0aD0iMTciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjkiLz48cGF0aCBkPSJNNDUgNzhjMjEtMzYgNTQtNTMgODktNTMgMjQgMCA0NiA4IDY1IDIyIiBmaWxsPSJub25lIiBzdHJva2U9IiM5QkVGRkYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuNTUiLz48L2c+PHRleHQgeD0iMzEwIiB5PSIyMjAiIGZvbnQtZmFtaWx5PSJJbnRlcixIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNjQiIGZvbnQtd2VpZ2h0PSI4MDAiIGxldHRlci1zcGFjaW5nPSIzMCIgZmlsbD0idXJsKCN0KSIgZmlsdGVyPSJ1cmwoI3MpIj5QRVJPPC90ZXh0Pjwvc3ZnPg==" alt="Opero">
+    <div class="splash-line"></div>
+    <div class="splash-product">PAKKI</div>
+    <div class="splash-line splash-line-bottom"></div>
+    <div class="splash-loading">Ladataan…</div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSI4OCIgeTE9IjcyIiB4Mj0iNDI0IiB5Mj0iNDQwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMDBDOEZGIi8+PHN0b3Agb2Zmc2V0PSIuNDUiIHN0b3AtY29sb3I9IiMwQTg0RkYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDQ2QzgiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDE9IjE1MCIgeTE9IjEyMCIgeDI9IjM3MCIgeTI9IjM5MCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzc4RThGRiIvPjxzdG9wIG9mZnNldD0iLjM1IiBzdG9wLWNvbG9yPSIjMEE4NEZGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDAzN0E4Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJnIiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj48ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUdyYXBoaWMiIHN0ZERldmlhdGlvbj0iMTAiIHJlc3VsdD0iYiIvPjxmZUNvbG9yTWF0cml4IGluPSJiIiB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAuMDQgMCAwIDAgMCAuNTIgMCAwIDAgMCAxIDAgMCAwIC41NSAwIiByZXN1bHQ9ImciLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49ImciLz48ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz48L2ZlTWVyZ2U+PC9maWx0ZXI+PC9kZWZzPjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTE4IiBmaWxsPSIjMDcxMjI2Ii8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxNjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA1MjY1RiIgc3Ryb2tlLXdpZHRoPSI1OCIgb3BhY2l0eT0iLjU1Ii8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxNjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNhKSIgc3Ryb2tlLXdpZHRoPSI1MiIgZmlsdGVyPSJ1cmwoI2cpIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxMDgiIGZpbGw9IiMwNzEyMjYiLz48cGF0aCBkPSJNMTY0IDI1NmMwLTUzIDM5LTkyIDkyLTkyIDM1IDAgNjUgMTcgODIgNDMiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNiKSIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTMzOCAzMDVjLTE3IDI2LTQ3IDQzLTgyIDQzLTUzIDAtOTItMzktOTItOTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBBODRGRiIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuODgiLz48cGF0aCBkPSJNMTEyIDE2NWMzNC01OCA4OC04NyAxNDQtODcgMzggMCA3NSAxMiAxMDUgMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzlCRUZGRiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuNTUiLz48L3N2Zz4=" alt="Opero"></div>
+      <div class="brand-text"><h1>Pakki</h1><p>by Opero</p></div>
+      <div class="lang-switch">
+        <button class="flag-btn active" id="langFI" type="button"><span class="flag-icon fi"></span></button>
+        <button class="flag-btn" id="langEN" type="button"><span class="flag-icon gb"></span></button>
+      </div>
+    </div>
+
+    <div class="sb-blk">
+      <div class="sb-ttl">Kooste</div>
+      <div class="money">
+        <div class="moneybox click unb" id="unbBox">
+          <div class="lbl" data-i18n="unbilled">Laskuttamatta</div>
+          <div class="val" id="sumUnb">0 €</div>
+        </div>
+        <div class="moneybox click bil" id="bilBox">
+          <div class="lbl" data-i18n="billed">Laskutettu</div>
+          <div class="val" id="sumBil">10&nbsp;749 €</div>
+        </div>
+        <div class="money-row">
+          <div class="moneybox moneybox-n moneybox-sm">
+            <div class="lbl" id="vatTitle" data-i18n="vatEstimate">ALV arvio</div>
+            <div class="val" id="sumVat">🔴 18 €</div>
+            <div class="sub" id="vatSub" style="display:none"></div>
+          </div>
+          <div class="moneybox moneybox-n moneybox-sm">
+            <div class="lbl" data-i18n="customersCount">Asiakkaita</div>
+            <div class="val" id="sumCustomers">9</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-blk">
+      <div class="sb-ttl" data-i18n="actions">Toiminnot</div>
+      <div class="quick-actions">
+        <button class="action-btn action-primary" id="addCustomer" type="button">
+          <span class="action-icon">＋</span><span data-i18n="addCustomer">Asiakas</span>
+        </button>
+        <button class="action-btn" id="addWorksite" type="button">
+          <span class="action-icon">🏗</span><span data-i18n="addWorksite">Työmaa</span>
+        </button>
+        <button class="action-btn" id="settingsMain" type="button">
+          <span class="action-icon">⚙</span><span data-i18n="settings">Asetukset</span>
+        </button>
+        <button class="action-btn action-danger" id="reset" type="button">
+          <span class="action-icon">✕</span><span data-i18n="clear">Tyhjennä</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="sb-blk today-card">
+      <div class="today-head">
+        <div class="sb-ttl" data-i18n="todayTitle">Tänään</div>
+        <div class="today-date" id="todayDate">–</div>
+      </div>
+      <div class="today-items" id="todayItems"></div>
+      <div class="today-google">
+        <span data-i18n="googleCalendar">Google-kalenteri</span>
+        <span data-i18n="connectLater">Yhdistä myöhemmin</span>
+      </div>
+    </div>
+
+
+    <div class="sb-foot" data-i18n="localStorageNote">Tiedot tallennetaan paikallisesti tähän laitteeseen (IndexedDB).</div>
+  </aside>
+
+  <section class="panel list">
+    <div class="list-head">
+      <div class="search-wrap">
+        <span class="search-ic">🔍</span>
+        <input id="search" data-i18n-placeholder="searchPlaceholder" placeholder="Hae asiakasta tai kaupunkia">
+      </div>
+      <select id="filter" class="filter-select">
+        <option value="all" data-i18n="all">Kaikki</option>
+        <option value="priority">Priority</option>
+        <option value="unbilled" data-i18n="unbilled">Laskuttamatta</option>
+      </select>
+    </div>
+    <div class="scroll" id="customers"><div class="customer done "><div class="ctop"><div><h3 class="cname">Pasi Valta</h3><p class="city">Kuopio</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">125 €</div></div></div></div><div class="customer prio "><div class="ctop"><div><h3 class="cname">Pohjolan Huolto</h3><p class="city">Kuopio</p></div><span class="badge">🟣 Priority</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">353 €</div></div></div></div><div class="customer done active"><div class="ctop"><div><h3 class="cname">Rakennus Kallio Oy</h3><p class="city">Iisalmi</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">283 €</div></div></div></div><div class="customer done "><div class="ctop"><div><h3 class="cname">Savon Remontti</h3><p class="city">Oulu</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">418 €</div></div></div></div><div class="customer done "><div class="ctop"><div><h3 class="cname">Kiinteistö Oy Keskusta</h3><p class="city">Joensuu</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">443 €</div></div></div></div><div class="customer done "><div class="ctop"><div><h3 class="cname">Pohjolan Huolto</h3><p class="city">Kuopio</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">523 €</div></div></div></div><div class="customer done "><div class="ctop"><div><h3 class="cname">Rakennus Kallio Oy</h3><p class="city">Iisalmi</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">658 €</div></div></div></div><div class="customer done "><div class="ctop"><div><h3 class="cname">Savon Remontti</h3><p class="city">Oulu</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">683 €</div></div></div></div><div class="customer done "><div class="ctop"><div><h3 class="cname">Kiinteistö Oy Keskusta</h3><p class="city">Joensuu</p></div><span class="badge">Asiakas</span></div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">Laskuttamatta</div><div class="amt">0 €</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">Laskutettu</div><div class="amt">7&nbsp;263 €</div></div></div></div></div>
+  </section>
+
+  <section class="panel detail">
+    <div class="d-hd">
+      <div class="d-left">
+        <div class="d-av-wrap" id="dAvatar"></div>
+        <div class="d-info">
+          <h2 id="dName" data-default-key="selectCustomer">Valitse asiakas</h2>
+          <p id="dCity" data-default-key="customerCardOpens">Oikealle aukeaa asiakaskortti</p>
+        </div>
+      </div>
+      <div class="d-acts">
+        <button id="priority" style="display: inline-flex;">Priority</button>
+      </div>
+    </div>
+    <div class="totals">
+      <div class="tbox unb" id="dUnbBox"><div class="lbl" data-i18n="unbilled">Laskuttamatta</div><div class="val" id="dUnb">0 €</div></div>
+      <div class="tbox bil" id="dBilBox"><div class="lbl" data-i18n="billed">Laskutettu</div><div class="val" id="dBil">283 €</div></div>
+      <div class="tbox"><div class="lbl" data-i18n="total">Yhteensä</div><div class="val" id="dTotal">283 €</div></div>
+    </div>
+    <div class="meta">
+      <div><strong data-i18n="phone">Puhelin</strong><span id="dPhone">040 1000001</span></div>
+      <div><strong data-i18n="email">Sähköposti</strong><span id="dEmail">asiakas2@example.fi</span></div>
+      <div><strong data-i18n="address">Osoite</strong><span id="dAddress"><a href="https://www.google.com/maps/search/?api=1&amp;query=Esimerkkitie%202" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(125,170,255,.45);text-underline-offset:3px">Esimerkkitie 2</a></span></div>
+    </div>
+    <div class="detail-scroll">
+      <div class="section">
+        <div class="sectionhead">
+          <h3 data-i18n="worksites">Työmaat</h3>
+          <div class="section-actions">
+            <button class="btn" id="settings" data-i18n="settings">Asetukset</button>
+            <button class="btn primary" id="addWorksite2">+ Työmaa</button>
+          </div>
+        </div>
+        <div class="body" id="worksites"><div class="work"><div class="wtop"><div><h4 class="wname">Kylpyhuone 2</h4><p class="wsub"><a href="https://www.google.com/maps/search/?api=1&amp;query=Testikatu%202" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(125,170,255,.45);text-underline-offset:3px">Testikatu 2</a></p></div><span class="badge">Käynnissä</span></div><div class="tabs"><button data-tab="notes" class="active">Merkinnät</button><button data-tab="mat">Materiaalit</button><button data-tab="hours" class="">Tunnit</button><button data-tab="costs">Kulut</button><button data-tab="drive">Ajot</button></div><div class="subcard" data-content=""><div class="empty">Ei merkintöjä.</div></div><div class="actions"><button class="btn primary" data-act="entry">+ Rivi</button><button class="btn" data-act="invoice">Lasku</button><button class="btn" data-act="report">Raportti</button><button class="btn" data-act="edit">Muokkaa</button></div></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modalbg" id="modalBg">
+  <div class="modal">
+    <div class="mhead"><h3 id="modalTitle">Uusi työmaa</h3><button class="btn" id="closeModal">Sulje</button></div>
+    <div class="mbody" id="modalBody"><div class="form"><div class="full"><label class="label">Työmaan nimi *</label><input id="wName" value=""></div><div class="full"><label class="label">Osoite</label><input id="wAddress" value=""></div><div><label class="label">Status</label><select id="wStatus"><option value="Suunnitteilla">Suunnitteilla</option><option value="Käynnissä" selected="">Käynnissä</option><option value="Valmis">Valmis</option></select></div><div><label class="label">Seuraava työvaihe</label><input id="wNext" value=""></div></div></div>
+    <div class="mactions" id="modalActions"><button class="btn">Peruuta</button><button class="btn primary">Tallenna</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DB='raksapakki_v13',STORE='state',KEY='app';
+function applyTheme(){document.body.classList.toggle('light',state?.settings?.theme==='light')}
+const VAT_RATES=[{value:25.5,label:'25,5 %'},{value:13.5,label:'13,5 %'},{value:10,label:'10 %'},{value:0,label:'0 %'}];
+const defaultData={customers:[],invoices:[],invoiceSeries:{prefix:'RP',lastNumber:0},pricing:{hourlyRate:65,dailyAllowance:53,kmRate:.59},settings:{lang:'fi',defaultSalesVat:25.5,defaultPurchaseVat:25.5,vatRates:structuredClone(VAT_RATES),seller:{name:'Pakki Demo Oy',address:'Yrityskatu 1, 70100 Kuopio',businessId:'1234567-8',vatId:'FI12345678',email:'laskutus@example.fi',iban:'FI00 0000 0000 0000 00',bic:'NDEAFIHH'}}};
+let state=structuredClone(defaultData),selected=null,searchTerm='',filterMode='all',loaded=false,timer=null;
+const I18N={
+fi:{
+  unbilled:'Laskuttamatta',billed:'Laskutettu',vatEstimate:'ALV arvio',customersCount:'Asiakkaita',actions:'Toiminnot',todayTitle:'Tänään',googleCalendar:'Google-kalenteri',connectLater:'Yhdistä myöhemmin',noTodayItems:'Ei avoimia työmaita tänään.',nextLabel:'Seuraavaksi',statusLabel:'Status',addCustomer:'Asiakas',addWorksite:'Työmaa',settings:'Asetukset',clear:'Tyhjennä',customerList:'Asiakaslista',customerListSub:'Asiakas, kaupunki ja maksutilanne yhdellä silmäyksellä.',searchPlaceholder:'Hae asiakasta tai kaupunkia',all:'Kaikki',selectCustomer:'Valitse asiakas',customerCardOpens:'Oikealle aukeaa asiakaskortti',total:'Yhteensä',localStorageNote:'Tiedot tallennetaan paikallisesti tähän laitteeseen (IndexedDB).',phone:'Puhelin',email:'Sähköposti',address:'Osoite',worksites:'Työmaat',customer:'Asiakas',priority:'Priority',noCustomers:'Ei asiakkaita.',noWorksites:'Ei työmaita.',chooseCustomer:'Valitse asiakas listasta.',invoice:'Lasku',report:'Raportti',edit:'Muokkaa',row:'+ Rivi',materials:'Materiaalit',notes:'Merkinnät',hours:'Tunnit',costs:'Kulut',drives:'Ajot',
+  cancel:'Peruuta',save:'Tallenna',close:'Sulje',back:'Takaisin',delete:'Poista',open:'Avoin',invoiced:'Laskutettu',notBillable:'Ei laskutettava',selectRows:'Valitse laskulle tulevat rivit. Lasku tallentuu omalla juoksevalla laskunumerolla.',createInvoicePdf:'Luo lasku PDF',netTotal:'Netto yhteensä',noUnbilledRows:'Ei laskuttamattomia rivejä.',noInvoicedRows:'Ei laskutettuja rivejä.',
+  newCustomer:'Uusi asiakas',nameReq:'Nimi *',nameRequired:'Nimi vaaditaan',city:'Kaupunki',newWorksite:'Uusi työmaa',editWorksite:'Muokkaa työmaata',worksiteNameReq:'Työmaan nimi *',status:'Status',planned:'Suunnitteilla',inProgress:'Käynnissä',done:'Valmis',nextStep:'Seuraava työvaihe',customerReportTexts:'Asiakkaan raportin tekstit',workSummary:'Työn yhteenveto',completedPhases:'Tehdyt työvaiheet',observations:'Huomiot työmaalta',recommendations:'Suositukset ja jatkotoimet',maintenanceInstructions:'Huolto-ohjeet asiakkaalle',reportTextHelp:'Nämä tekstit näkyvät vain asiakkaan työmaaraportissa. Jätä tyhjäksi, jos osiota ei tarvita.',workPhases:'Työvaiheet',
+  newEntry:'Uusi rivi',type:'Tyyppi',date:'Suorituspäivä',title:'Otsikko',extraInfo:'Lisätieto',image:'Kuva',imageHelp:'Kuva tallennetaan paikallisesti rivin mukana.',quantity:'Määrä',purchaseReceipt:'Osto / kuitti',purchaseGross:'Ostosumma kuitilla € (sis. ALV)',purchaseGrossHelp:'Syötä kuitin loppusumma. Ohjelma erottaa ALV:n itse.',purchaseVatRate:'Oston ALV-kanta',deductPurchaseVat:'Osto-ALV vähennettävä?',billCustomer:'Laskutetaanko asiakkaalta?',yes:'Kyllä',no:'Ei',salesPrice:'Myyntihinta asiakkaalle € (ALV 0%)',salesVatSettings:'Myynnin ALV-asetukset',taxTreatment:'Verokohtelu',normalTax:'Normaali verollinen',vatZero:'ALV 0 %',reverseCharge:'Käännetty verovelvollisuus',vatExempt:'ALViton',salesVat:'Myynnin ALV',materialHelp:'Materiaali: syötä kuitin loppusumma ja myyntihinta asiakkaalle. Ostosumma vaikuttaa vain sisäiseen ALV- ja katearvioon.',costHelp:'Kulu: syötä kuitin loppusumma. Jos kulu laskutetaan asiakkaalta, lisää myös myyntihinta asiakkaalle.',hourHelp:'Tunti: määrä × tuntihinta muodostaa myyntihinnan. Ostokenttiä ei tarvita.',dayHelp:'Päiväraha: määrä × päiväraha muodostaa myyntihinnan.',kmHelp:'Ajot/kilometrit: oletuksena ALV 0 %. Summa menee laskulle ilman myynnin ALV:tä.',noteHelp:'Merkintä ja kuva ovat dokumentointia varten. Niitä ei laskuteta.',unitPrice:'Yksikköhinta',manualOverride:'Yliajettu käsin.',
+  settingsIntro:'Valitse mitä haluat muuttaa. Asetukset on jaettu pieniin osiin, jotta näkymä pysyy selkeänä.',companyInfo:'Yrityksen tiedot',companyInfoSub:'Nimi, Y-tunnus, ALV-tunniste, osoite, sähköposti ja maksutiedot laskulle.',invoicePrices:'Laskutus ja hinnat',invoicePricesSub:'Tuntihinta, päiväraha, km-korvaus, laskunumero ja ALV-asetukset.',appearanceLegend:'Ulkoasu ja merkitykset',appearanceLegendSub:'Tumma / vaalea tila, värikoodit ja ALV-arvion selitys.',dataManagement:'Tietojen hallinta',dataManagementSub:'Demo-data ja tietojen tyhjennys.',companyInfoHelp:'Nämä tiedot tulostuvat asiakaslaskulle.',companyName:'Yrityksen nimi',businessId:'Y-tunnus',vatId:'ALV-tunniste',iban:'IBAN',bic:'BIC',savedCompany:'Yrityksen tiedot tallennettu',hourlyRate:'Tuntihinta €/h',dailyAllowance:'Päiväraha €/pv',kmRate:'Km-korvaus €/km',invoicePrefix:'Laskun prefix',vatSettings:'ALV-asetukset',defaultSalesVat:'Oletus myynnin ALV',defaultPurchaseVat:'Oletus oston ALV',savedInvoiceSettings:'Laskutusasetukset tallennettu',chooseVat:'Valitse vähintään yksi ALV-kanta',theme:'Teema',darkTheme:'Tumma tila',lightTheme:'Vaalea tila',colorLegend:'Värikoodien selitys',vatFormula:'ALV-arvion laskentakaava',savedAppearance:'Ulkoasu tallennettu',demoData:'Demo-data',demoDataSub:'Luo testiasiakkaita ja testirivejä.',clearAll:'Tyhjennä kaikki tiedot',clearAllSub:'Poistaa asiakkaat, työmaat, rivit ja laskut tältä laitteelta.',loadDemo:'Lataa demo-data',demoConfirm:'Ladataanko demo-data? Nykyiset testitiedot korvataan.',clearConfirm:'Poistetaanko kaikki tiedot pysyvästi?',
+  reportChoice:'Raportti',reportChoiceHelp:'Valitse raportin tarkoitus. Asiakkaalle menevä raportti ei sisällä ostohintoja, osto-ALV:tä tai katetta.',forCustomer:'Asiakkaalle',internal:'Sisäinen',both:'Molemmat',customerReport:'Työmaaraportti',internalReport:'Sisäinen työmaaraportti',printPdf:'Tulosta PDF',generated:'Generoitu',worksite:'Työmaa',amount:'Summa',state:'Tila',noEntries:'Ei merkintöjä.',totalHours:'Tunnit',totalKm:'Kilometrit',totalNet:'Yhteensä netto',seller:'Myyjä',buyer:'Asiakas',invoiceDate:'Laskun päivä',dueDate:'Eräpäivä',paymentTerm:'Maksuehto',paymentInfo:'Maksutiedot',description:'Selite',supplyDate:'Suorituspäivä',vat:'ALV',payableTotal:'Maksettava yhteensä',vatTotal:'ALV yhteensä',
+},
+en:{
+  unbilled:'Unbilled',billed:'Invoiced',vatEstimate:'VAT estimate',customersCount:'Customers',actions:'Actions',todayTitle:'Today',googleCalendar:'Google Calendar',connectLater:'Connect later',noTodayItems:'No open worksites today.',nextLabel:'Next',statusLabel:'Status',addCustomer:'Customer',addWorksite:'Worksite',settings:'Settings',clear:'Clear',customerList:'Customer list',customerListSub:'Customer, city and billing status at a glance.',searchPlaceholder:'Search customer or city',all:'All',selectCustomer:'Select customer',customerCardOpens:'The customer card opens on the right',total:'Total',localStorageNote:'Data is stored locally on this device (IndexedDB).',phone:'Phone',email:'Email',address:'Address',worksites:'Worksites',customer:'Customer',priority:'Priority',noCustomers:'No customers.',noWorksites:'No worksites.',chooseCustomer:'Select a customer from the list.',invoice:'Invoice',report:'Report',edit:'Edit',row:'+ Row',materials:'Materials',notes:'Notes',hours:'Hours',costs:'Costs',drives:'Drives',
+  cancel:'Cancel',save:'Save',close:'Close',back:'Back',delete:'Delete',open:'Open',invoiced:'Invoiced',notBillable:'Not billable',selectRows:'Select the rows to include on the invoice. The invoice is saved with a running invoice number.',createInvoicePdf:'Create invoice PDF',netTotal:'Net total',noUnbilledRows:'No unbilled rows.',noInvoicedRows:'No invoiced rows.',
+  newCustomer:'New customer',nameReq:'Name *',nameRequired:'Name is required',city:'City',newWorksite:'New worksite',editWorksite:'Edit worksite',worksiteNameReq:'Worksite name *',status:'Status',planned:'Planned',inProgress:'In progress',done:'Done',nextStep:'Next step',customerReportTexts:'Customer report texts',workSummary:'Work summary',completedPhases:'Completed work phases',observations:'Worksite observations',recommendations:'Recommendations and next actions',maintenanceInstructions:'Maintenance instructions for customer',reportTextHelp:'These texts are shown only on the customer worksite report. Leave empty if the section is not needed.',workPhases:'Work phases',
+  newEntry:'New row',type:'Type',date:'Work date',title:'Title',extraInfo:'Additional info',image:'Image',imageHelp:'The image is stored locally with the row.',quantity:'Quantity',purchaseReceipt:'Purchase / receipt',purchaseGross:'Receipt total € (incl. VAT)',purchaseGrossHelp:'Enter the receipt total. The app separates VAT automatically.',purchaseVatRate:'Purchase VAT rate',deductPurchaseVat:'Deduct purchase VAT?',billCustomer:'Bill the customer?',yes:'Yes',no:'No',salesPrice:'Sales price to customer € (VAT 0%)',salesVatSettings:'Sales VAT settings',taxTreatment:'Tax treatment',normalTax:'Normal taxable',vatZero:'VAT 0%',reverseCharge:'Reverse charge',vatExempt:'VAT exempt',salesVat:'Sales VAT',materialHelp:'Material: enter the receipt total and the sales price to the customer. The purchase amount is used only for internal VAT and margin estimates.',costHelp:'Cost: enter the receipt total. If the cost is billed to the customer, add a sales price as well.',hourHelp:'Hours: quantity × hourly rate creates the sales price. No purchase fields are needed.',dayHelp:'Daily allowance: quantity × daily allowance creates the sales price.',kmHelp:'Mileage: VAT 0% by default. The amount goes to the invoice without sales VAT.',noteHelp:'Notes and images are for documentation. They are not billed.',unitPrice:'Unit price',manualOverride:'Overridden manually.',
+  settingsIntro:'Choose what you want to change. Settings are split into small sections to keep the view clear.',companyInfo:'Company details',companyInfoSub:'Name, business ID, VAT ID, address, email and payment details for invoices.',invoicePrices:'Invoicing and prices',invoicePricesSub:'Hourly rate, daily allowance, mileage rate, invoice number and VAT settings.',appearanceLegend:'Appearance and meanings',appearanceLegendSub:'Dark / light mode, color codes and VAT estimate explanation.',dataManagement:'Data management',dataManagementSub:'Demo data and clearing data.',companyInfoHelp:'These details are printed on customer invoices.',companyName:'Company name',businessId:'Business ID',vatId:'VAT ID',iban:'IBAN',bic:'BIC',savedCompany:'Company details saved',hourlyRate:'Hourly rate €/h',dailyAllowance:'Daily allowance €/day',kmRate:'Mileage rate €/km',invoicePrefix:'Invoice prefix',vatSettings:'VAT settings',defaultSalesVat:'Default sales VAT',defaultPurchaseVat:'Default purchase VAT',savedInvoiceSettings:'Invoicing settings saved',chooseVat:'Select at least one VAT rate',theme:'Theme',darkTheme:'Dark mode',lightTheme:'Light mode',colorLegend:'Color code explanation',vatFormula:'VAT estimate formula',savedAppearance:'Appearance saved',demoData:'Demo data',demoDataSub:'Create test customers and test rows.',clearAll:'Clear all data',clearAllSub:'Removes customers, worksites, rows and invoices from this device.',loadDemo:'Load demo data',demoConfirm:'Load demo data? Current test data will be replaced.',clearConfirm:'Delete all data permanently?',
+  reportChoice:'Report',reportChoiceHelp:'Choose the purpose of the report. The customer report does not include purchase prices, purchase VAT or margin.',forCustomer:'For customer',internal:'Internal',both:'Both',customerReport:'Worksite report',internalReport:'Internal worksite report',printPdf:'Print PDF',generated:'Generated',worksite:'Worksite',amount:'Amount',state:'Status',noEntries:'No entries.',totalHours:'Hours',totalKm:'Kilometres',totalNet:'Net total',seller:'Seller',buyer:'Customer',invoiceDate:'Invoice date',dueDate:'Due date',paymentTerm:'Payment terms',paymentInfo:'Payment details',description:'Description',supplyDate:'Work date',vat:'VAT',payableTotal:'Total payable',vatTotal:'Total VAT',
+}};
+function lang(){return state?.settings?.lang||'fi'}function tr(k){return (I18N[lang()]&&I18N[lang()][k])||I18N.fi[k]||k}
+const $=id=>document.getElementById(id),round2=n=>Math.round((Number(n||0)+Number.EPSILON)*100)/100,euro=n=>`${Number(n||0).toLocaleString('fi-FI',{maximumFractionDigits:0})} €`,euro2=n=>`${Number(n||0).toLocaleString('fi-FI',{minimumFractionDigits:2,maximumFractionDigits:2})} €`,uid=()=>Math.random().toString(36).slice(2,10),today=()=>new Date().toISOString().slice(0,10),addDays=(iso,d)=>new Date(new Date(iso).getTime()+d*86400000).toISOString().slice(0,10);
+function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;')}
+function mapsUrl(address){return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address||'')}`}
+function addressLink(address,label){return address?`<a href="${mapsUrl(address)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(125,170,255,.45);text-underline-offset:3px">${esc(label||address)}</a>`:'-'}function money(v){const n=Number(String(v??'').trim().replace(/\s/g,'').replace(',','.'));return Number.isFinite(n)?n:0}function toast(m){const e=$('toast');e.textContent=m;e.className='toast show';clearTimeout(e.t);e.t=setTimeout(()=>e.className='toast',2200)}function vatLabel(r){return (state.settings.vatRates||VAT_RATES).find(x=>Number(x.value)===Number(r))?.label||`${String(r).replace('.',',')} %`}function vatOptions(sel){return (state.settings.vatRates||VAT_RATES).map(r=>`<option value="${r.value}" ${Number(r.value)===Number(sel)?'selected':''}>${esc(r.label)}</option>`).join('')}
+function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=e=>e.target.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}async function dbGet(){const db=await openDb();return new Promise((res,rej)=>{const t=db.transaction(STORE,'readonly').objectStore(STORE).get(KEY);t.onsuccess=()=>res(t.result);t.onerror=()=>rej(t.error)})}async function dbSet(v){const db=await openDb();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(v,KEY);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}async function dbDel(){const db=await openDb();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(KEY);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+function normalize(d){if(!d||typeof d!=='object')d=structuredClone(defaultData);d.customers??=[];d.invoices??=[];d.invoiceSeries??=structuredClone(defaultData.invoiceSeries);d.pricing??=structuredClone(defaultData.pricing);d.settings??=structuredClone(defaultData.settings);d.settings.seller??=structuredClone(defaultData.settings.seller);d.settings.theme??='dark';d.settings.lang??='fi';d.settings.vatRates=(d.settings.vatRates||VAT_RATES).map(r=>Number(r.value)===14?{value:13.5,label:'13,5 %'}:r);if(d.settings.defaultSalesVat===14)d.settings.defaultSalesVat=25.5;if(d.settings.defaultPurchaseVat===14)d.settings.defaultPurchaseVat=25.5;for(const c of d.customers){c.worksites??=[];for(const w of c.worksites){w.entries??=[];for(const e of w.entries){e.supplyDate??=e.date||today();e.date??=e.supplyDate;e.salesVatRate=Number(e.salesVatRate===14?25.5:e.salesVatRate??d.settings.defaultSalesVat);e.purchaseVatRate=Number(e.purchaseVatRate===14?13.5:e.purchaseVatRate??d.settings.defaultPurchaseVat);e.taxTreatment??='taxable';if(e.type==='Kilometrit'){e.taxTreatment='zeroRated';e.salesVatRate=0;}e.purchaseVatDeductible??=Number(e.costPrice||0)>0;e.purchaseDeductiblePercent??=100;e.invoiceId??=null;e.invoiceDate??=null}}}return d}function save(){if(!loaded)return;applyTheme();applyLang();clearTimeout(timer);timer=setTimeout(()=>dbSet(state).catch(()=>{}),150)}
+function applyLang(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=tr(el.dataset.i18n)});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{el.placeholder=tr(el.dataset.i18nPlaceholder)});$('langFI')?.classList.toggle('active',lang()==='fi');$('langEN')?.classList.toggle('active',lang()==='en');const hasSelected=state?.customers?.some(c=>c.id===selected);if(!hasSelected){if($('dName')?.dataset.defaultKey)$('dName').textContent=tr($('dName').dataset.defaultKey);if($('dCity')?.dataset.defaultKey)$('dCity').textContent=tr($('dCity').dataset.defaultKey)}}
+function rateFor(type,w){const p={...state.pricing,...(w?.pricing||{})};if(type==='Tunti')return{rate:Number(p.hourlyRate||0),unit:'h',label:tr('hours')};if(type==='Päiväraha')return{rate:Number(p.dailyAllowance||0),unit:'pv',label:tr('dailyAllowance')};if(type==='Kilometrit')return{rate:Number(p.kmRate||0),unit:'km',label:tr('totalKm')};return null}function qty(e){const q=Number(e.quantity||0);if(q>0)return q;const m=String(e.title||'').match(/([\d,.]+)\s*(h|pv|km)\b/i);return m?money(m[1]):0}function unit(e){return e.type==='Tunti'?'h':e.type==='Päiväraha'?'pv':e.type==='Kilometrit'?'km':''}function salesVat(base,rate,t='taxable'){return t==='taxable'?round2(Number(base||0)*Number(rate||0)/100):0}function purchaseVat(base,rate,deduct=true,pct=100){return deduct?round2(Number(base||0)*Number(rate||0)/100*Number(pct||0)/100):0}
+function purchaseNetFromGross(gross,rate){return round2(Number(gross||0)/(1+Number(rate||0)/100))}
+function purchaseVatFromGross(gross,rate,deduct=true,pct=100){if(!deduct)return 0;const vat=round2(Number(gross||0)-purchaseNetFromGross(gross,rate));return round2(vat*Number(pct||0)/100)}
+function readFileAsDataUrl(input){return new Promise(resolve=>{const file=input?.files?.[0];if(!file)return resolve('');const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>resolve('');reader.readAsDataURL(file)})}
+function customerTotals(c){let unbilled=0,billed=0;for(const w of c.worksites||[])for(const e of w.entries||[]){if(e.billable===false)continue;const a=Number(e.amount||0);e.invoiced?billed+=a:unbilled+=a}return{unbilled,billed,total:unbilled+billed}}function workTotals(w){let unbilled=0,billed=0;for(const e of w.entries||[]){if(e.billable===false)continue;const a=Number(e.amount||0);e.invoiced?billed+=a:unbilled+=a}return{unbilled,billed,total:unbilled+billed}}
+function vatSummary(entries,{onlyInvoiced=false,period=null,invoiceOnly=false}={}){const buckets={};let sb=0,sv=0,pb=0,pv=0;const b=r=>buckets[r]??={rate:Number(r),salesBase:0,salesVat:0,purchaseBase:0,purchaseVat:0};for(const e of entries){if(onlyInvoiced&&!e.invoiced)continue;if(period&&!String(e.invoiceDate||e.supplyDate||e.date).startsWith(period))continue;if(e.billable!==false){const base=Number(e.amount||0),r=Number(e.salesVatRate??state.settings.defaultSalesVat),v=salesVat(base,r,e.taxTreatment);sb+=base;sv+=v;b(r).salesBase+=base;b(r).salesVat+=v}if(!invoiceOnly&&(Number(e.purchaseGross||0)>0||Number(e.costPrice||0)>0)&&e.purchaseVatDeductible!==false){const r=Number(e.purchaseVatRate??state.settings.defaultPurchaseVat);const gross=Number(e.purchaseGross||0);const base=gross>0?purchaseNetFromGross(gross,r):Number(e.costPrice||0);const v=gross>0?purchaseVatFromGross(gross,r,true,e.purchaseDeductiblePercent??100):purchaseVat(base,r,true,e.purchaseDeductiblePercent??100);pb+=base;pv+=v;b(r).purchaseBase+=base;b(r).purchaseVat+=v}}return{buckets,salesBase:round2(sb),salesVat:round2(sv),purchaseBase:round2(pb),purchaseVat:round2(pv),vatDebt:round2(sv-pv)}}
+function allEntries(){return state.customers.flatMap(c=>c.worksites||[]).flatMap(w=>w.entries||[])}function totals(){const a={unbilled:0,billed:0,total:0};for(const c of state.customers){const t=customerTotals(c);a.unbilled+=t.unbilled;a.billed+=t.billed;a.total+=t.total}const d=new Date(),ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,v=vatSummary(allEntries(),{onlyInvoiced:true,period:ym});return{...a,salesVat:v.salesVat,purchaseVat:v.purchaseVat,vatDebt:v.vatDebt}}
+function render(){renderSide();renderToday();renderCustomers();renderDetail();save()}function renderSide(){const t=totals(),m=new Date().toLocaleDateString('fi-FI',{month:'2-digit'});$('sumUnb').textContent=euro(t.unbilled);$('sumBil').textContent=euro(t.billed);$('sumCustomers').textContent=state.customers.length;$('vatTitle').textContent=`${tr('vatEstimate')} /${m}`;$('sumVat').textContent=`${t.vatDebt>0?'🔴 ':t.vatDebt<0?'🟢 ':'⚪ '}${euro(Math.abs(t.vatDebt))}`;$('vatSub').textContent=''}function renderToday(){const d=new Date();if($('todayDate'))$('todayDate').textContent=d.toLocaleDateString(lang()==='fi'?'fi-FI':'en-GB',{weekday:'short',day:'numeric',month:'numeric'});const box=$('todayItems');if(!box)return;const items=[];for(const c of state.customers||[]){for(const w of c.worksites||[]){const wt=workTotals(w);const active=String(w.status||'').toLowerCase()!=='valmis'||wt.unbilled>0;if(active)items.push({c,w,wt});}}items.sort((a,b)=>(b.wt.unbilled-a.wt.unbilled)||String(a.w.name).localeCompare(String(b.w.name)));const shown=items.slice(0,3);if(!shown.length){box.innerHTML=`<div class="today-empty">${tr('noTodayItems')}</div>`;return;}box.innerHTML=shown.map((x,i)=>{const time=['08:00','11:00','14:00'][i]||'';const sub=x.w.nextStep?`${tr('nextLabel')}: ${esc(x.w.nextStep)}`:`${tr('statusLabel')}: ${esc(x.w.status||'-')}`;return `<div class="today-item" data-today-cid="${x.c.id}"><div class="today-row"><div class="today-title">${esc(x.w.name)}</div><div class="today-time">${time}</div></div><div class="today-sub">${sub}</div></div>`}).join('');box.querySelectorAll('[data-today-cid]').forEach(el=>el.onclick=()=>{selected=el.dataset.todayCid;render()})}function filtered(){return state.customers.filter(c=>{const t=customerTotals(c),h=`${c.name} ${c.city}`.toLowerCase();return h.includes(searchTerm.toLowerCase())&&(filterMode==='all'||filterMode==='priority'&&c.priority||filterMode==='unbilled'&&t.unbilled>0)})}function renderCustomers(){const box=$('customers'),items=filtered();box.innerHTML='';if(!items.length){box.innerHTML=`<div class="empty">${tr('noCustomers')}</div>`;return}for(const c of items){const t=customerTotals(c),el=document.createElement('div');el.className=`customer ${c.priority?'prio':t.unbilled>0?'open':'done'} ${c.id===selected?'active':''}`;el.innerHTML=`<div class="ctop"><div><h3 class="cname">${esc(c.name)}</h3><p class="city">${esc(c.city||'-')}</p></div>${c.priority?'<span class="badge">🟣 '+tr('priority')+'</span>':'<span class="badge">'+tr('customer')+'</span>'}</div><div class="cbot"><div><div class="amtlbl" style="color:var(--orange)">${tr('unbilled')}</div><div class="amt">${euro(t.unbilled)}</div></div><div style="text-align:right"><div class="amtlbl" style="color:var(--green)">${tr('billed')}</div><div class="amt">${euro(t.billed)}</div></div></div>`;el.onclick=()=>{selected=c.id;render()};box.appendChild(el)}}
+function current(){return state.customers.find(c=>c.id===selected)||null}function initials(name){const parts=String(name||'').trim().split(/\s+/).filter(Boolean);if(!parts.length)return '';if(parts.length===1)return parts[0].slice(0,2).toUpperCase();return (parts[0][0]+parts[parts.length-1][0]).toUpperCase()}function renderDetail(){const c=current();if(!c){$('dAvatar').textContent='';$('dAvatar').className='d-av-wrap empty';$('dName').textContent=tr('selectCustomer');$('dCity').textContent=tr('customerCardOpens');$('dPhone').textContent=$('dEmail').textContent=$('dAddress').textContent='-';$('dUnb').textContent=$('dBil').textContent=$('dTotal').textContent=euro(0);$('priority').style.display='none';$('worksites').innerHTML=`<div class="empty">${tr('chooseCustomer')}</div>`;return}const t=customerTotals(c);$('dAvatar').textContent=initials(c.name);$('dAvatar').className='d-av-wrap '+(c.priority?'prio':'');$('dName').textContent=c.name;$('dCity').textContent=c.city||'-';$('dPhone').textContent=c.phone||'-';$('dEmail').textContent=c.email||'-';$('dAddress').innerHTML=addressLink(c.address);$('dUnb').textContent=euro(t.unbilled);$('dBil').textContent=euro(t.billed);$('dTotal').textContent=euro(t.total);$('priority').style.display='inline-flex';$('priority').textContent=c.priority?'🟣 '+tr('priority'):tr('priority');$('priority').onclick=()=>{c.priority=!c.priority;render()};$('dUnbBox').onclick=()=>openInvoiceModal(c.id);$('dBilBox').onclick=()=>openBilled(c.id);const root=$('worksites');root.innerHTML='';if(!c.worksites.length){root.innerHTML=`<div class="empty">${tr('noWorksites')}</div>`;return}c.worksites.forEach(w=>{const wt=workTotals(w),el=document.createElement('div');el.className='work';el.innerHTML=`<div class="wtop"><div><h4 class="wname">${esc(w.name)}</h4><p class="wsub">${w.address?addressLink(w.address):esc(c.city||'')}</p></div><span class="badge">${w.status==='Suunnitteilla'?tr('planned'):w.status==='Käynnissä'?tr('inProgress'):w.status==='Valmis'?tr('done'):esc(w.status||tr('planned'))}</span></div><div class="tabs"><button data-tab="notes">${tr('notes')}</button><button data-tab="mat">${tr('materials')}</button><button data-tab="hours">${tr('hours')}</button><button data-tab="costs">${tr('costs')}</button><button data-tab="drive">${tr('drives')}</button></div><div class="subcard" data-content></div><div class="actions"><button class="btn primary" data-act="entry">${tr('row')}</button><button class="btn" data-act="invoice">${tr('invoice')}</button><button class="btn" data-act="report">${tr('report')}</button><button class="btn" data-act="edit">${tr('edit')}</button></div>`;const content=el.querySelector('[data-content]'),tabs=[...el.querySelectorAll('[data-tab]')];function tab(x){tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===x));const map={notes:['Merkintä','Kuva'],mat:['Materiaali'],hours:['Tunti'],costs:['Kulu'],drive:['Päiväraha','Kilometrit']};content.innerHTML=rowsHtml((w.entries||[]).filter(e=>map[x].includes(e.type)),c.id,w.id);bindRowButtons(content,c.id,w.id)}tabs.forEach(b=>b.onclick=()=>tab(b.dataset.tab));tab('notes');el.querySelector('[data-act=entry]').onclick=()=>openEntry(c.id,w.id);el.querySelector('[data-act=invoice]').onclick=()=>openInvoiceModal(c.id,w.id);el.querySelector('[data-act=report]').onclick=()=>openReportChoice(c.id,w.id);el.querySelector('[data-act=edit]').onclick=()=>openWorksite(c.id,w.id);root.appendChild(el)})}
+function rowsHtml(entries,cid,wid){if(!entries.length)return`<div class="empty">${tr('noEntries')}</div>`;return`<div class="rows">${entries.map(e=>{const q=qty(e),u=unit(e),up=q>0?round2(Number(e.amount||0)/q):0,cls=e.billable===false?'gray':e.invoiced?'invoiced':'open';return`<div class="row ${cls}"><div><strong>${esc(e.title||e.type)}</strong><small>${esc(e.date||'')}${e.note?' · '+esc(e.note):''}</small>${e.imageDataUrl?`<img src="${e.imageDataUrl}" style="margin-top:8px;max-width:160px;max-height:110px;border-radius:10px;border:1px solid rgba(255,255,255,.12);display:block;object-fit:cover;">`:''}${q&&u?`<small>${q.toLocaleString('fi-FI')} ${u} × ${euro2(up)} / ${u}</small>`:''}<small>${e.billable===false?tr('notBillable'):e.invoiced?'🟢 '+tr('invoiced'):'🟠 '+tr('unbilled')}</small></div><div style="text-align:right"><strong>${e.amount?euro(e.amount):'–'}</strong><div class="actions" style="justify-content:flex-end;margin-top:6px">${e.billable!==false?`<button class="btn" style="padding:6px 9px;font-size:12px" data-toggle="${e.id}">${e.invoiced?tr('open'):tr('invoiced')}</button>`:''}<button class="btn danger" style="padding:6px 9px;font-size:12px" data-del="${e.id}">${tr('delete')}</button></div></div></div>`}).join('')}</div>`}function bindRowButtons(root,cid,wid){root.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=()=>{const e=findEntry(cid,wid,b.dataset.toggle);if(e){e.invoiced=!e.invoiced;if(e.invoiced&&!e.invoiceDate)e.invoiceDate=today();render()}});root.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(!confirm(tr('delete')+'?'))return;const w=findWork(cid,wid);w.entries=w.entries.filter(e=>e.id!==b.dataset.del);render()})}function findWork(cid,wid){return state.customers.find(c=>c.id===cid)?.worksites.find(w=>w.id===wid)}function findEntry(cid,wid,eid){return findWork(cid,wid)?.entries.find(e=>e.id===eid)}
+function modal(title,html,acts=[]){$('modalTitle').textContent=title;$('modalBody').innerHTML=html;const a=$('modalActions');a.innerHTML='';acts.forEach(x=>{const b=document.createElement('button');b.className=x.cls||'btn';b.textContent=x.label;b.onclick=x.onClick;a.appendChild(b)});$('modalBg').classList.add('show')}function closeModal(){$('modalBg').classList.remove('show')}
+function openCustomer(){modal(tr('newCustomer'),`<div class="form"><div class="full"><label class="label">${tr('nameReq')}</label><input id="cName"></div><div><label class="label">${tr('city')}</label><input id="cCity"></div><div><label class="label">${tr('phone')}</label><input id="cPhone"></div><div><label class="label">${tr('email')}</label><input id="cEmail"></div><div class="full"><label class="label">${tr('address')}</label><input id="cAddress"></div></div>`,[{label:tr('cancel'),onClick:closeModal},{label:tr('save'),cls:'btn primary',onClick:()=>{const c={id:uid(),name:$('cName').value.trim(),city:$('cCity').value.trim(),phone:$('cPhone').value.trim(),email:$('cEmail').value.trim(),address:$('cAddress').value.trim(),priority:false,worksites:[]};if(!c.name)return toast(tr('nameRequired'));state.customers.unshift(c);selected=c.id;closeModal();render()}}])}
+function openWorksite(cid=selected,wid=null){const c=state.customers.find(c=>c.id===cid),w=wid?findWork(cid,wid):null;if(!c)return toast(tr('selectCustomer'));modal(w?tr('editWorksite'):tr('newWorksite'),`<div class="form"><div class="full"><label class="label">${tr('worksiteNameReq')}</label><input id="wName" value="${esc(w?.name||'')}"></div><div class="full"><label class="label">${tr('address')}</label><input id="wAddress" value="${esc(w?.address||'')}"></div><div><label class="label">${tr('status')}</label><select id="wStatus"><option value="Suunnitteilla" ${w?.status==='Suunnitteilla'?'selected':''}>${tr('planned')}</option><option value="Käynnissä" ${!w||w?.status==='Käynnissä'?'selected':''}>${tr('inProgress')}</option><option value="Valmis" ${w?.status==='Valmis'?'selected':''}>${tr('done')}</option></select></div><div><label class="label">${tr('nextStep')}</label><input id="wNext" value="${esc(w?.nextStep||'')}"></div><div class="full"><div class="info">${tr('reportTextHelp')}</div></div><div class="full"><label class="label">${tr('workSummary')}</label><textarea id="wSummary">${esc(w?.summary||'')}</textarea></div><div class="full"><label class="label">${tr('completedPhases')}</label><textarea id="wPhasesDone">${esc(w?.phasesDone||'')}</textarea></div><div class="full"><label class="label">${tr('observations')}</label><textarea id="wObservations">${esc(w?.observations||'')}</textarea></div><div class="full"><label class="label">${tr('recommendations')}</label><textarea id="wRecommendations">${esc(w?.recommendations||'')}</textarea></div><div class="full"><label class="label">${tr('maintenanceInstructions')}</label><textarea id="wMaintenance">${esc(w?.maintenance||'')}</textarea></div></div>`,[{label:tr('cancel'),onClick:closeModal},{label:tr('save'),cls:'btn primary',onClick:()=>{const data={name:$('wName').value.trim(),address:$('wAddress').value.trim(),status:$('wStatus').value,nextStep:$('wNext').value.trim(),summary:$('wSummary').value.trim(),phasesDone:$('wPhasesDone').value.trim(),observations:$('wObservations').value.trim(),recommendations:$('wRecommendations').value.trim(),maintenance:$('wMaintenance').value.trim(),entries:w?.entries||[],id:w?.id||uid()};if(!data.name)return toast(tr('nameRequired'));if(w)Object.assign(w,data);else c.worksites.unshift(data);closeModal();render()}}])}
+function openEntry(cid,wid){
+  const w=findWork(cid,wid);
+  modal(tr('newEntry'),`
+    <div class="form">
+      <div><label class="label">${tr('type')}</label><select id="eType"><option value="Merkintä">${tr('notes')}</option><option value="Kuva">${tr('image')}</option><option value="Materiaali" selected>${tr('materials')}</option><option value="Tunti">${tr('hours')}</option><option value="Päiväraha">${tr('dailyAllowance')}</option><option value="Kilometrit">${tr('drives')}</option><option value="Kulu">${tr('costs')}</option></select></div>
+      <div><label class="label">${tr('date')}</label><input id="eDate" type="date" value="${today()}"></div>
+      <div class="full"><label class="label">${tr('title')}</label><input id="eTitle"></div>
+      <div class="full"><label class="label">${tr('extraInfo')}</label><textarea id="eNote"></textarea></div>
+      <div class="full" id="imageBox" style="display:none"><label class="label">${tr('image')}</label><input id="eImage" type="file" accept="image/*"><small style="color:var(--muted)">${tr('imageHelp')}</small></div>
+      <div id="qBox" style="display:none"><label class="label" id="qLabel">${tr('quantity')}</label><input id="eQty" inputmode="decimal"><small id="qInfo" style="color:var(--muted)"></small></div>
+      <div id="purchaseBlock" class="full" style="display:none;border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(255,255,255,.03)">
+        <strong style="display:block;margin-bottom:8px">${tr('purchaseReceipt')}</strong>
+        <div class="form">
+          <div><label class="label">${tr('purchaseGross')}</label><input id="eCost" inputmode="decimal"><small style="color:var(--muted)">${tr('purchaseGrossHelp')}</small></div>
+          <div><label class="label">${tr('purchaseVatRate')}</label><select id="ePurchaseVat">${vatOptions(state.settings.defaultPurchaseVat)}</select></div>
+          <div><label class="label">${tr('deductPurchaseVat')}</label><select id="eDeduct"><option value="yes">${tr('yes')}</option><option value="no">${tr('no')}</option></select></div>
+        </div>
+      </div>
+      <div id="billableBox"><label class="label">${tr('billCustomer')}</label><select id="eBill"><option value="yes">${tr('yes')}</option><option value="no">${tr('no')}</option></select></div>
+      <div id="amountBox"><label class="label" id="amountLabel">${tr('salesPrice')}</label><input id="eAmount" inputmode="decimal"><small id="aInfo" style="color:var(--muted)"></small></div>
+      <details class="full" id="vatDetails"><summary style="cursor:pointer;color:var(--muted);font-weight:800">${tr('salesVatSettings')}</summary>
+        <div class="form" style="margin-top:12px">
+          <div><label class="label">${tr('taxTreatment')}</label><select id="eTax"><option value="taxable">${tr('normalTax')}</option><option value="zeroRated">${tr('vatZero')}</option><option value="reverseCharge">${tr('reverseCharge')}</option><option value="exempt">${tr('vatExempt')}</option></select></div>
+          <div><label class="label">${tr('salesVat')}</label><select id="eSalesVat">${vatOptions(state.settings.defaultSalesVat)}</select></div>
+        </div>
+      </details>
+    </div>
+    <div class="info" id="entryHelp">${tr('materialHelp')}</div>
+  `,[{label:tr('cancel'),onClick:closeModal},{label:tr('save'),cls:'btn primary',onClick:async()=>{
+    const type=$('eType').value,q=money($('eQty').value),date=$('eDate').value||today();
+    let title=$('eTitle').value.trim();
+    if(!title)title=type==='Tunti'&&q?`Työ ${q}h`:type==='Kilometrit'&&q?`Ajot ${q}km`:type==='Päiväraha'&&q?`Päiväraha ${q}pv`:type;
+    const purchaseRate=Number($('ePurchaseVat')?.value||state.settings.defaultPurchaseVat);
+    const purchaseGross=(type==='Materiaali'||type==='Kulu')?money($('eCost').value):0;
+    const imageDataUrl=type==='Kuva'?await readFileAsDataUrl($('eImage')):'';
+    let tax=$('eTax').value;
+    let salesRate=tax==='taxable'?Number($('eSalesVat').value):0;
+    if(type==='Kilometrit'){tax='zeroRated';salesRate=0;}
+    const isInfoOnly=type==='Merkintä'||type==='Kuva';
+    const billable=isInfoOnly?false:$('eBill').value==='yes';
+    const amount=billable?money($('eAmount').value):0;
+    w.entries.unshift({id:uid(),type,date,supplyDate:date,title,note:$('eNote').value.trim(),imageDataUrl,quantity:rateFor(type,w)?q:0,amount,purchaseGross,costPrice:purchaseGross?purchaseNetFromGross(purchaseGross,purchaseRate):0,salesVatRate:salesRate,purchaseVatRate:purchaseRate,taxTreatment:tax,purchaseVatDeductible:$('eDeduct')?.value!=='no',purchaseDeductiblePercent:100,billable,invoiced:false,invoiceId:null,invoiceDate:null});
+    closeModal();render();
+  }}]);
+  let over=false;
+  $('eAmount').oninput=()=>{over=true;$('aInfo').textContent=tr('manualOverride')};
+  $('eQty').oninput=recalc;
+  $('eType').onchange=()=>{over=false;refresh()};
+  $('eTax').onchange=refresh;
+  $('eBill').onchange=refresh;
+  function refresh(){
+    const type=$('eType').value,cfg=rateFor(type,w);
+    const infoOnly=type==='Merkintä'||type==='Kuva';
+    const purchase=type==='Materiaali'||type==='Kulu';
+    const quantity=!!cfg;
+    $('imageBox').style.display=type==='Kuva'?'':'none';
+    $('qBox').style.display=quantity?'':'none';
+    $('purchaseBlock').style.display=purchase?'':'none';
+    $('billableBox').style.display=infoOnly?'none':'';
+    $('amountBox').style.display=infoOnly?'none':'';
+    $('vatDetails').style.display=infoOnly?'none':'';
+    if(infoOnly){$('eBill').value='no';$('eAmount').value='';}
+    if(type==='Materiaali'){$('amountLabel').textContent=tr('salesPrice');$('eBill').value='yes';$('entryHelp').textContent=tr('materialHelp')}
+    else if(type==='Kulu'){$('amountLabel').textContent=tr('salesPrice');$('entryHelp').textContent=tr('costHelp')}
+    else if(type==='Tunti'){$('amountLabel').textContent=tr('salesPrice');$('entryHelp').textContent=tr('hourHelp')}
+    else if(type==='Päiväraha'){$('amountLabel').textContent=tr('salesPrice');$('entryHelp').textContent=tr('dayHelp')}
+    else if(type==='Kilometrit'){$('amountLabel').textContent=tr('salesPrice');$('eTax').value='zeroRated';$('eSalesVat').value='0';$('entryHelp').textContent=tr('kmHelp')}
+    else {$('entryHelp').textContent=tr('noteHelp')}
+    if(type!=='Kilometrit'&&$('eTax').value==='zeroRated'&&$('eSalesVat').value==='0'){$('eTax').value='taxable';$('eSalesVat').value=String(state.settings.defaultSalesVat)}
+    $('eSalesVat').disabled=$('eTax').value!=='taxable';
+    if($('eBill').value==='no'&&type!=='Kulu'){$('eBill').value=infoOnly?'no':'yes'}
+    if($('eBill').value==='no'){$('amountBox').style.display='none'}
+    if(cfg){$('qLabel').textContent=`${cfg.label} (${cfg.unit})`;$('qInfo').textContent=`${tr('unitPrice')} ${euro2(cfg.rate)} / ${cfg.unit}`;recalc();}
+  }
+  function recalc(){if(over)return;const cfg=rateFor($('eType').value,w);if(!cfg)return;const q=money($('eQty').value),sum=q*cfg.rate;$('eAmount').value=sum?sum.toLocaleString('fi-FI',{minimumFractionDigits:2,maximumFractionDigits:2}):'';$('aInfo').textContent=q?`${q} × ${euro2(cfg.rate)} = ${euro2(sum)}`:''}
+  refresh();
+}
+function openInvoiceModal(cid,wid=null){const c=state.customers.find(c=>c.id===cid),rows=[];for(const w of c.worksites){if(wid&&w.id!==wid)continue;for(const e of w.entries||[])if(e.billable!==false&&!e.invoiced&&Number(e.amount)>0)rows.push({w,e})}const total=rows.reduce((s,r)=>s+Number(r.e.amount||0),0);modal(tr('invoice'),rows.length?`<div class="info">${tr('selectRows')}</div><div class="rows">${rows.map(r=>`<label class="row open" style="cursor:pointer"><div><strong>${esc(r.w.name)} – ${esc(r.e.title)}</strong><small>${esc(r.e.date)} · ${r.e.taxTreatment==='taxable'?tr('vat')+' '+vatLabel(r.e.salesVatRate):taxName(r.e.taxTreatment)}</small></div><div><strong>${euro(r.e.amount)}</strong><input type="checkbox" data-invrow="${r.e.id}" data-amount="${r.e.amount}" checked></div></label>`).join('')}</div><div class="info"><strong>${tr('netTotal')}:</strong> <span id="invoiceSelectTotal">${euro(total)}</span></div>`:`<div class="empty">${tr('noUnbilledRows')}</div>`,[{label:tr('close'),onClick:closeModal},...(rows.length?[{label:tr('createInvoicePdf'),cls:'btn primary',onClick:()=>createInvoice(cid)}]:[])]);document.querySelectorAll('[data-invrow]').forEach(x=>x.onchange=()=>{$('invoiceSelectTotal').textContent=euro([...document.querySelectorAll('[data-invrow]:checked')].reduce((s,e)=>s+Number(e.dataset.amount||0),0))})}
+function taxName(t){return t==='reverseCharge'?tr('reverseCharge'):t==='zeroRated'?'0 %':t==='exempt'?tr('vatExempt'):tr('vat')}function nextInvoice(){state.invoiceSeries.lastNumber=Number(state.invoiceSeries.lastNumber||0)+1;return `${state.invoiceSeries.prefix||'RP'}-${String(state.invoiceSeries.lastNumber).padStart(6,'0')}`}function freezeLine(w,e){const q=qty(e),u=unit(e),net=round2(e.amount||0),rate=Number(e.salesVatRate??state.settings.defaultSalesVat),tax=e.taxTreatment||'taxable';return{entryId:e.id,worksiteId:w.id,worksiteName:w.name,type:e.type,title:e.title,note:e.note,date:e.supplyDate||e.date,quantity:q,unit:u,unitPrice:q?round2(net/q):0,netAmount:net,salesVatRate:rate,taxTreatment:tax,vatAmount:salesVat(net,rate,tax)}}function invoiceBuckets(lines){const b={};for(const l of lines){if(l.taxTreatment!=='taxable')continue;const k=String(l.salesVatRate);b[k]??={rate:l.salesVatRate,base:0,vat:0};b[k].base=round2(b[k].base+l.netAmount);b[k].vat=round2(b[k].base*l.salesVatRate/100)}return Object.values(b).sort((a,b)=>b.rate-a.rate)}
+function createInvoice(cid){const c=state.customers.find(c=>c.id===cid),ids=[...document.querySelectorAll('[data-invrow]:checked')].map(x=>x.dataset.invrow);if(!ids.length)return toast(tr('noUnbilledRows'));const issueDate=today(),lines=[];for(const w of c.worksites)for(const e of w.entries||[])if(ids.includes(e.id))lines.push(freezeLine(w,e));const vatBuckets=invoiceBuckets(lines),netTotal=round2(lines.reduce((s,l)=>s+l.netAmount,0)),vatTotal=round2(vatBuckets.reduce((s,b)=>s+b.vat,0)),grossTotal=round2(netTotal+vatTotal),inv={id:uid(),number:nextInvoice(),issueDate,dueDate:addDays(issueDate,14),sellerSnapshot:structuredClone(state.settings.seller),customerSnapshot:{name:c.name,address:c.address,city:c.city,email:c.email,phone:c.phone,businessId:c.businessId||'',vatId:c.vatId||''},lines,vatBuckets,netTotal,vatTotal,grossTotal};state.invoices.push(inv);for(const w of c.worksites)for(const e of w.entries||[])if(ids.includes(e.id)){e.invoiced=true;e.invoiceId=inv.id;e.invoiceDate=issueDate}closeModal();openInvoicePdf(inv);render()}
+function openBilled(cid){const c=state.customers.find(c=>c.id===cid),rows=[];for(const w of c.worksites)for(const e of w.entries||[])if(e.invoiced&&e.billable!==false)rows.push({w,e});modal(tr('billed'),rows.length?`<div class="rows">${rows.map(r=>`<div class="row invoiced"><div><strong>${esc(r.w.name)} – ${esc(r.e.title)}</strong><small>${esc(r.e.invoiceDate||r.e.date)}</small></div><strong>${euro(r.e.amount)}</strong></div>`).join('')}</div>`:`<div class="empty">${tr('noInvoicedRows')}</div>`,[{label:tr('close'),onClick:closeModal}])}
+function pdfBaseStyle(){return '<style>body{font-family:Inter,Arial,sans-serif;color:#111827;padding:40px;max-width:860px;margin:auto;background:white}button{background:#2f80ff;color:white;border:0;padding:10px 16px;border-radius:8px;font-weight:700}.header{display:flex;justify-content:space-between;border-bottom:3px solid #2f80ff;padding-bottom:16px;margin-bottom:20px}h1{margin:0;font-size:28px}.muted{color:#6b7280}.brand{font-size:22px;font-weight:800;color:#2f80ff}.meta,.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}.box{border:1px solid #d1d5db;border-radius:10px;padding:12px}.box small{display:block;color:#6b7280;text-transform:uppercase;font-size:10px;font-weight:700}.party{white-space:pre-line}.report-text{border:1px solid #dbe3ef;background:#f8fafc;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;white-space:pre-line}.phase-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.group,section{margin-top:18px;page-break-inside:avoid}.group h3,section h2{margin:0 0 8px;font-size:14px;color:#2f80ff}section h2{background:#2f80ff;color:white;border-radius:6px;padding:8px 12px;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;text-align:left;vertical-align:top}th{background:#f9fafb;color:#6b7280;text-transform:uppercase;font-size:10px}.num{text-align:right}.totals{margin-top:24px;margin-left:auto;width:360px;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}.totals div{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #e5e7eb;font-size:13px}.totals div:last-child{border-bottom:0;background:#2f80ff;color:white;font-weight:800;font-size:16px}.note{margin-top:18px;padding:12px;border:1px solid #f59e0b;background:#fffbeb;border-radius:8px;font-size:13px}.emptyline{color:#6b7280;border:1px dashed #d1d5db;border-radius:8px;padding:10px}.footer{margin-top:30px;border-top:1px solid #e5e7eb;padding-top:12px;color:#6b7280;font-size:11px;display:flex;justify-content:space-between}@media print{button{display:none}body{padding:16mm 12mm}.phase-grid{grid-template-columns:1fr 1fr}}</style>'}
+function openHtmlDoc(html){
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if(!win){
+    URL.revokeObjectURL(url);
+    toast(lang()==='fi'?'Salli ponnahdusikkunat':'Allow pop-ups');
+    return;
+  }
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function openInvoicePdf(inv){
+  const s=inv.sellerSnapshot||{}, b=inv.customerSnapshot||{};
+  const fmt=d=>new Date(d).toLocaleDateString('fi-FI');
+  const groups={};
+  for(const l of inv.lines||[]){(groups[l.worksiteName]??=[]).push(l)}
+  const fi=lang()==='fi';
+  let body='<!doctype html><html lang="'+lang()+'"><head><meta charset="utf-8"><title>'+tr('invoice')+' '+esc(inv.number)+'</title>'+pdfBaseStyle()+'</head><body>';
+  body+='<button onclick="window.print()">'+tr('printPdf')+'</button>';
+  body+='<div class="header"><div><h1>'+(fi?'LASKU':'INVOICE')+'</h1><div class="muted">'+(fi?'Laskunumero':'Invoice number')+': '+esc(inv.number)+'</div></div><div style="text-align:right"><div class="brand">'+esc(s.name||'Pakki')+'</div><div class="muted">'+(fi?'Y-tunnus':'Business ID')+' '+esc(s.businessId||'-')+'</div><div class="muted">'+(fi?'ALV-tunniste':'VAT ID')+' '+esc(s.vatId||'-')+'</div></div></div>';
+  body+='<div class="meta"><div class="box"><small>'+tr('seller')+'</small><div class="party">'+esc(s.name||'')+'<br>'+esc(s.address||'')+'<br>'+esc(s.email||'')+'</div></div><div class="box"><small>'+tr('buyer')+'</small><div class="party">'+esc(b.name||'')+'<br>'+esc(b.address||'-')+'<br>'+esc(b.email||'')+'</div></div><div class="box"><small>'+tr('invoiceDate')+'</small>'+fmt(inv.issueDate)+'</div><div class="box"><small>'+tr('dueDate')+'</small>'+fmt(inv.dueDate)+'</div><div class="box"><small>'+tr('paymentTerm')+'</small>'+(fi?'14 pv netto':'14 days net')+'</div><div class="box"><small>'+tr('paymentInfo')+'</small>'+esc(s.iban||(fi?'IBAN puuttuu':'IBAN missing'))+(s.bic?' · BIC '+esc(s.bic):'')+'</div></div>';
+  Object.entries(groups).forEach(([name,items])=>{
+    body+='<div class="group"><h3>'+tr('worksite')+': '+esc(name)+'</h3><table><thead><tr><th>'+(fi?'Tyyppi':'Type')+'</th><th>'+tr('description')+'</th><th>'+tr('supplyDate')+'</th><th class="num">'+tr('quantity')+'</th><th class="num">'+(fi?'Yks.hinta':'Unit price')+'</th><th class="num">'+tr('vat')+'</th><th class="num">'+(fi?'Netto':'Net')+'</th></tr></thead><tbody>';
+    items.forEach(l=>{body+='<tr><td>'+esc(l.type)+'</td><td>'+esc(l.title||'')+(l.note?'<br><small>'+esc(l.note)+'</small>':'')+'</td><td>'+esc(l.date||'')+'</td><td class="num">'+(l.quantity&&l.unit?Number(l.quantity).toLocaleString('fi-FI')+' '+l.unit:'–')+'</td><td class="num">'+(l.quantity&&l.unit?euro2(l.unitPrice):'–')+'</td><td class="num">'+(l.taxTreatment==='taxable'?vatLabel(l.salesVatRate):taxName(l.taxTreatment))+'</td><td class="num">'+euro2(l.netAmount)+'</td></tr>'});
+    body+='</tbody></table></div>';
+  });
+  if((inv.lines||[]).length && inv.lines.every(l=>l.taxTreatment==='reverseCharge')) body+='<div class="note">'+(fi?'<strong>Käännetty verovelvollisuus.</strong> Ostaja on verovelvollinen rakentamispalvelun arvonlisäverosta. Viite: AVL 8 c §.':'<strong>Reverse charge.</strong> The buyer is liable for VAT on the construction service.')+'</div>';
+  body+='<div class="totals"><div><span>'+tr('netTotal')+'</span><span>'+euro2(inv.netTotal)+'</span></div>';
+  (inv.vatBuckets||[]).forEach(v=>{body+='<div><span>'+tr('vat')+' '+vatLabel(v.rate)+'</span><span>'+euro2(v.vat)+'</span></div>'});
+  body+='<div><span>'+tr('vatTotal')+'</span><span>'+euro2(inv.vatTotal)+'</span></div><div><span>'+tr('payableTotal')+'</span><span>'+euro2(inv.grossTotal)+'</span></div></div>';
+  body+='<div class="footer"><span>'+esc(s.name||'Pakki')+' · '+tr('generated')+' '+new Date().toLocaleString('fi-FI')+'</span><span>'+esc(s.iban||'')+'</span></div></body></html>';
+  openHtmlDoc(body);
+}
+function openReportChoice(cid,wid){
+  modal(tr('reportChoice'),'<div class="info">'+tr('reportChoiceHelp')+'</div><div class="actions"><button class="btn primary" id="rCustomer">'+tr('forCustomer')+'</button><button class="btn" id="rInternal">'+tr('internal')+'</button><button class="btn green" id="rBoth">'+tr('both')+'</button></div>',[{label:tr('close'),onClick:closeModal}]);
+  $('rCustomer').onclick=()=>{closeModal();openCustomerReport(cid,wid)};
+  $('rInternal').onclick=()=>{closeModal();openInternalReport(cid,wid)};
+  $('rBoth').onclick=()=>{closeModal();openCustomerReport(cid,wid);setTimeout(()=>openInternalReport(cid,wid),300)};
+}
+function openCustomerReport(cid,wid){
+  const c=state.customers.find(c=>c.id===cid), w=findWork(cid,wid); if(!c||!w)return;
+  const entries=w.entries||[];
+  const groups=[
+    [tr('notes'),entries.filter(e=>['Merkintä','Kuva'].includes(e.type))],
+    [tr('hours'),entries.filter(e=>e.type==='Tunti')],
+    [tr('materials'),entries.filter(e=>e.type==='Materiaali')],
+    [tr('costs'),entries.filter(e=>e.type==='Kulu'&&e.billable!==false)],
+    [tr('drives'),entries.filter(e=>['Päiväraha','Kilometrit'].includes(e.type))]
+  ];
+  const billable=entries.filter(e=>e.billable!==false);
+  const hours=entries.filter(e=>e.type==='Tunti').reduce((s,e)=>s+qty(e),0);
+  const km=entries.filter(e=>e.type==='Kilometrit').reduce((s,e)=>s+qty(e),0);
+  const materials=entries.filter(e=>e.type==='Materiaali'&&e.billable!==false).reduce((s,e)=>s+Number(e.amount||0),0);
+  const costs=entries.filter(e=>e.type==='Kulu'&&e.billable!==false).reduce((s,e)=>s+Number(e.amount||0),0);
+  const total=billable.reduce((s,e)=>s+Number(e.amount||0),0);
+  const rowStatus=e=>e.invoiced?tr('invoiced'):e.billable===false?tr('notBillable'):tr('open');
+  const hasTxt=v=>String(v||'').trim().length>0;
+  const fmt=d=>new Date(d).toLocaleDateString('fi-FI');
+  const fi=lang()==='fi';
+  const reportDate=fmt(new Date().toISOString().slice(0,10));
+  const statusText=w.status==='Suunnitteilla'?tr('planned'):w.status==='Käynnissä'?tr('inProgress'):w.status==='Valmis'?tr('done'):esc(w.status||'-');
+  const reportCss=`<style>
+    body{font-family:Inter,Arial,sans-serif;color:#111827;padding:28px;max-width:900px;margin:auto;background:#fff;font-size:12.7px;line-height:1.38}
+    button{background:#2563eb;color:white;border:0;padding:8px 13px;border-radius:8px;font-weight:700;margin-bottom:12px}
+    .report-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:2px solid #dbeafe;padding-bottom:13px;margin-bottom:12px}
+    h1{margin:0;color:#0f172a;font-size:27px;letter-spacing:-.03em;font-weight:700}.subtitle{margin-top:3px;color:#64748b;font-size:12.5px}.brand{font-size:18px;color:#2563eb;font-weight:800;text-align:right}.date{font-size:11.5px;color:#64748b;text-align:right;margin-top:2px}
+    .meta-grid{display:grid;grid-template-columns:1.25fr 1.25fr 1fr 1fr;gap:8px;margin:12px 0 12px}.box{border:1px solid #e2e8f0;border-radius:11px;padding:9px 10px;background:#f8fafc}.box small{display:block;font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}.box strong{font-size:12.6px;color:#0f172a}.status-box{background:#eff6ff;border-color:#bfdbfe}.status-box strong{color:#1d4ed8}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px;margin:8px 0 12px}.summary .box{background:#fff}.summary .box strong{font-size:15px;font-weight:700}
+    section{margin-top:11px;page-break-inside:avoid;break-inside:avoid}.txt-section{border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;background:#fff}.txt-section h2,.table-section h2{margin:0 0 6px;font-size:12px;color:#1e40af;text-transform:uppercase;letter-spacing:.05em}.txt-section p{margin:0;white-space:pre-line;color:#1f2937}.phase-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini-title{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:3px;font-weight:800}.attention{background:#fff7ed;border-color:#fed7aa}.attention h2{color:#c2410c}.recommend{background:#f8fafc}.maintenance{background:#f0fdf4;border-color:#bbf7d0}.maintenance h2{color:#15803d}
+    table{width:100%;border-collapse:collapse;margin-top:6px}th,td{padding:6px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top;font-size:11.5px}th{background:#f8fafc;color:#64748b;text-transform:uppercase;font-size:9px;letter-spacing:.04em}.num{text-align:right}.muted{color:#64748b}.footer{margin-top:14px;border-top:1px solid #e5e7eb;padding-top:8px;color:#64748b;font-size:10.5px;display:flex;justify-content:space-between;gap:10px;page-break-inside:avoid;break-inside:avoid}
+    @media print{button{display:none}body{padding:10mm 10mm;font-size:12px;line-height:1.32}.report-head{margin-top:0}.box,section{break-inside:avoid}.footer{display:none}}
+    @media(max-width:720px){.meta-grid{grid-template-columns:1fr}.phase-grid{grid-template-columns:1fr}.report-head{display:block}.brand,.date{text-align:left;margin-top:10px}}
+  </style>`;
+  const txtSection=(title,txt,cls='')=>hasTxt(txt)?`<section class="txt-section ${cls}"><h2>${esc(title)}</h2><p>${esc(txt)}</p></section>`:'';
+  let body='<!doctype html><html lang="'+lang()+'"><head><meta charset="utf-8"><title>'+tr('customerReport')+' - '+esc(w.name)+'</title>'+reportCss+'</head><body>';
+  body+='<button onclick="window.print()">'+tr('printPdf')+'</button>';
+  body+='<div class="report-head"><div><h1>'+tr('customerReport')+'</h1><div class="subtitle">'+esc(c.name)+' · '+esc(w.name)+'</div></div><div><div class="brand">Pakki</div><div class="date">'+tr('generated')+' '+reportDate+'</div></div></div>';
+  body+='<div class="meta-grid"><div class="box"><small>'+tr('customer')+'</small><strong>'+esc(c.name)+'</strong></div><div class="box"><small>'+tr('worksite')+'</small><strong>'+esc(w.name)+'</strong></div><div class="box"><small>'+tr('address')+'</small><strong>'+esc(w.address||'-')+'</strong></div><div class="box status-box"><small>'+tr('status')+'</small><strong>'+statusText+'</strong></div></div>';
+  const summary=[];
+  if(hours>0)summary.push(['totalHours',hours.toLocaleString('fi-FI')+' h']);
+  if(km>0)summary.push(['totalKm',km.toLocaleString('fi-FI')+' km']);
+  if(materials>0)summary.push(['materials',euro2(materials)]);
+  if(costs>0)summary.push(['costs',euro2(costs)]);
+  if(total>0)summary.push(['totalNet',euro2(total)]);
+  if(summary.length){body+='<div class="summary">'+summary.map(([k,v])=>'<div class="box"><small>'+tr(k)+'</small><strong>'+v+'</strong></div>').join('')+'</div>';}
+  body+=txtSection(tr('workSummary'),w.summary);
+  if(hasTxt(w.phasesDone)||hasTxt(w.nextStep)){
+    body+='<section class="txt-section"><h2>'+tr('workPhases')+'</h2><div class="phase-grid">';
+    if(hasTxt(w.phasesDone))body+='<p><span class="mini-title">'+tr('completedPhases')+'</span>'+esc(w.phasesDone)+'</p>';
+    if(hasTxt(w.nextStep))body+='<p><span class="mini-title">'+tr('nextStep')+'</span>'+esc(w.nextStep)+'</p>';
+    body+='</div></section>';
+  }
+  body+=txtSection(tr('observations'),w.observations,'attention');
+  body+=txtSection(tr('recommendations'),w.recommendations,'recommend');
+  body+=txtSection(tr('maintenanceInstructions'),w.maintenance,'maintenance');
+  groups.forEach(([title,rows])=>{if(!rows.length)return;body+='<section class="table-section"><h2>'+esc(title)+' <span class="muted">'+rows.length+' '+(fi?'kpl':'pcs')+'</span></h2><table><thead><tr><th>'+tr('description')+'</th><th>'+tr('date')+'</th><th class="num">'+tr('quantity')+'</th><th class="num">'+tr('amount')+'</th><th>'+tr('state')+'</th></tr></thead><tbody>'; rows.forEach(e=>{const q=qty(e),u=unit(e); body+='<tr><td>'+esc(e.title||e.type)+(e.note?'<br><small class="muted">'+esc(e.note)+'</small>':'')+(e.imageDataUrl?'<br><img src="'+e.imageDataUrl+'" style="margin-top:6px;max-width:160px;max-height:110px;border-radius:8px;object-fit:cover">':'')+'</td><td>'+esc(e.date||'')+'</td><td class="num">'+(q&&u?q.toLocaleString('fi-FI')+' '+u:'–')+'</td><td class="num">'+(e.amount?euro2(e.amount):'–')+'</td><td>'+rowStatus(e)+'</td></tr>'}); body+='</tbody></table></section>'});
+  body+='<div class="footer"><span>Pakki by Opero</span><span>'+tr('generated')+' '+new Date().toLocaleString('fi-FI')+'</span></div></body></html>';
+  openHtmlDoc(body);
+}
+function openInternalReport(cid,wid){
+  const c=state.customers.find(c=>c.id===cid), w=findWork(cid,wid); if(!c||!w)return;
+  const v=vatSummary(w.entries,{onlyInvoiced:true}), rows=Object.values(v.buckets).sort((a,b)=>b.rate-a.rate), fi=lang()==='fi';
+  const L=fi?{title:'Sisäinen työmaaraportti',vatBreakdown:'ALV-erittely, sisäinen arvio',vatRate:'ALV-kanta',salesNet:'Myynti netto',salesVat:'Myynti-ALV',purchaseNet:'Ostot netto',purchaseVat:'Osto-ALV',vatDebt:'ALV-velka',total:'Yhteensä'}:{title:'Internal worksite report',vatBreakdown:'VAT breakdown, internal estimate',vatRate:'VAT rate',salesNet:'Sales net',salesVat:'Sales VAT',purchaseNet:'Purchases net',purchaseVat:'Purchase VAT',vatDebt:'VAT payable',total:'Total'};
+  let body='<!doctype html><html lang="'+lang()+'"><head><meta charset="utf-8"><title>'+L.title+'</title>'+pdfBaseStyle()+'</head><body><button onclick="window.print()">'+tr('printPdf')+'</button><h1>'+L.title+'</h1><p>'+esc(c.name)+' · '+esc(w.name)+'</p><h2>'+L.vatBreakdown+'</h2><table><thead><tr><th>'+L.vatRate+'</th><th class="num">'+L.salesNet+'</th><th class="num">'+L.salesVat+'</th><th class="num">'+L.purchaseNet+'</th><th class="num">'+L.purchaseVat+'</th><th class="num">'+L.vatDebt+'</th></tr></thead><tbody>';
+  rows.forEach(r=>{body+='<tr><td>'+vatLabel(r.rate)+'</td><td class="num">'+euro2(r.salesBase)+'</td><td class="num">'+euro2(r.salesVat)+'</td><td class="num">'+euro2(r.purchaseBase)+'</td><td class="num">'+euro2(r.purchaseVat)+'</td><td class="num">'+euro2(r.salesVat-r.purchaseVat)+'</td></tr>'});
+  body+='<tr><th>'+L.total+'</th><th class="num">'+euro2(v.salesBase)+'</th><th class="num">'+euro2(v.salesVat)+'</th><th class="num">'+euro2(v.purchaseBase)+'</th><th class="num">'+euro2(v.purchaseVat)+'</th><th class="num">'+euro2(v.vatDebt)+'</th></tr></tbody></table></body></html>';
+  openHtmlDoc(body);
+}
+function openSettings(){
+  modal(tr('settings'),`
+    <div class="info">${tr('settingsIntro')}</div>
+    <div class="rows">
+      <button class="row" style="cursor:pointer;text-align:left" id="setCompany"><div><strong>${tr('companyInfo')}</strong><small>${tr('companyInfoSub')}</small></div><strong>›</strong></button>
+      <button class="row" style="cursor:pointer;text-align:left" id="setInvoice"><div><strong>${tr('invoicePrices')}</strong><small>${tr('invoicePricesSub')}</small></div><strong>›</strong></button>
+      <button class="row" style="cursor:pointer;text-align:left" id="setAppearance"><div><strong>${tr('appearanceLegend')}</strong><small>${tr('appearanceLegendSub')}</small></div><strong>›</strong></button>
+      <button class="row" style="cursor:pointer;text-align:left" id="setData"><div><strong>${tr('dataManagement')}</strong><small>${tr('dataManagementSub')}</small></div><strong>›</strong></button>
+    </div>
+  `,[{label:tr('close'),onClick:closeModal}]);
+  $('setCompany').onclick=openCompanySettings;
+  $('setInvoice').onclick=openInvoiceSettings;
+  $('setAppearance').onclick=openAppearanceSettings;
+  $('setData').onclick=openDataSettings;
+}
+
+function openCompanySettings(){const s=state.settings.seller;modal(tr('companyInfo'),`
+  <div class="info">${tr('companyInfoHelp')}</div>
+  <div class="form">
+    <div><label class="label">${tr('companyName')}</label><input id="sName" value="${esc(s.name)}"></div>
+    <div><label class="label">${tr('businessId')}</label><input id="sBid" value="${esc(s.businessId)}"></div>
+    <div><label class="label">${tr('vatId')}</label><input id="sVat" value="${esc(s.vatId)}"></div>
+    <div><label class="label">${tr('email')}</label><input id="sEmail" value="${esc(s.email)}"></div>
+    <div class="full"><label class="label">${tr('address')}</label><input id="sAddress" value="${esc(s.address)}"></div>
+    <div><label class="label">${tr('iban')}</label><input id="sIban" value="${esc(s.iban)}"></div>
+    <div><label class="label">${tr('bic')}</label><input id="sBic" value="${esc(s.bic)}"></div>
+  </div>
+`,[{label:tr('back'),onClick:openSettings},{label:tr('save'),cls:'btn primary',onClick:()=>{Object.assign(state.settings.seller,{name:$('sName').value.trim(),businessId:$('sBid').value.trim(),vatId:$('sVat').value.trim(),email:$('sEmail').value.trim(),address:$('sAddress').value.trim(),iban:$('sIban').value.trim(),bic:$('sBic').value.trim()});toast(tr('savedCompany'));openSettings();render()}}])}
+
+function openInvoiceSettings(){const p=state.pricing,checked=v=>(state.settings.vatRates||[]).some(r=>Number(r.value)===v)?'checked':'';modal(tr('invoicePrices'),`
+  <div class="info">${tr('invoicePricesSub')}</div>
+  <div class="form">
+    <div><label class="label">${tr('hourlyRate')}</label><input id="pHour" type="number" step="0.01" value="${p.hourlyRate}"></div>
+    <div><label class="label">${tr('dailyAllowance')}</label><input id="pDay" type="number" step="0.01" value="${p.dailyAllowance}"></div>
+    <div><label class="label">${tr('kmRate')}</label><input id="pKm" type="number" step="0.01" value="${p.kmRate}"></div>
+    <div><label class="label">${tr('invoicePrefix')}</label><input id="prefix" value="${esc(state.invoiceSeries.prefix)}"></div>
+  </div>
+  <details class="full" style="margin-top:14px"><summary style="cursor:pointer;color:var(--muted);font-weight:800">${tr('vatSettings')}</summary>
+    <div class="form" style="margin-top:12px">
+      <label class="row"><span>25,5 %</span><input class="vatChk" type="checkbox" value="25.5" ${checked(25.5)}></label>
+      <label class="row"><span>13,5 %</span><input class="vatChk" type="checkbox" value="13.5" ${checked(13.5)}></label>
+      <label class="row"><span>10 %</span><input class="vatChk" type="checkbox" value="10" ${checked(10)}></label>
+      <label class="row"><span>0 %</span><input class="vatChk" type="checkbox" value="0" ${checked(0)}></label>
+      <div><label class="label">${tr('defaultSalesVat')}</label><select id="defSales">${vatOptions(state.settings.defaultSalesVat)}</select></div>
+      <div><label class="label">${tr('defaultPurchaseVat')}</label><select id="defPurchase">${vatOptions(state.settings.defaultPurchaseVat)}</select></div>
+    </div>
+  </details>
+`,[{label:tr('back'),onClick:openSettings},{label:tr('save'),cls:'btn primary',onClick:()=>{const selected=[...document.querySelectorAll('.vatChk:checked')].map(x=>Number(x.value));if(!selected.length)return toast(tr('chooseVat'));state.pricing={hourlyRate:Number($('pHour').value||0),dailyAllowance:Number($('pDay').value||0),kmRate:Number($('pKm').value||0)};state.invoiceSeries.prefix=$('prefix').value.trim()||'RP';state.settings.vatRates=VAT_RATES.filter(r=>selected.includes(Number(r.value)));state.settings.defaultSalesVat=selected.includes(Number($('defSales').value))?Number($('defSales').value):selected[0];state.settings.defaultPurchaseVat=selected.includes(Number($('defPurchase').value))?Number($('defPurchase').value):selected[0];toast(tr('savedInvoiceSettings'));openSettings();render()}}])}
+
+function openAppearanceSettings(){modal(tr('appearanceLegend'),`
+  <div class="form">
+    <div class="full"><label class="label">${tr('theme')}</label><select id="themeSelect"><option value="dark" ${state.settings.theme!=='light'?'selected':''}>${tr('darkTheme')}</option><option value="light" ${state.settings.theme==='light'?'selected':''}>${tr('lightTheme')}</option></select></div>
+  </div>
+  <details class="full" style="margin-top:14px" open><summary style="cursor:pointer;color:var(--muted);font-weight:800">${tr('colorLegend')}</summary><div class="info" style="margin-top:12px">🟠 ${tr('unbilled')}<br>🟢 ${tr('billed')}<br>🟣 ${tr('priority')}<br>🔴 ${tr('vatEstimate')} +<br>🟢 ${tr('vatEstimate')} −</div></details>
+  <details class="full" style="margin-top:14px"><summary style="cursor:pointer;color:var(--muted);font-weight:800">${tr('vatFormula')}</summary><div class="info" style="margin-top:12px">${lang()==='fi'?'ALV-arvio = laskujen myynti-ALV − vähennyskelpoinen osto-ALV. Arvio kohdistetaan laskupäivän kuukaudelle. Asiakaslaskulle osto-ALV ei mene koskaan.':'VAT estimate = sales VAT from invoices − deductible purchase VAT. The estimate is assigned to the invoice date month. Purchase VAT is never shown on the customer invoice.'}</div></details>
+`,[{label:tr('back'),onClick:openSettings},{label:tr('save'),cls:'btn primary',onClick:()=>{state.settings.theme=$('themeSelect').value;applyTheme();toast(tr('savedAppearance'));openSettings();render()}}])}
+
+function openDataSettings(){modal(tr('dataManagement'),`
+  <div class="info">${tr('dataManagementSub')}</div>
+  <div class="rows">
+    <button class="row" style="cursor:pointer;text-align:left" id="loadDemo"><div><strong>${tr('loadDemo')}</strong><small>${tr('demoDataSub')}</small></div><strong>›</strong></button>
+    <button class="row" style="cursor:pointer;text-align:left;border-color:rgba(239,68,68,.35);color:#fecaca" id="clearAll"><div><strong>${tr('clearAll')}</strong><small>${tr('clearAllSub')}</small></div><strong>›</strong></button>
+  </div>
+`,[{label:tr('back'),onClick:openSettings}]);$('loadDemo').onclick=()=>{if(!confirm(tr('demoConfirm')))return;seed();closeModal()};$('clearAll').onclick=async()=>{if(!confirm(tr('clearConfirm')))return;state=structuredClone(defaultData);selected=null;await dbDel().catch(()=>{});closeModal();render()}}
+
+function seed(){state=structuredClone(defaultData);const names=['Pohjolan Huolto','Rakennus Kallio Oy','Savon Remontti','Kiinteistö Oy Keskusta'],cities=['Kuopio','Iisalmi','Oulu','Joensuu'];for(let i=0;i<8;i++){const c={id:uid(),name:names[i%names.length],city:cities[i%cities.length],phone:'040 '+(1000000+i),email:`asiakas${i+1}@example.fi`,address:`Esimerkkitie ${i+1}`,priority:i%4===0,worksites:[]};const w={id:uid(),name:'Kylpyhuone '+(i+1),address:`Testikatu ${i+1}`,status:'Käynnissä',nextStep:'Seuraavaksi tarkistus ja viimeistely.',summary:'Työmaalla tehtiin sovitut kirjaukset ja kohteen eteneminen dokumentoitiin raporttia varten.',phasesDone:'Valmistelu\nTyövaiheen kirjaus\nMateriaalien dokumentointi',observations:'Ei erityisiä huomioita.',recommendations:'Seurataan työn etenemistä ja varmistetaan seuraava työvaihe ennen laskutusta.',maintenance:'Pidä kohde puhtaana ja ilmoita, jos huomaat poikkeamia työn jälkeen.',entries:[]};const h=2+i,mat=73+i*15,cost=round2(mat*.55),d=today();w.entries.push({id:uid(),type:'Tunti',title:`Työ ${h}h`,date:d,supplyDate:d,quantity:h,amount:h*65,costPrice:0,salesVatRate:25.5,purchaseVatRate:25.5,taxTreatment:'taxable',billable:true,invoiced:false});w.entries.push({id:uid(),type:'Materiaali',title:'Rakennusmateriaali',date:d,supplyDate:d,quantity:0,amount:mat,purchaseGross:round2(cost*1.255),costPrice:cost,salesVatRate:25.5,purchaseVatRate:25.5,taxTreatment:'taxable',purchaseVatDeductible:true,purchaseDeductiblePercent:100,billable:true,invoiced:false});c.worksites.push(w);state.customers.push(c)}selected=state.customers[0].id;toast('Demo-data ladattu');render()}
+$('addCustomer').onclick=openCustomer;$('addWorksite').onclick=()=>openWorksite();$('addWorksite2').onclick=()=>openWorksite();$('settings').onclick=openSettings;$('settingsMain').onclick=openSettings;$('langFI').onclick=()=>{state.settings.lang='fi';applyLang();render()};$('langEN').onclick=()=>{state.settings.lang='en';applyLang();render()};$('reset').onclick=async()=>{if(!confirm(tr('clearConfirm')))return;state=structuredClone(defaultData);selected=null;await dbDel().catch(()=>{});render()};$('search').oninput=e=>{searchTerm=e.target.value;renderCustomers()};$('filter').onchange=e=>{filterMode=e.target.value;renderCustomers()};$('closeModal').onclick=closeModal;$('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeModal()};function openSidebarSummary(kind){const isUnbilled=kind==='unbilled';const items=state.customers.map(c=>({c,total:customerTotals(c)[isUnbilled?'unbilled':'billed']})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);modal(isUnbilled?tr('unbilled'):tr('billed'),items.length?`<div class="rows">${items.map(({c,total})=>`<div class="row ${isUnbilled?'open':'invoiced'}" style="cursor:pointer" data-jump="${c.id}"><div><strong>${esc(c.name)}</strong><small>${esc(c.city||'')}</small></div><strong>${euro(total)}</strong></div>`).join('')}</div>`:`<div class="empty">${isUnbilled?tr('noUnbilledRows'):tr('noInvoicedRows')}</div>`,[{label:tr('close'),onClick:closeModal}]);document.querySelectorAll('[data-jump]').forEach(el=>el.onclick=()=>{selected=el.dataset.jump;closeModal();render()})}
+$('unbBox').onclick=()=>openSidebarSummary('unbilled');$('bilBox').onclick=()=>openSidebarSummary('billed');document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+(async()=>{state=normalize(await dbGet().catch(()=>null));loaded=true;applyTheme();applyLang();selected=state.customers[0]?.id||null;if(!state.customers.length)seed();else render();setTimeout(()=>$('splash')?.classList.add('hide'),850)})();
+</script>
+
+</body></html>
