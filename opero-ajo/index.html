@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Opero Ajo</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1a2c;--panel2:#12243a;--line:rgba(255,255,255,.1);--text:#edf5ff;--muted:#91a1b8;--soft:#5f718b;--blue:#29a8ff;--green:#32d583;--amber:#f6c85f;--red:#ff6b7c;--shadow:0 18px 48px rgba(0,0,0,.35);--r:18px;--font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:var(--font);background:#040a13;color:var(--text)}body{display:flex;justify-content:center;align-items:flex-start;padding:0}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.app{width:100%;max-width:440px;min-height:100dvh;background:linear-gradient(180deg,#09172a,#050b15);position:relative;overflow:hidden}.page{padding:18px 14px 92px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#00c8ff,#075de8);display:grid;place-items:center;font-weight:900;color:white;box-shadow:0 0 28px rgba(41,168,255,.35)}.kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);font-weight:800}.title{font-size:23px;font-weight:900;letter-spacing:-.04em;line-height:1}.status{font-size:11px;color:var(--muted);border:1px solid var(--line);background:rgba(255,255,255,.04);padding:7px 10px;border-radius:999px;white-space:nowrap}
+.hero{border:1px solid var(--line);background:linear-gradient(145deg,rgba(41,168,255,.18),rgba(50,213,131,.09) 55%,rgba(255,255,255,.03));border-radius:24px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:12px}.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}.metric strong{font-size:25px;letter-spacing:-.04em}.tabs{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:440px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(5,11,21,.92);backdrop-filter:blur(18px);border-top:1px solid var(--line)}.tab{min-height:58px;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:16px;display:grid;place-items:center;gap:2px;font-size:20px}.tab span{font-size:10px;font-weight:800}.tab.active{background:rgba(41,168,255,.14);border-color:rgba(41,168,255,.3);color:var(--text)}
+.view{display:none}.view.active{display:block}.card{border:1px solid var(--line);background:rgba(13,26,44,.92);border-radius:var(--r);padding:14px;margin-bottom:12px}.card h2{font-size:17px;margin:0 0 12px;letter-spacing:-.025em}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:6px;margin-bottom:10px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--soft);font-weight:900}.input,.select,.textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);border-radius:14px;padding:12px;outline:none}.textarea{min-height:88px;resize:vertical}.input:focus,.select:focus,.textarea:focus{border-color:rgba(41,168,255,.55);box-shadow:0 0 0 3px rgba(41,168,255,.12)}.select option{background:#0d1a2c;color:#fff}.btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:14px;padding:12px 14px;font-weight:850;min-height:45px}.btn.primary{background:linear-gradient(135deg,#00a7ff,#0067ff);border-color:rgba(41,168,255,.55);color:white}.btn.green{background:rgba(50,213,131,.14);border-color:rgba(50,213,131,.35)}.btn.danger{background:rgba(255,107,124,.12);border-color:rgba(255,107,124,.35);color:#ffd7dc}.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.seg .btn.active{background:rgba(41,168,255,.18);border-color:rgba(41,168,255,.5)}.actions{display:grid;gap:8px}.actions.two{grid-template-columns:1fr 1fr}.hint{font-size:12px;color:var(--muted);line-height:1.45}.list{display:grid;gap:10px}.entry{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:16px;padding:12px}.entry-top{display:flex;justify-content:space-between;gap:10px}.entry-title{font-weight:900}.entry-meta{font-size:12px;color:var(--muted);margin-top:2px}.pill{font-size:11px;font-weight:900;padding:5px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}.pill.trip{color:#b7e6ff;background:rgba(41,168,255,.12);border-color:rgba(41,168,255,.28)}.pill.expense{color:#ffe7aa;background:rgba(246,200,95,.12);border-color:rgba(246,200,95,.28)}.entry-note{font-size:13px;color:var(--muted);line-height:1.4;margin-top:8px}.thumb{width:100%;max-height:180px;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-top:10px}.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}.toolbar .input{flex:1}.summary{display:grid;gap:8px}.sumrow{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:9px 0}.sumrow:last-child{border-bottom:0}.sumrow b{font-size:18px}.empty{padding:22px 10px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(20px);max-width:390px;width:calc(100% - 28px);background:#edf5ff;color:#07111f;border-radius:16px;padding:12px 14px;font-weight:850;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 18px 42px rgba(0,0,0,.35)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:700px){body{padding:24px}.app{border:1px solid var(--line);border-radius:34px;min-height:860px;box-shadow:0 30px 80px rgba(0,0,0,.45)}.tabs{position:absolute}.page{padding:22px 18px 96px}}
+@media print{body{display:block;background:white;color:#111}.app,.tabs,.page,.toast{display:none!important}.print-report{display:block!important;color:#111;font-family:Arial,sans-serif;padding:18mm}.print-report h1{margin:0 0 4mm}.print-report table{width:100%;border-collapse:collapse;margin-top:6mm}.print-report th,.print-report td{border-bottom:1px solid #ddd;padding:7px;text-align:left;font-size:12px}.print-report th{background:#f3f4f6}.print-report .num{text-align:right}.print-report .summary{max-width:420px;margin-left:auto}.print-report .sumrow{border-bottom:1px solid #ddd;color:#111}}
+</style>
+</head>
+<body>
+<main class="app">
+  <section class="page">
+    <header class="top">
+      <div class="brand"><div class="logo">A</div><div><div class="kicker">Opero</div><div class="title">Ajo</div></div></div>
+      <div class="status" id="saveStatus">Käynnistyy</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-row">
+        <div class="metric"><small>Kuukauden km</small><strong id="heroKm">0</strong></div>
+        <div class="metric"><small>Kulut</small><strong id="heroExpenses">0 €</strong></div>
+      </div>
+    </section>
+
+    <section class="view active" id="view-new">
+      <div class="seg">
+        <button class="btn active" id="modeTrip" type="button">Uusi ajo</button>
+        <button class="btn" id="modeExpense" type="button">Kulu / kuitti</button>
+      </div>
+
+      <form class="card" id="tripForm">
+        <h2>Kirjaa ajo</h2>
+        <div class="grid2">
+          <div class="field"><label class="label" for="tripDate">Päivä</label><input class="input" id="tripDate" type="date" required></div>
+          <div class="field"><label class="label" for="tripKm">Kilometrit</label><input class="input" id="tripKm" type="number" min="0" step="0.1" inputmode="decimal" placeholder="0" required></div>
+        </div>
+        <div class="field"><label class="label" for="tripFrom">Lähtö</label><input class="input" id="tripFrom" placeholder="Esim. Kuopio"></div>
+        <div class="field"><label class="label" for="tripTo">Määränpää</label><input class="input" id="tripTo" placeholder="Esim. Iisalmi"></div>
+        <div class="field"><label class="label" for="tripStops">Pysähdykset</label><input class="input" id="tripStops" placeholder="Valinnainen"></div>
+        <div class="field"><label class="label" for="tripPurpose">Tarkoitus</label><input class="input" id="tripPurpose" placeholder="Työkäynti, nouto, huolto..."></div>
+        <div class="field"><label class="label" for="tripNote">Lisähuomio</label><textarea class="textarea" id="tripNote" placeholder="Lyhyt muistiinpano"></textarea></div>
+        <button class="btn primary" type="submit">Tallenna ajo</button>
+      </form>
+
+      <form class="card" id="expenseForm" style="display:none">
+        <h2>Lisää kulu ja kuitti</h2>
+        <div class="grid2">
+          <div class="field"><label class="label" for="expenseDate">Päivä</label><input class="input" id="expenseDate" type="date" required></div>
+          <div class="field"><label class="label" for="expenseAmount">Summa €</label><input class="input" id="expenseAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" required></div>
+        </div>
+        <div class="field"><label class="label" for="expenseCategory">Tyyppi</label><select class="select" id="expenseCategory"><option>Polttoaine</option><option>Pysäköinti</option><option>Pesu</option><option>Huolto</option><option>Muu kulu</option></select></div>
+        <div class="field"><label class="label" for="expenseTitle">Selite</label><input class="input" id="expenseTitle" placeholder="Esim. Tankkaus ABC"></div>
+        <div class="field"><label class="label" for="receiptFile">Kuittikuva</label><input class="input" id="receiptFile" type="file" accept="image/*"></div>
+        <div class="hint" id="receiptHint">Kuva tallennetaan paikallisesti IndexedDB:hen.</div>
+        <img class="thumb" id="receiptPreview" alt="" style="display:none">
+        <div class="field"><label class="label" for="expenseNote">Lisähuomio</label><textarea class="textarea" id="expenseNote" placeholder="Valinnainen"></textarea></div>
+        <button class="btn primary" type="submit">Tallenna kulu</button>
+      </form>
+    </section>
+
+    <section class="view" id="view-report">
+      <div class="card">
+        <h2>Kuukausiraportti</h2>
+        <div class="field"><label class="label" for="reportMonth">Kuukausi</label><input class="input" id="reportMonth" type="month"></div>
+        <div class="summary" id="reportSummary"></div>
+        <div class="actions two" style="margin-top:12px">
+          <button class="btn" type="button" id="refreshReport">Päivitä</button>
+          <button class="btn primary" type="button" id="printReport">Tulosta PDF</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Raportin rivit</h2>
+        <div class="list" id="reportRows"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-list">
+      <div class="toolbar"><input class="input" id="listMonth" type="month"><button class="btn" type="button" id="clearFilter">Kaikki</button></div>
+      <div class="list" id="entriesList"></div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="card">
+        <h2>Asetukset</h2>
+        <div class="field"><label class="label" for="driverName">Nimi / yritys</label><input class="input" id="driverName" placeholder="Raportille tulostuva nimi"></div>
+        <div class="field"><label class="label" for="vehicleName">Ajoneuvo</label><input class="input" id="vehicleName" placeholder="Esim. ABC-123"></div>
+        <div class="field"><label class="label" for="kmRate">Km-korvaus €/km</label><input class="input" id="kmRate" type="number" min="0" step="0.01" inputmode="decimal"></div>
+        <button class="btn primary" type="button" id="saveSettings">Tallenna asetukset</button>
+      </div>
+      <div class="card">
+        <h2>Varmuuskopio</h2>
+        <div class="actions">
+          <button class="btn green" type="button" id="exportJson">Vie JSON</button>
+          <button class="btn" type="button" id="importJsonBtn">Tuo JSON</button>
+          <input id="importJsonInput" type="file" accept="application/json,.json" hidden>
+          <button class="btn danger" type="button" id="clearData">Tyhjennä kaikki tiedot</button>
+        </div>
+        <p class="hint">Varmuuskopio sisältää ajot, kulut, kuittikuvat ja asetukset.</p>
+      </div>
+    </section>
+  </section>
+
+  <nav class="tabs" aria-label="Päänavigaatio">
+    <button class="tab active" data-view="new" type="button">＋<span>Uusi ajo</span></button>
+    <button class="tab" data-view="report" type="button">▦<span>Raportti</span></button>
+    <button class="tab" data-view="list" type="button">☰<span>Ajot</span></button>
+    <button class="tab" data-view="settings" type="button">⚙<span>Asetukset</span></button>
+  </nav>
+  <div class="toast" id="toast"></div>
+</main>
+<section class="print-report" id="printArea" style="display:none"></section>
+
+<script>
+const DB_NAME='opero_ajo_db';
+const DB_VERSION=1;
+const STORE='state';
+const STATE_KEY='main';
+let state={entries:[],settings:{driverName:'',vehicleName:'',kmRate:0.59}};
+let receiptDataUrl='';
+
+const $=id=>document.getElementById(id);
+function localDateString(date=new Date()){const y=date.getFullYear();const m=String(date.getMonth()+1).padStart(2,'0');const d=String(date.getDate()).padStart(2,'0');return `${y}-${m}-${d}`}
+const monthNow=()=>localDateString().slice(0,7);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const money=n=>Number(n||0).toLocaleString('fi-FI',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2300)}
+function setStatus(msg){$('saveStatus').textContent=msg}
+function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>req.result.createObjectStore(STORE);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function dbGet(){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly');const req=tx.objectStore(STORE).get(STATE_KEY);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);tx.oncomplete=()=>db.close()})}
+async function dbSet(value){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(value,STATE_KEY);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>reject(tx.error)})}
+async function save(){try{await dbSet(state);setStatus('Tallennettu')}catch(e){console.error(e);setStatus('Tallennusvirhe');toast('Tallennus epäonnistui')}}
+async function load(){try{const saved=await dbGet();if(saved&&Array.isArray(saved.entries)){state=saved}setStatus('Valmis')}catch(e){console.error(e);setStatus('IndexedDB ei käytössä');toast('IndexedDB ei avautunut')}}
+
+function entriesForMonth(m){return state.entries.filter(e=>!m||e.date?.startsWith(m)).sort((a,b)=>(b.date||'').localeCompare(a.date||''))}
+function totals(m){const rows=entriesForMonth(m);const km=rows.filter(e=>e.type==='trip').reduce((s,e)=>s+Number(e.km||0),0);const expenses=rows.filter(e=>e.type==='expense').reduce((s,e)=>s+Number(e.amount||0),0);const rate=Number(state.settings.kmRate||0);return{rows,km,expenses,rate,kmComp:km*rate,total:km*rate+expenses}}
+function renderHero(){const t=totals(monthNow());$('heroKm').textContent=t.km.toLocaleString('fi-FI');$('heroExpenses').textContent=money(t.expenses)}
+function entryLabel(e){return e.type==='trip'?'Ajo':'Kulu'}
+function entryTitle(e){if(e.type==='trip')return [e.from,e.to].filter(Boolean).join(' → ')||'Ajo';return e.title||e.category||'Kulu'}
+function entryMeta(e){if(e.type==='trip')return `${e.date||''} · ${Number(e.km||0).toLocaleString('fi-FI')} km`;return `${e.date||''} · ${money(e.amount)} · ${e.category||'Kulu'}`}
+function entryHtml(e,withDelete=true){const note=e.type==='trip'?[e.purpose,e.stops?`Pysähdykset: ${e.stops}`:'',e.note].filter(Boolean).join(' · '):(e.note||'');return `<article class="entry"><div class="entry-top"><div><div class="entry-title">${esc(entryTitle(e))}</div><div class="entry-meta">${esc(entryMeta(e))}</div></div><span class="pill ${e.type}">${entryLabel(e)}</span></div>${note?`<div class="entry-note">${esc(note)}</div>`:''}${e.receiptDataUrl?`<img class="thumb" src="${e.receiptDataUrl}" alt="Kuitti">`:''}${withDelete?`<div class="actions two" style="margin-top:10px"><button class="btn" data-edit="${e.id}" type="button">Muokkaa</button><button class="btn danger" data-del="${e.id}" type="button">Poista</button></div>`:''}</article>`}
+function renderList(){const m=$('listMonth').value;const rows=entriesForMonth(m);$('entriesList').innerHTML=rows.length?rows.map(e=>entryHtml(e)).join(''):'<div class="empty">Ei kirjauksia.</div>';document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!confirm('Poistetaanko kirjaus?'))return;state.entries=state.entries.filter(e=>e.id!==b.dataset.del);await save();renderAll();toast('Kirjaus poistettu')});document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>loadEntryToForm(b.dataset.edit))}
+function renderReport(){const m=$('reportMonth').value||monthNow();$('reportMonth').value=m;const t=totals(m);$('reportSummary').innerHTML=`<div class="sumrow"><span>Ajoja</span><b>${t.rows.filter(e=>e.type==='trip').length}</b></div><div class="sumrow"><span>Kilometrit</span><b>${t.km.toLocaleString('fi-FI')} km</b></div><div class="sumrow"><span>Km-korvaus</span><b>${money(t.kmComp)}</b></div><div class="sumrow"><span>Kulut</span><b>${money(t.expenses)}</b></div><div class="sumrow"><span>Yhteensä</span><b>${money(t.total)}</b></div>`;$('reportRows').innerHTML=t.rows.length?t.rows.map(e=>entryHtml(e,false)).join(''):'<div class="empty">Ei raportoitavia rivejä.</div>'}
+function renderSettings(){const s=state.settings;$('driverName').value=s.driverName||'';$('vehicleName').value=s.vehicleName||'';$('kmRate').value=s.kmRate??0.59}
+function renderAll(){renderHero();renderList();renderReport();renderSettings()}
+
+function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+name).classList.add('active');document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===name));if(name==='report')renderReport();if(name==='list')renderList();if(name==='settings')renderSettings()}
+function setMode(mode){const isTrip=mode==='trip';$('tripForm').style.display=isTrip?'block':'none';$('expenseForm').style.display=isTrip?'none':'block';$('modeTrip').classList.toggle('active',isTrip);$('modeExpense').classList.toggle('active',!isTrip)}
+function resetTripForm(){$('tripForm').reset();$('tripDate').value=localDateString()}
+function resetExpenseForm(){$('expenseForm').reset();$('expenseDate').value=localDateString();receiptDataUrl='';$('receiptPreview').style.display='none';$('receiptPreview').src=''}
+function loadEntryToForm(id){const e=state.entries.find(x=>x.id===id);if(!e)return;showView('new');if(e.type==='trip'){setMode('trip');$('tripDate').value=e.date||localDateString();$('tripKm').value=e.km||'';$('tripFrom').value=e.from||'';$('tripTo').value=e.to||'';$('tripStops').value=e.stops||'';$('tripPurpose').value=e.purpose||'';$('tripNote').value=e.note||'';$('tripForm').dataset.edit=id}else{setMode('expense');$('expenseDate').value=e.date||localDateString();$('expenseAmount').value=e.amount||'';$('expenseCategory').value=e.category||'Muu kulu';$('expenseTitle').value=e.title||'';$('expenseNote').value=e.note||'';receiptDataUrl=e.receiptDataUrl||'';$('receiptPreview').src=receiptDataUrl;$('receiptPreview').style.display=receiptDataUrl?'block':'none';$('expenseForm').dataset.edit=id}toast('Muokkaa kirjausta ja tallenna')}
+
+function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(file)})}
+function download(name,text,type='application/json'){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function buildPrint(){const m=$('reportMonth').value||monthNow();const t=totals(m);const s=state.settings;const tripRows=t.rows.filter(e=>e.type==='trip').map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.from||'')}</td><td>${esc(e.to||'')}</td><td>${esc(e.purpose||'')}</td><td class="num">${Number(e.km||0).toLocaleString('fi-FI')}</td></tr>`).join('');const expenseRows=t.rows.filter(e=>e.type==='expense').map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.category||'')}</td><td>${esc(e.title||'')}</td><td class="num">${money(e.amount)}</td></tr>`).join('');$('printArea').innerHTML=`<h1>Opero Ajo - kuukausiraportti</h1><p>${esc(m)} · ${esc(s.driverName||'')} ${s.vehicleName?'· '+esc(s.vehicleName):''}</p><div class="summary"><div class="sumrow"><span>Kilometrit</span><b>${t.km.toLocaleString('fi-FI')} km</b></div><div class="sumrow"><span>Km-korvaus (${money(t.rate).replace(' €',' €/km')})</span><b>${money(t.kmComp)}</b></div><div class="sumrow"><span>Kulut</span><b>${money(t.expenses)}</b></div><div class="sumrow"><span>Yhteensä</span><b>${money(t.total)}</b></div></div><h2>Ajot</h2><table><thead><tr><th>Päivä</th><th>Lähtö</th><th>Määränpää</th><th>Tarkoitus</th><th class="num">Km</th></tr></thead><tbody>${tripRows||'<tr><td colspan="5">Ei ajoja.</td></tr>'}</tbody></table><h2>Kulut</h2><table><thead><tr><th>Päivä</th><th>Tyyppi</th><th>Selite</th><th class="num">Summa</th></tr></thead><tbody>${expenseRows||'<tr><td colspan="4">Ei kuluja.</td></tr>'}</tbody></table><p style="margin-top:10mm;font-size:11px;color:#555">Generoitu ${new Date().toLocaleString('fi-FI')} · Opero Ajo</p>`}
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+$('modeTrip').onclick=()=>setMode('trip');
+$('modeExpense').onclick=()=>setMode('expense');
+$('tripForm').onsubmit=async e=>{e.preventDefault();const id=e.currentTarget.dataset.edit||uid();const entry={id,type:'trip',date:$('tripDate').value||localDateString(),km:Number(String($('tripKm').value).replace(',','.'))||0,from:$('tripFrom').value.trim(),to:$('tripTo').value.trim(),stops:$('tripStops').value.trim(),purpose:$('tripPurpose').value.trim(),note:$('tripNote').value.trim(),updatedAt:new Date().toISOString()};state.entries=state.entries.filter(x=>x.id!==id).concat(entry);delete e.currentTarget.dataset.edit;await save();resetTripForm();renderAll();toast('Ajo tallennettu')};
+$('expenseForm').onsubmit=async e=>{e.preventDefault();const id=e.currentTarget.dataset.edit||uid();const entry={id,type:'expense',date:$('expenseDate').value||localDateString(),amount:Number(String($('expenseAmount').value).replace(',','.'))||0,category:$('expenseCategory').value,title:$('expenseTitle').value.trim(),note:$('expenseNote').value.trim(),receiptDataUrl,updatedAt:new Date().toISOString()};state.entries=state.entries.filter(x=>x.id!==id).concat(entry);delete e.currentTarget.dataset.edit;await save();resetExpenseForm();renderAll();toast('Kulu tallennettu')};
+$('receiptFile').onchange=async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;receiptDataUrl=await fileToDataUrl(file);$('receiptPreview').src=receiptDataUrl;$('receiptPreview').style.display='block';$('receiptHint').textContent='Kuittikuva valmis tallennettavaksi.'};
+$('refreshReport').onclick=renderReport;
+$('printReport').onclick=()=>{buildPrint();window.print()};
+$('listMonth').onchange=renderList;
+$('clearFilter').onclick=()=>{$('listMonth').value='';renderList()};
+$('saveSettings').onclick=async()=>{state.settings={driverName:$('driverName').value.trim(),vehicleName:$('vehicleName').value.trim(),kmRate:Number(String($('kmRate').value).replace(',','.'))||0};await save();renderAll();toast('Asetukset tallennettu')};
+$('exportJson').onclick=()=>download(`opero-ajo-backup-${localDateString()}.json`,JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2));
+$('importJsonBtn').onclick=()=>$('importJsonInput').click();
+$('importJsonInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=async()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.entries))throw new Error('entries puuttuu');state={entries:data.entries,settings:{...state.settings,...(data.settings||{})}};await save();renderAll();toast('JSON tuotu')}catch(err){toast('Tuonti epäonnistui: '+err.message)}e.target.value=''};reader.readAsText(file,'utf-8')};
+$('clearData').onclick=async()=>{if(!confirm('Poistetaanko kaikki Opero Ajo -tiedot tältä laitteelta?'))return;state={entries:[],settings:{driverName:'',vehicleName:'',kmRate:0.59}};await save();renderAll();toast('Tiedot tyhjennetty')};
+
+(async function init(){$('tripDate').value=localDateString();$('expenseDate').value=localDateString();$('reportMonth').value=monthNow();$('listMonth').value=monthNow();await load();renderAll()})();
+</script>
+</body>
+</html>
