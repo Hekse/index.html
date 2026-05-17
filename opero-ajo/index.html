@@ -138,6 +138,8 @@ Päiväys: 2026-05-17
 const LS_KEY='ajoPhone';
 const LS_DRAFT_KEY='ajoPhoneDraft';
 const OLD_KEYS=['opero-ajot-release-cleanup-v2'];
+const SUPABASE_URL='https://miahuckcphquawobehtk.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_tY1y97VnFfhXyKJ_9XCNGw_-rEq2pLx';
 let data=defaultData(), driveType='meno', costs=[], draftReceipts=[], routeTargets=[], idbOk=false, restoredDraftAt='';
 const q=id=>document.getElementById(id);
 const eur=n=>(+n||0).toLocaleString('fi-FI',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
@@ -310,7 +312,7 @@ async function fetchJsonWithTimeout(url,timeoutMs=9000){const ctrl=new AbortCont
 async function geocode(text){for(const c of candidates(text)){try{const arr=await fetchJsonWithTimeout('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=fi&q='+encodeURIComponent(c),9000);if(arr&&arr[0])return{lat:Number(arr[0].lat),lon:Number(arr[0].lon),label:arr[0].display_name,query:c}}catch(e){/* try next candidate */}}return null}
 function uncertainKmText(){return appLang==='en'?'Km lookup returned an uncertain result. Check the route on the map and enter kilometres manually.':'Km-haku antoi epävarman tuloksen. Tarkista reitti kartasta ja syötä kilometrit käsin.'}
 async function lookupDistance(){const p=routePoints();if(!p)return;const loading=appLang==='en'?'Getting kilometres...':'Haetaan kilometrejä...';setDistanceStatus(loading);msg(loading);try{const names=[p.s,...p.routeTargets],points=[];for(const name of names){const pt=await geocode(name);if(!pt)throw new Error('geocode');points.push(pt)}const coords=points.map(x=>`${x.lon},${x.lat}`).join(';');const url=`https://router.project-osrm.org/route/v1/driving/${coords}?overview=false`;const js=await fetchJsonWithTimeout(url,9000);const meters=js?.routes?.[0]?.distance;if(!meters)throw new Error('distance');const km=Math.round((meters/1000)*10)/10;if(km>1000){const warn=uncertainKmText();console.warn('[Opero Ajo km] unrealistic route distance rejected', {km,names,points});setDistanceStatus(warn);msg(warn,'warn');return}q('km').value=String(km);q('km').dispatchEvent(new Event('input',{bubbles:true}));calc();const okText=`${appLang==='en'?'Route':'Reitti'} ${kmf(km)}.`;setDistanceStatus(okText);msg(okText)}catch(e){const fail=appLang==='en'?'Km lookup failed. Open the map and enter kilometres manually.':'Km-haku ei onnistunut. Avaa kartta ja syötä kilometrit käsin.';setDistanceStatus(fail);msg(fail,'warn')}}
-function cloudSettings(){const c=data.settings.cloud||{};return{url:String(c.url||'').trim().replace(/\/+$/,''),anonKey:String(c.anonKey||'').trim(),email:String(c.email||'').trim(),userId:String(c.userId||c.session?.user?.id||'').trim(),session:c.session||null,status:String(c.status||'disabled'),lastSyncedAt:String(c.lastSyncedAt||''),error:String(c.error||'')}}
+function cloudSettings(){const c=data.settings.cloud||{};return{url:String(c.url||SUPABASE_URL||'').trim().replace(/\/+$/,''),anonKey:String(c.anonKey||SUPABASE_PUBLISHABLE_KEY||'').trim(),email:String(c.email||'').trim(),userId:String(c.userId||c.session?.user?.id||'').trim(),session:c.session||null,status:String(c.status||'disabled'),lastSyncedAt:String(c.lastSyncedAt||''),error:String(c.error||'')}}
 function cloudConfigured(){const c=cloudSettings();return !!(c.url&&c.anonKey)}
 function cloudSession(){return cloudSettings().session||null}
 function cloudAccessToken(){return String(cloudSession()?.access_token||'')}
