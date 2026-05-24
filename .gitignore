@@ -1,1 +1,5 @@
 _archive_untracked/
+test-results/
+playwright-report/
+*.webm
+trace.zip
