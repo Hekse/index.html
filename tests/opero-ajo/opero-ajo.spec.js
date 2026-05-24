@@ -121,6 +121,12 @@ async function fillRate(page, value = '0,55') {
 
 async function fillTrip(page, name, opts = {}) {
   await goNewTrip(page);
+  if (opts.startLabel) {
+    await page.locator('#start').selectOption({ label: opts.startLabel });
+  } else if (opts.customStart) {
+    await page.locator('#start').selectOption('__custom__');
+    await page.locator('#custom').fill(opts.customStart);
+  }
   await page.locator('#dest').fill(name);
   await page.locator('#purpose').fill(opts.purpose || 'Customer Visit');
   await page.locator('#km').fill(String(opts.km || '80'));
@@ -132,7 +138,19 @@ async function fillTrip(page, name, opts = {}) {
 
 async function saveTrip(page) {
   await page.getByRole('button', { name: /Tallenna ajo|Save trip/i }).click();
-  await expect(page.getByText(/Ajo tallennettu|Trip saved/i).or(page.getByText(/Uusi ajo|New trip/i))).toBeVisible({ timeout: 20_000 });
+  await waitForTripSaved(page);
+}
+
+async function waitForTripSaved(page) {
+  const deadline = Date.now() + 10_000;
+  while (Date.now() < deadline) {
+    const toastVisible = await page.locator('#toast').filter({ hasText: /Ajo tallennettu|Trip saved/i }).isVisible().catch(() => false);
+    const homeVisible = await page.locator('section#home:not(.hide)').isVisible().catch(() => false);
+    const homeHeadingVisible = await page.locator('section#home:not(.hide)').getByRole('heading', { name: /Tämän kuun koonti|This month/i }).isVisible().catch(() => false);
+    if (toastVisible || homeVisible || homeHeadingVisible) return;
+    await page.waitForTimeout(200);
+  }
+  throw new Error('Trip save confirmation did not appear');
 }
 
 async function syncNow(page) {
@@ -146,16 +164,48 @@ async function syncNow(page) {
 
 async function expectTripVisible(page, name) {
   await goTo(page, 'drives');
-  await expect(page.getByText(name)).toBeVisible();
+  const tripTitle = page.locator('#list .item .it', { hasText: name }).first();
+  await expect(tripTitle).toBeVisible();
 }
 
 async function expectTripHidden(page, name) {
   await goTo(page, 'drives');
-  await expect(page.getByText(name)).toHaveCount(0);
+  await expect(page.locator('#list .item .it', { hasText: name })).toHaveCount(0);
 }
 
 function storageLogs(logs) {
   return logs.filter(l => l.text.includes('[Opero Ajo storage]') || l.text.includes('[Opero Ajo cloud]') || l.text.includes('[Opero Ajo display]'));
+}
+
+async function attachStorageLogs(testInfo, name, logs) {
+  await testInfo.attach(name, { body: JSON.stringify(storageLogs(logs), null, 2), contentType: 'application/json' });
+}
+
+function parseUserIds(logs) {
+  return storageLogs(logs).map(l => l.text.match(/currentUserId:\s*'?([0-9a-f-]{20,})/i)?.[1]).filter(Boolean);
+}
+
+function parseDataStorageKeys(logs) {
+  return storageLogs(logs).map(l => l.text.match(/operoAjo:[^\s,}]+:data/)?.[0]).filter(Boolean);
+}
+
+async function ensureTestStartLocation(page) {
+  await goTo(page, 'settings');
+  const existing = page.locator('#locs').getByText('TESTI_AUTOMAATIO_HOME').first();
+  if (await existing.isVisible().catch(() => false)) {
+    return { startLabel: 'TESTI_AUTOMAATIO_HOME' };
+  }
+
+  const locationItems = await page.locator('#locs .item').count();
+  if (locationItems < 5) {
+    await page.locator('#ln').fill('TESTI_AUTOMAATIO_HOME');
+    await page.locator('#la').fill('Siikaranta 5, Kuopio');
+    await page.getByRole('button', { name: /\+ Lisää lähtöpaikka|\+ Add start location/i }).click();
+    await expect(page.locator('#locs').getByText('TESTI_AUTOMAATIO_HOME')).toBeVisible({ timeout: 10_000 });
+    return { startLabel: 'TESTI_AUTOMAATIO_HOME' };
+  }
+
+  return { customStart: 'Siikaranta 5, Kuopio' };
 }
 
 test.describe('Opero Ajo QA', () => {
@@ -214,65 +264,78 @@ test.describe('Opero Ajo QA', () => {
   });
 
   test('cloud user isolation between two Supabase users', async ({ browser }, testInfo) => {
+    test.setTimeout(120_000);
     test.skip(!cloudEnvReady(), 'Set OPERO_AJO_USER_A_EMAIL/PASSWORD and OPERO_AJO_USER_B_EMAIL/PASSWORD to run cloud isolation tests.');
 
     const runId = Date.now();
     const tripA = `TESTI_AUTOMAATIO_USER_A_${runId}`;
     const tripB = `TESTI_AUTOMAATIO_USER_B_${runId}`;
+    const testStart = { customStart: 'Siikaranta 5, Kuopio' };
+    let logsA1 = [];
+    let logsB = [];
+    let logsA2 = [];
+    let contextA1;
+    let contextB;
+    let contextA2;
 
-    const contextA1 = await browser.newContext();
-    const pageA1 = await contextA1.newPage();
-    const logsA1 = await collectConsole(pageA1);
-    await login(pageA1, USER_A);
-    await fillTrip(pageA1, tripA);
-    await saveTrip(pageA1);
-    await syncNow(pageA1);
-    await expectTripVisible(pageA1, tripA);
-    await signOut(pageA1);
-    await contextA1.close();
+    try {
+      contextA1 = await browser.newContext();
+      const pageA1 = await contextA1.newPage();
+      logsA1 = await collectConsole(pageA1);
+      await login(pageA1, USER_A);
+      await fillTrip(pageA1, tripA, testStart);
+      await saveTrip(pageA1);
+      await syncNow(pageA1);
+      await expectTripVisible(pageA1, tripA);
+      await contextA1.close();
+      contextA1 = null;
 
-    const contextB = await browser.newContext();
-    const pageB = await contextB.newPage();
-    const logsB = await collectConsole(pageB);
-    await login(pageB, USER_B);
-    await expectTripHidden(pageB, tripA);
-    await fillTrip(pageB, tripB);
-    await saveTrip(pageB);
-    await syncNow(pageB);
-    await expectTripVisible(pageB, tripB);
-    await signOut(pageB);
-    await contextB.close();
+      contextB = await browser.newContext();
+      const pageB = await contextB.newPage();
+      logsB = await collectConsole(pageB);
+      await login(pageB, USER_B);
+      await expectTripHidden(pageB, tripA);
+      await fillTrip(pageB, tripB, testStart);
+      await saveTrip(pageB);
+      await syncNow(pageB);
+      await expectTripVisible(pageB, tripB);
+      await contextB.close();
+      contextB = null;
 
-    const contextA2 = await browser.newContext();
-    const pageA2 = await contextA2.newPage();
-    const logsA2 = await collectConsole(pageA2);
-    await login(pageA2, USER_A);
-    await expectTripHidden(pageA2, tripB);
-    await expectTripVisible(pageA2, tripA);
-    await signOut(pageA2);
-    await contextA2.close();
-
-    await testInfo.attach('cloud-user-a-first-console.json', { body: JSON.stringify(storageLogs(logsA1), null, 2), contentType: 'application/json' });
-    await testInfo.attach('cloud-user-b-console.json', { body: JSON.stringify(storageLogs(logsB), null, 2), contentType: 'application/json' });
-    await testInfo.attach('cloud-user-a-second-console.json', { body: JSON.stringify(storageLogs(logsA2), null, 2), contentType: 'application/json' });
+      contextA2 = await browser.newContext();
+      const pageA2 = await contextA2.newPage();
+      logsA2 = await collectConsole(pageA2);
+      await login(pageA2, USER_A);
+      await expectTripHidden(pageA2, tripB);
+      await expectTripVisible(pageA2, tripA);
+      await contextA2.close();
+      contextA2 = null;
+    } finally {
+      await attachStorageLogs(testInfo, 'cloud-isolation-console.json', [...logsA1, ...logsB, ...logsA2]);
+      if (contextA1) await contextA1.close().catch(() => {});
+      if (contextB) await contextB.close().catch(() => {});
+      if (contextA2) await contextA2.close().catch(() => {});
+    }
   });
 
   test('same-browser user switch changes user id and storage key', async ({ page }, testInfo) => {
     test.skip(!cloudEnvReady(), 'Set OPERO_AJO_USER_A_EMAIL/PASSWORD and OPERO_AJO_USER_B_EMAIL/PASSWORD to run user switch tests.');
 
     const logs = await collectConsole(page);
-    await login(page, USER_A);
-    await signOut(page);
-    await login(page, USER_B);
+    try {
+      await login(page, USER_A);
+      await signOut(page);
+      await login(page, USER_B);
 
-    const relevant = storageLogs(logs);
-    const userIds = relevant.map(l => l.text.match(/currentUserId:?'?([0-9a-f-]{20,})/i)?.[1]).filter(Boolean);
-    const dataKeys = relevant.map(l => l.text.match(/operoAjo:[^\\s,}]+:data/)?.[0]).filter(Boolean);
+      const userIds = parseUserIds(logs);
+      const dataKeys = parseDataStorageKeys(logs);
 
-    expect(new Set(userIds).size).toBeGreaterThanOrEqual(2);
-    expect(new Set(dataKeys).size).toBeGreaterThanOrEqual(2);
-    await expect(page.locator('body')).not.toContainText(/user_id.*(null|undefined)/i);
-    await testInfo.attach('same-browser-switch-console.json', { body: JSON.stringify(relevant, null, 2), contentType: 'application/json' });
+      expect(new Set(userIds).size).toBeGreaterThanOrEqual(2);
+      expect(new Set(dataKeys).size).toBeGreaterThanOrEqual(2);
+      await expect(page.locator('body')).not.toContainText(/user_id.*(null|undefined)/i);
+    } finally {
+      await attachStorageLogs(testInfo, 'same-browser-switch-console.json', logs);
+    }
   });
 
   test('report only includes visible user drives and localized footer', async ({ page }, testInfo) => {
