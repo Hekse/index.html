@@ -241,11 +241,13 @@ test.describe('Opero Ajo QA', () => {
     await openApp(page);
     test.skip(await loginGateActive(page), 'Anonymous local mode is not available when the login gate is active.');
     await fillTrip(page, 'TESTI_AUTOMAATIO_MAPS', { km: '80', rate: '0,55' });
+    const appUrl = page.url();
     const popupPromise = context.waitForEvent('page').catch(() => null);
     await page.getByRole('button', { name: /Karttaan|Map/i }).click();
     const popup = await popupPromise;
     if (popup) await popup.close();
     await page.bringToFront();
+    expect(page.url()).toBe(appUrl);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.getByDisplayValue('TESTI_AUTOMAATIO_MAPS')).toBeVisible();
     await expect(page.getByDisplayValue('Customer Visit')).toBeVisible();
