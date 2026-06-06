@@ -192,8 +192,11 @@ function storageUserId(userId=cloudUserId()){const id=String(userId||'').trim();
 function dataStorageKey(userId=cloudUserId()){const id=storageUserId(userId);return id==='anon'?LS_KEY:`operoAjo:${id}:data`}
 function draftStorageKey(userId=cloudUserId()){const id=storageUserId(userId);return id==='anon'?LS_DRAFT_KEY:`operoAjo:${id}:draft`}
 function idbDataKey(userId=cloudUserId()){const id=storageUserId(userId);return id==='anon'?'appData:anon':`appData:${id}`}
-function mergeCloudSettings(cloud){return{...defaultData().settings.cloud,...(cloud||{})}}
-function attachCloudSettings(d,cloud){const next=normalizeData(d);if(cloud)next.settings.cloud={...next.settings.cloud,...mergeCloudSettings(cloud)};return next}
+function mergeCloudConnectionSettings(cloud){return{...defaultData().settings.cloud,...(cloud||{})}}
+function attachCloudSettings(d,cloud){const next=normalizeData(d);if(cloud)next.settings.cloud={...next.settings.cloud,...mergeCloudConnectionSettings(cloud)};return next}
+function publicLocationPayload(loc){const out={};['id','n','a','name','label','address','addr'].forEach(k=>{const v=String(loc?.[k]??'').trim();if(v)out[k]=v});return out}
+function publicSettingsPayload(){const s=data.settings||{},locs=Array.isArray(s.locs)?s.locs:[];return{name:String(s.name||''),carReg:String(s.carReg||''),rate:num(s.rate)||0.57,locs:locs.map(publicLocationPayload).filter(l=>Object.keys(l).length>0)}}
+function mergeCloudSettings(settingsJson){const incoming=settingsJson&&typeof settingsJson==='object'?settingsJson:{},cloud=data.settings?.cloud;data.settings=data.settings||defaultData().settings;if(Object.prototype.hasOwnProperty.call(incoming,'name'))data.settings.name=String(incoming.name||'');if(Object.prototype.hasOwnProperty.call(incoming,'carReg'))data.settings.carReg=String(incoming.carReg||'');if(Object.prototype.hasOwnProperty.call(incoming,'rate'))data.settings.rate=num(incoming.rate)||data.settings.rate||0.57;if(Array.isArray(incoming.locs))data.settings.locs=incoming.locs.map(normalizeLocation).filter(l=>l.n||l.a);data.settings.cloud=mergeCloudConnectionSettings(cloud||data.settings.cloud);return data.settings}
 function cloudDriveBelongsToUser(drive,user){return !!(drive&&user?.id&&String(drive.user_id||'')===String(user.id))}
 function driveBelongsToUserState(drive,userId){const uid=String(userId||'').trim(),rowUser=String(drive?.user_id||'').trim();return uid?rowUser===uid:!rowUser}
 function driveBelongsToCurrentUser(drive){return driveBelongsToUserState(drive,cloudUserId())}
@@ -215,6 +218,37 @@ async function readStoredData(userId='',cloud=null,includeLegacy=false){
   console.log('[Opero Ajo storage] read local data',{userId:storageUserId(userId),dataStorageKey:key,idbDataKey:idbKey,localStorageDrives:(normalizeData(ls).drives||[]).length,indexedDbDrives:(normalizeData(fromDb).drives||[]).length,legacyDrives:(normalizeData(legacy).drives||[]).length,legacyIndexedDbDrives:(normalizeData(legacyDb).drives||[]).length});
   return attachCloudSettings(pickBest([fromDb,ls,legacyDb,legacy,defaultData()]),cloud);
 }
+async function fetchCloudUserSettings(){
+  if(!cloudSignedIn())return null;
+  const c=cloudSettings(),uid=cloudUserId();
+  if(!uid)return null;
+  try{
+    const r=await fetch(`${c.url}/rest/v1/ajo_user_settings?select=settings_json,updated_at&user_id=eq.${encodeURIComponent(uid)}&limit=1`,{headers:supabaseHeaders({},true)});
+    const body=await r.text();
+    if(!r.ok)throw new Error(body||`HTTP ${r.status}`);
+    const rows=safeParse(body)||[];
+    return Array.isArray(rows)&&rows[0]?.settings_json?rows[0].settings_json:null;
+  }catch(e){
+    console.warn('[Opero Ajo settings] cloud settings fetch failed',{currentUserId:uid,message:String(e.message||e)});
+    return undefined;
+  }
+}
+async function upsertCloudUserSettings(reason='manual'){
+  if(!cloudSignedIn())return{skipped:true};
+  const c=cloudSettings(),uid=cloudUserId();
+  if(!uid)return{skipped:true};
+  const payload={user_id:uid,settings_json:publicSettingsPayload(),updated_at:new Date().toISOString()};
+  try{
+    const r=await fetch(`${c.url}/rest/v1/ajo_user_settings?on_conflict=user_id`,{method:'POST',headers:supabaseHeaders({Prefer:'resolution=merge-duplicates'},true),body:JSON.stringify(payload)});
+    const body=await r.text();
+    if(!r.ok)throw new Error(body||`HTTP ${r.status}`);
+    console.log('[Opero Ajo settings] cloud settings upserted',{reason,currentUserId:uid});
+    return{ok:true};
+  }catch(e){
+    console.warn('[Opero Ajo settings] cloud settings sync failed',{reason,currentUserId:uid,message:String(e.message||e)});
+    return{ok:false,error:String(e.message||e)};
+  }
+}
 async function loadData(){
   data=await readStoredData('',null,true);
   const userId=cloudUserId(),cloud=data.settings.cloud;
@@ -228,6 +262,11 @@ async function loadSignedInUserData(cloud,notice=false){
   data=attachCloudSettings(defaultData(),cloud);
   logStorageDebug('signIn before user scoped load',{email:cloud?.email||cloud?.session?.user?.email||'',currentUserId:userId});
   data=await readStoredData(userId,cloud,false);
+  const cloudUserSettings=await fetchCloudUserSettings();
+  if(cloudUserSettings!==undefined){
+    if(cloudUserSettings){mergeCloudSettings(cloudUserSettings);await persist(userId)}
+    else await upsertCloudUserSettings('initial-migration');
+  }
   const cloudRows=await fetchOwnCloudDrives();
   console.log('[Opero Ajo cloud] own cloud rows loaded',{currentUserId:userId,count:cloudRows.length});
   data.drives=mergeOwnCloudDrives(data.drives,cloudRows);
@@ -423,10 +462,10 @@ function renderReport(){
   q('rr').innerHTML=rows.length?`<div class="print-trips-section"><h3 class="report-section-title">${appLang==='en'?'Trips':'Ajot'}</h3><div class="report-trip-list">${tripRows}</div>${tripSummary}</div>`:`<div class="empty">${t('noMonth')}</div>`;
   const brand=document.querySelector('.report-brand');if(brand)brand.textContent=appLang==='en'?'Created with Opero Drive · opero.fi':'Luotu Opero Ajolla · opero.fi';
 }
-async function saveSettings(){data.settings.name=q('name').value.trim();data.settings.carReg=q('carReg')?q('carReg').value.trim():'';data.settings.rate=num(q('defrate').value)||0.57;saveCloudSettingsFromForm();await persist();q('rate').value=data.settings.rate;renderAll();msg(appLang==='en'?'Settings saved':'Asetukset tallennettu')}
+async function saveSettings(){data.settings.name=q('name').value.trim();data.settings.carReg=q('carReg')?q('carReg').value.trim():'';data.settings.rate=num(q('defrate').value)||0.57;saveCloudSettingsFromForm();await persist();if(cloudSignedIn())await upsertCloudUserSettings('saveSettings');q('rate').value=data.settings.rate;renderAll();msg(appLang==='en'?'Settings saved':'Asetukset tallennettu')}
 function renderLocations(){q('locs').innerHTML=(data.settings.locs||[]).map(l=>`<div class="item"><div class="ih"><div><div class="it">${esc(l.n)}</div><div class="im">${esc(l.a||(appLang==='en'?'Address missing':'Osoite puuttuu'))}</div></div><button class="danger np" type="button" onclick="removeLocation('${esc(l.id)}')">${appLang==='en'?'Delete':'Poista'}</button></div></div>`).join('')||`<div class="empty">${appLang==='en'?'No start locations.':'Ei lähtöpaikkoja.'}</div>`;starts()}
-async function addLocation(){const n=q('ln').value.trim(),a=q('la').value.trim();if(!n||!a){msg(appLang==='en'?'Add name and address':'Lisää nimi ja osoite','warn');return}data.settings.locs=data.settings.locs||[];if(data.settings.locs.length>=5){msg(appLang==='en'?'Max 5 start locations':'Max 5 lähtöpaikkaa','warn');return}data.settings.locs.push({id:uid(),n,a});q('ln').value='';q('la').value='';await persist();renderAll();msg(appLang==='en'?'Start location added':'Lähtöpaikka lisätty')}
-async function removeLocation(i){data.settings.locs=(data.settings.locs||[]).filter(l=>l.id!==i);await persist();renderAll();msg(appLang==='en'?'Start location deleted':'Lähtöpaikka poistettu')}
+async function addLocation(){const n=q('ln').value.trim(),a=q('la').value.trim();if(!n||!a){msg(appLang==='en'?'Add name and address':'Lisää nimi ja osoite','warn');return}data.settings.locs=data.settings.locs||[];if(data.settings.locs.length>=5){msg(appLang==='en'?'Max 5 start locations':'Max 5 lähtöpaikkaa','warn');return}data.settings.locs.push({id:uid(),n,a});q('ln').value='';q('la').value='';await persist();if(cloudSignedIn())await upsertCloudUserSettings('locationsChanged');renderAll();msg(appLang==='en'?'Start location added':'Lähtöpaikka lisätty')}
+async function removeLocation(i){data.settings.locs=(data.settings.locs||[]).filter(l=>l.id!==i);await persist();if(cloudSignedIn())await upsertCloudUserSettings('locationsChanged');renderAll();msg(appLang==='en'?'Start location deleted':'Lähtöpaikka poistettu')}
 function hideSplash(){const splash=q('operoSplash');setTimeout(()=>{if(splash)splash.setAttribute('hidden','');applyAuthGate()},3500)}
 const I18N={
   fi:{product:'AJO',newDrive:'Uusi ajo',report:'Raportti',drives:'Ajot',settings:'Asetukset',thisMonth:'Tämän kuun koonti',recent:'Viimeisimmät ajot',driveCount:'Ajot',kilometers:'Kilometrit',comp:'Korvaukset',total:'Yhteensä',clear:'Tyhjennä',date:'Päivämäärä',start:'Lähtöpaikka',customStart:'Muu lähtöosoite',dest:'Kohde / osoite',purpose:'Ajon tarkoitus',oneway:'Meno',round:'Meno-paluu',routeKm:'Reitin km',rate:'€/km',getKm:'🧮 Hae km',map:'🗺️ Karttaan',addCost:'+ Lisää kulu',addReceipt:'📷 Lisää kuitti raporttiin',receiptTip:'Vinkki: kuvaa kuitti heti sileänä ja hyvässä valossa, jotta tiedot erottuvat PDF:ssä.',note:'Muistiinpano',saveDrive:'✅ Tallenna ajo',nameReport:'Nimi raportille',carReg:'Auto / rekisterinumero',defaultRate:'Oletus €/km',save:'Tallenna',locations:'Lähtöpaikat',addLocation:'+ Lisää lähtöpaikka',month:'Kuukausi',year:'Vuosi',print:'📄 PDF / tulosta',refresh:'Päivitä',mileageExpenseReport:'Kilometri- ja kuluraportti',reportRows:'Raportin rivit',noDrives:'Ei ajoja vielä.',noMonth:'Ei ajoja valitulla kuukaudella.',loading:'Ladataan...',reimbursableKm:'Korvattavat km',mileageCompensation:'Km-korvaus',expenses:'Kulut',addDestination:'+ Lisää kohde',delete:'Poista',routeHint:'(reitti)',localStorageNote:'Pilvitallennus tehdään seuraavassa vaiheessa Supabaseen. Tämä versio tallentaa puhelimeen ja pitää rakenteen valmiina siirtoa varten.'},
@@ -492,7 +531,8 @@ function runTests(){
   const beforeTestLocs=data.settings.locs;data.settings.locs=[{id:'koti',n:'Koti',a:'ruuhvelintie 20 lapinlahti'}];console.assert(normalizeRoutePlace('koti')==='ruuhvelintie 20 lapinlahti'&&normalizeRoutePlace('Koti')==='ruuhvelintie 20 lapinlahti'&&normalizeRoutePlace(' Koti ')==='ruuhvelintie 20 lapinlahti'&&normalizeRoutePlace('Hotelli Koljonvirta, Iisalmi')==='Hotelli Koljonvirta, Iisalmi','saved route place names and ids normalize exactly without changing other destinations');data.settings.locs=beforeTestLocs;
   console.assert(unusualDistance(378.4,[{lat:62.89,lon:27.68},{lat:62.99,lon:27.78},{lat:62.89,lon:27.68}]),'150 km safety guard rejects 378.4 km lookup results');
   const beforeKmValue=q('km')?.value||'';if(q('km'))q('km').value='123';if(unusualDistance(378.4,[{lat:62.89,lon:27.68},{lat:62.99,lon:27.78}]))console.assert(q('km')?.value==='123','rejected distance lookup does not overwrite km field');if(q('km'))q('km').value=beforeKmValue;
-  const beforeTestData=data;data={...defaultData(),drives:[{id:'x',user_id:'user-a'}]};console.assert(clearSignedOutMemory(mergeCloudSettings({status:'not_signed_in'})),'signOut clears in-memory drives');data=beforeTestData;
+  const beforePublicSettingsData=data;data=defaultData();data.settings={...data.settings,name:'Tester',carReg:'ABC-123',rate:0.61,locs:[{id:'koti',n:'Koti',a:'Testikatu 1',extra:'hidden'}],cloud:{url:'https://secret.supabase.co',anonKey:'secret-key',session:{access_token:'secret-token'}}};const publicSettings=publicSettingsPayload(),publicSettingsText=JSON.stringify(publicSettings).toLowerCase();console.assert(publicSettings.name==='Tester'&&publicSettings.carReg==='ABC-123'&&publicSettings.rate===0.61&&Array.isArray(publicSettings.locs),'public settings payload contains expected public fields');console.assert(!('cloud'in publicSettings)&&!publicSettingsText.includes('supabase')&&!publicSettingsText.includes('anonkey')&&!publicSettingsText.includes('token')&&!publicSettingsText.includes('session')&&!publicSettingsText.includes('salasana')&&!publicSettingsText.includes('password'),'public settings payload excludes cloud secrets and auth fields');mergeCloudSettings({name:'Cloud Tester'});console.assert(data.settings.name==='Cloud Tester'&&data.settings.carReg==='ABC-123'&&data.settings.rate===0.61&&Array.isArray(data.settings.locs),'cloud settings merge keeps local defaults for missing fields');data=beforePublicSettingsData;
+  const beforeTestData=data;data={...defaultData(),drives:[{id:'x',user_id:'user-a'}]};console.assert(clearSignedOutMemory(mergeCloudConnectionSettings({status:'not_signed_in'})),'signOut clears in-memory drives');data=beforeTestData;
   const oldRoundTrip=normalizeDrive({date:'2026-04-01',dest:'Test',type:'paluu',km:20,rate:0.5});
   console.assert(oldRoundTrip.km===20,'old round trip km is not doubled');
   console.assert(oldRoundTrip.kmv===10,'mileage compensation is calculated from stored km');
