@@ -282,6 +282,8 @@ function isDebugMode(){return new URLSearchParams(location.search).get('debug')=
 function syncSettingsFieldsFromData(opts={}){const rate=num(data.settings?.rate)||0.57;if(q('name'))q('name').value=data.settings?.name||'';if(q('carReg'))q('carReg').value=data.settings?.carReg||'';if(q('defrate'))q('defrate').value=rate;const tripRate=q('rate');if(tripRate&&(opts.forceTripRate||!String(tripRate.value||'').trim()))tripRate.value=rate}
 function init(){const d=new Date();document.body.classList.toggle('debug-cloud',isDebugMode());q('date').value=today();syncSettingsFieldsFromData({forceTripRate:true});loadCloudSettingsToForm();renderMonthOptions(d.getMonth());for(let y=d.getFullYear()-2;y<=d.getFullYear()+1;y++)q('ry').innerHTML+=`<option>${y}</option>`;q('ry').value=d.getFullYear();q('start').onchange=()=>q('customWrap').classList.toggle('hide',q('start').value!=='__custom__');resetForm(false);renderAll();updateStorageLabels()}
 function formHasInput(){return !!((q('dest')?.value||'').trim()||(q('purpose')?.value||'').trim()||(q('km')?.value||'').trim()||(q('note')?.value||'').trim()||routeTargets.some(x=>String(x||'').trim())||costs.length||draftReceipts.length)}
+function draftHasInput(draft){if(!draft||typeof draft!=='object')return false;const targets=draftRouteTargets(draft),hasKm=num(draft.km??draft.base)>0,hasCosts=Array.isArray(draft.costs)&&draft.costs.some(c=>num(c?.v??c?.amount)>0),hasReceipts=Array.isArray(draft.receipts)&&draft.receipts.length>0;return !!(targets.length||String(draft.purpose||'').trim()||hasKm||String(draft.note||'').trim()||hasCosts||hasReceipts)}
+function startupViewForDraft(draft){return draftHasInput(draft)?'new':'home'}
 function cleanRouteTargets(list){return (Array.isArray(list)?list:[]).map(x=>String(x||'').trim()).filter(Boolean)}
 function routeTargetValues(){syncRouteTargetsFromInputs(false);return cleanRouteTargets(routeTargets)}
 function syncRouteTargetsFromInputs(render=false){
@@ -330,6 +332,7 @@ function currentDraft(reason='manual'){
 function saveDraft(reason='manual'){
   const draft=currentDraft(reason);
   const key=draftStorageKey();
+  if(!draftHasInput(draft)){console.log('[Opero Ajo draft] empty draft not saved', {key, reason});return false}
   const ok=lsSet(key,JSON.stringify(draft));
   console.log('[Opero Ajo draft] saved before map/open', {key, reason, ok, draft});
   console.log('[Opero Ajo draft] routeTargets saved', {key, reason, routeTargets:draft.routeTargets});
@@ -350,6 +353,7 @@ function restoreDraft(opts={}){
   if(!raw){console.log('[Opero Ajo draft] no draft found', {key, reason});return false}
   const draft=safeParse(raw);
   if(!draft){console.log('[Opero Ajo draft] draft parse failed', {key, reason});return false}
+  if(startupViewForDraft(draft)!=='new'){console.log('[Opero Ajo draft] empty draft ignored', {key, reason});return false}
   console.log('[Opero Ajo draft] draft found', {key, reason, draft});
   console.log('[Opero Ajo draft] routeTargets in draft', {key, reason, routeTargets:draft.routeTargets, normalizedRouteTargets:draftRouteTargets(draft)});
   if(opts.onlyIfEmpty&&formHasInput()){console.log('[Opero Ajo draft] restore skipped because form has input', {key, reason});return false}
@@ -526,6 +530,9 @@ function runTests(){
   console.assert(num('0,55')===0.55,'comma decimal parsing works');
   console.assert(draftStorageKey('user-a')!==draftStorageKey('user-b')&&dataStorageKey('user-a')!==dataStorageKey('user-b'),'user scoped storage keys differ');
   console.assert(testDraftRoundTrip(),'draft can be saved and restored');
+  console.assert(!draftHasInput({date:today(),startId:'koti',rate:'0.57'}),'default date, start and rate do not make a meaningful draft');
+  console.assert(draftHasInput({dest:'Test destination'})&&draftHasInput({km:'12.5'})&&draftHasInput({purpose:'Customer visit'}),'destination, km or purpose make a meaningful draft');
+  console.assert(startupViewForDraft({date:today(),startId:'koti',rate:'0.57'})==='home'&&startupViewForDraft({dest:'Test destination'})==='new','startup opens home without a meaningful draft and new trip with a meaningful draft');
   console.assert(cloudDriveBelongsToUser({user_id:'u1'},{id:'u1'})&&!cloudDriveBelongsToUser({user_id:'u2'},{id:'u1'}),'cloud drive ownership check works');
   console.assert(cloudRowsForUser([{user_id:'u1',local_id:'a'},{user_id:'u2',local_id:'b'},{local_id:'c'}],'u1','test').length===1,'wrong or missing cloud user_id is filtered out');
   console.assert(driveBelongsToUserState({user_id:'user-a'},'user-a')&&!driveBelongsToUserState({user_id:'user-a'},'user-b'),'user A drive is hidden from user B');
@@ -546,14 +553,15 @@ function runTests(){
 function testDraftRoundTrip(){
   const key=draftStorageKey();
   const previous=lsGet(key);
-  const ok=saveDraft('test');
+  const testDraft={version:1,reason:'test',savedAt:new Date().toISOString(),dest:'TEST_DRAFT',routeTargets:['TEST_DRAFT'],costs:[],receipts:[]};
+  const ok=lsSet(key,JSON.stringify(testDraft));
   const restored=safeParse(lsGet(key));
   if(previous===null)lsRemove(key);else lsSet(key,previous);
-  return ok&&!!restored&&restored.reason==='test'&&Array.isArray(restored.costs)&&Array.isArray(restored.receipts);
+  return ok&&!!restored&&restored.reason==='test'&&draftHasInput(restored)&&Array.isArray(restored.costs)&&Array.isArray(restored.receipts);
 }
 window.addEventListener('pageshow',()=>restoreDraft({reason:'pageshow',onlyIfEmpty:true}));
 window.addEventListener('focus',()=>{if(!q('new')?.classList.contains('hide'))restoreDraft({reason:'focus',onlyIfEmpty:true})});
-loadData().then(()=>{init();setLang(appLang);restoreDraft({reason:'init',forceView:true});runTests();hideSplash()}).catch(()=>{data=defaultData();init();setLang(appLang);restoreDraft({reason:'init-fallback',forceView:true});runTests();hideSplash();msg(appLang==='en'?'Storage initialization failed':'Tallennuksen alustus epäonnistui','warn')});
+loadData().then(()=>{init();setLang(appLang);runTests();hideSplash()}).catch(()=>{data=defaultData();init();setLang(appLang);runTests();hideSplash();msg(appLang==='en'?'Storage initialization failed':'Tallennuksen alustus epäonnistui','warn')});
 </script>
 </body>
 </html>
