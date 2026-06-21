@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#07111f" />
+<meta name="description" content="Opero Ajo on ajopaivakirja ja kulujen kirjaustyokalu yrittajalle. Kirjaa tyomatkat, kulut ja kuitit helposti." />
+<title>Opero Ajo | Ajopaivakirja ja kulut yrittajalle</title>
+<style>
+:root{
+  --bg:#07111f;
+  --bg2:#091726;
+  --panel:#0d1b2f;
+  --panel2:#10233d;
+  --text:#eef4ff;
+  --muted:#9db0d3;
+  --line:rgba(125,170,255,.18);
+  --line2:rgba(255,255,255,.12);
+  --accent:#2f80ff;
+  --accent2:#6ea8ff;
+  --good:#22c55e;
+  --shadow:0 22px 54px rgba(0,0,0,.32);
+  --safe:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;min-height:100%;background:var(--bg)}
+body{
+  color:var(--text);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(47,128,255,.28),transparent 34%),
+    radial-gradient(circle at 92% 18%,rgba(34,197,94,.10),transparent 24%),
+    linear-gradient(180deg,var(--bg),var(--bg2) 56%,#07111f);
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+.page{width:min(1120px,100%);margin:0 auto;padding:18px 18px calc(42px + var(--safe))}
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:10px 0 28px;
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{width:46px;height:46px;border-radius:12px;display:block}
+.brand-text strong{
+  display:block;
+  font-size:20px;
+  letter-spacing:.04em;
+  font-weight:700;
+  line-height:1;
+}
+.brand-text span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+.nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  color:var(--text);
+  font-size:14px;
+  font-weight:650;
+}
+.hero{
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(280px,.78fr);
+  gap:34px;
+  align-items:center;
+  min-height:560px;
+  padding:36px 0 58px;
+}
+.hero h1{
+  margin:0;
+  max-width:720px;
+  font-size:clamp(44px,8vw,86px);
+  line-height:.96;
+  letter-spacing:0;
+  font-weight:720;
+}
+.lead{
+  max-width:630px;
+  margin:22px 0 0;
+  color:#d8e5ff;
+  font-size:clamp(18px,2.2vw,22px);
+  line-height:1.45;
+}
+.sublead{
+  max-width:640px;
+  margin:16px 0 0;
+  color:var(--muted);
+  font-size:16px;
+}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:50px;
+  padding:0 20px;
+  border-radius:16px;
+  font-weight:760;
+  border:1px solid transparent;
+}
+.btn.primary{
+  background:linear-gradient(180deg,var(--accent2),var(--accent));
+  color:white;
+  box-shadow:0 14px 28px rgba(47,128,255,.22);
+}
+.btn.secondary{
+  background:rgba(255,255,255,.055);
+  border-color:var(--line);
+  color:var(--text);
+}
+.pilot{
+  margin-top:22px;
+  display:inline-flex;
+  max-width:620px;
+  padding:11px 13px;
+  border:1px solid rgba(250,204,21,.24);
+  border-radius:14px;
+  background:rgba(250,204,21,.08);
+  color:#f6e7b0;
+  font-size:14px;
+}
+.hero-panel{
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 76% 8%,rgba(47,128,255,.24),transparent 35%),
+    linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+.mini-app{
+  border:1px solid var(--line2);
+  border-radius:24px;
+  background:#091525;
+  padding:16px;
+}
+.mini-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.mini-title{font-weight:760}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  color:#beddff;
+  background:rgba(47,128,255,.14);
+  border:1px solid rgba(47,128,255,.24);
+  font-size:12px;
+}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.metric,.row{
+  border:1px solid var(--line2);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+  padding:12px;
+}
+.metric small{display:block;color:var(--muted);font-size:12px}
+.metric strong{display:block;margin-top:4px;font-size:22px}
+.row{display:grid;gap:6px;margin-top:10px}
+.row-top{display:flex;justify-content:space-between;gap:10px;font-weight:700}
+.row p{margin:0;color:var(--muted);font-size:13px}
+.section{padding:38px 0}
+.section h2{
+  margin:0 0 16px;
+  font-size:clamp(28px,4vw,44px);
+  line-height:1.08;
+  font-weight:680;
+}
+.section-intro{max-width:720px;margin:0 0 22px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(180deg,var(--panel),rgba(255,255,255,.018));
+  box-shadow:0 16px 38px rgba(0,0,0,.20);
+  padding:20px;
+}
+.card h3{margin:0 0 8px;font-size:19px;font-weight:680}
+.card p{margin:0;color:var(--muted)}
+.icon{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  margin-bottom:14px;
+  background:rgba(47,128,255,.14);
+  color:#d9ebff;
+}
+.split{
+  display:grid;
+  grid-template-columns:minmax(0,.95fr) minmax(280px,.78fr);
+  gap:18px;
+  align-items:start;
+}
+.steps{counter-reset:step;display:grid;gap:10px}
+.step{
+  counter-increment:step;
+  display:grid;
+  grid-template-columns:42px 1fr;
+  gap:12px;
+  align-items:start;
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.035);
+}
+.step:before{
+  content:counter(step);
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(47,128,255,.16);
+  color:#d9ebff;
+  font-weight:760;
+}
+.step strong{display:block;margin-top:2px}
+.step span{display:block;color:var(--muted);font-size:14px;margin-top:3px}
+.pilot-card{
+  border-color:rgba(250,204,21,.22);
+  background:linear-gradient(180deg,rgba(250,204,21,.08),rgba(255,255,255,.02));
+}
+.final-cta{
+  margin-top:24px;
+  padding:30px;
+  border:1px solid rgba(47,128,255,.28);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 84% 8%,rgba(47,128,255,.26),transparent 34%),
+    linear-gradient(180deg,var(--panel2),rgba(255,255,255,.024));
+  box-shadow:var(--shadow);
+}
+.final-cta h2{margin-bottom:10px}
+.final-cta p{max-width:700px;margin:0;color:#d8e5ff}
+.footer{
+  margin-top:34px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:13px;
+}
+@media (max-width:820px){
+  .hero,.split{grid-template-columns:1fr}
+  .hero{min-height:0;padding-top:18px}
+  .hero-panel{order:-1}
+  .cards{grid-template-columns:1fr}
+}
+@media (max-width:540px){
+  .page{padding:14px 14px calc(34px + var(--safe))}
+  .top{padding-bottom:20px}
+  .brand img{width:42px;height:42px}
+  .brand-text strong{font-size:18px}
+  .nav-link{display:none}
+  .hero h1{font-size:48px}
+  .lead{font-size:18px}
+  .cta-row{display:grid}
+  .btn{width:100%}
+  .hero-panel,.final-cta{border-radius:22px}
+  .metric-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="top" aria-label="Opero">
+    <a class="brand" href="../" aria-label="Opero etusivu">
+      <img src="../opero-ajo/assets/opero-ajo-icon.svg" alt="" />
+      <span class="brand-text"><strong>Opero</strong><span>Ajo</span></span>
+    </a>
+    <a class="nav-link" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Opero Ajo</h1>
+      <p class="lead">Ajopäiväkirja ja kulut yrittäjälle.</p>
+      <p class="sublead">Kirjaa työajot, kulut ja kuitit helposti puhelimella tai tietokoneella. Tee raportti kirjanpitoa, laskutusta tai omaa seurantaa varten.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://hekse.github.io/index.html/opero-ajo/">Avaa Opero Ajo</a>
+        <a class="btn secondary" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
+      </div>
+      <div class="pilot">Opero Ajo on tällä hetkellä koekäyttö- ja pilotointivaiheessa. Hinta ja käyttöönotto vahvistetaan pilotin jälkeen.</div>
+    </div>
+
+    <aside class="hero-panel" aria-label="Opero Ajo yhteenveto">
+      <div class="mini-app">
+        <div class="mini-head">
+          <div class="mini-title">Kuukauden koonti</div>
+          <span class="pill">Pilotti</span>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><small>Ajot</small><strong>18</strong></div>
+          <div class="metric"><small>Kilometrit</small><strong>842 km</strong></div>
+          <div class="metric"><small>Kulut</small><strong>126,40 €</strong></div>
+          <div class="metric"><small>Raportti</small><strong>Valmis</strong></div>
+        </div>
+        <div class="row">
+          <div class="row-top"><span>Asiakaskäynti</span><span>56,5 km</span></div>
+          <p>Reitti, tarkoitus, kulut ja kuitit samassa raportissa.</p>
+        </div>
+        <div class="row">
+          <div class="row-top"><span>Kuitti lisätty</span><span>PDF</span></div>
+          <p>Kuvat säilyvät ajokohtaisesti kirjanpitoa varten.</p>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section" aria-labelledby="hyodyt">
+    <h2 id="hyodyt">Hyödyt</h2>
+    <p class="section-intro">Opero Ajo kokoaa arjen ajokirjaukset yhteen paikkaan ilman raskasta järjestelmää.</p>
+    <div class="cards">
+      <article class="card">
+        <div class="icon" aria-hidden="true">↗</div>
+        <h3>Työajot talteen</h3>
+        <p>Kirjaa päivämäärä, reitti, tarkoitus, kilometrit ja korvaus heti matkan yhteydessä.</p>
+      </article>
+      <article class="card">
+        <div class="icon" aria-hidden="true">✓</div>
+        <h3>Kulut ja kuitit samaan paikkaan</h3>
+        <p>Lisää pysäköinnit, muut kulut ja kuittikuvat ajon yhteyteen.</p>
+      </article>
+      <article class="card">
+        <div class="icon" aria-hidden="true">□</div>
+        <h3>Raportti valmiiksi</h3>
+        <p>Muodosta kuukausiraportti kirjanpitoa, laskutusta tai omaa seurantaa varten.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section split" aria-labelledby="kenelle">
+    <div>
+      <h2 id="kenelle">Kenelle Opero Ajo sopii?</h2>
+      <p class="section-intro">Opero Ajo sopii yrittäjälle, myyjälle, asentajalle, rakennusalan toimijalle tai kenelle tahansa, jonka pitää kirjata työajoja ja kuluja ilman raskasta järjestelmää.</p>
+    </div>
+    <div class="card pilot-card">
+      <h3>Kevyt käyttö arjessa</h3>
+      <p>Palvelu on suunniteltu tilanteisiin, joissa ajot pitää saada talteen nopeasti puhelimella ja raportiksi ilman erillistä taulukointia.</p>
+    </div>
+  </section>
+
+  <section class="section split" aria-labelledby="kayttoonotto">
+    <div>
+      <h2 id="kayttoonotto">Käyttöönotto</h2>
+      <p class="section-intro">Pilotissa käyttöönotto pidetään yksinkertaisena. Saat tunnukset ja pääset kokeilemaan palvelua oikeassa työarjessa.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div><strong>Saat tunnukset</strong><span>Kirjaudut Opero Ajoon selaimella tai puhelimella.</span></div></div>
+      <div class="step"><div><strong>Lisäät lähtöpaikat ja auton tiedot</strong><span>Koti, toimisto, rekisterinumero ja oletus €/km tallentuvat käyttäjällesi.</span></div></div>
+      <div class="step"><div><strong>Kirjaat ajot puhelimella</strong><span>Lisää kohde, tarkoitus, kilometrit, kulut ja kuitit heti.</span></div></div>
+      <div class="step"><div><strong>Muodostat raportin</strong><span>Kuukausikoonti ja ajolista ovat valmiina tulostukseen tai PDF:ksi.</span></div></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="pilotointi">
+    <div class="card pilot-card">
+      <h2 id="pilotointi">Pilotointi</h2>
+      <p>Opero Ajo on RC1-vaiheen pilotissa. Ohjelmaa testataan oikeassa arjessa ennen laajempaa julkaisua.</p>
+      <p>Hinta ja käyttöönotto vahvistetaan pilotin jälkeen.</p>
+    </div>
+  </section>
+
+  <section class="final-cta" aria-labelledby="koekaytto">
+    <h2 id="koekaytto">Haluatko mukaan koekäyttöön?</h2>
+    <p>Ota yhteyttä, niin katsotaan sopiiko Opero Ajo sinun käyttöösi.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
+      <a class="btn secondary" href="https://hekse.github.io/index.html/opero-ajo/">Avaa Opero Ajo</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Opero Ajo · opero.fi
+  </footer>
+</main>
+</body>
+</html>
