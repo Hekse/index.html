@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#07111f" />
+<meta name="description" content="Operon työkalut pienyrittäjälle: ajopäiväkirja, asiakastyö ja arjen kirjaukset selkeässä muodossa." />
+<title>Opero | Työkalut pienyrittäjälle</title>
+<style>
+:root{
+  --bg:#07111f;
+  --bg2:#091726;
+  --panel:#0d1b2f;
+  --panel2:#10233d;
+  --text:#eef4ff;
+  --muted:#9db0d3;
+  --line:rgba(125,170,255,.18);
+  --accent:#2f80ff;
+  --accent2:#6ea8ff;
+  --shadow:0 22px 54px rgba(0,0,0,.32);
+  --safe:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg)}
+body{
+  color:var(--text);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 50% -12%,rgba(47,128,255,.28),transparent 35%),
+    radial-gradient(circle at 94% 18%,rgba(34,197,94,.08),transparent 25%),
+    linear-gradient(180deg,var(--bg),var(--bg2) 56%,#07111f);
+}
+a{color:inherit;text-decoration:none}
+.page{width:min(1120px,100%);margin:0 auto;padding:18px 18px calc(46px + var(--safe))}
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:10px 0 38px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:radial-gradient(circle at 32% 22%,#2f80ff,#0d2f6f 48%,#07111f);
+  box-shadow:0 12px 28px rgba(0,0,0,.28);
+  color:white;
+  font-weight:760;
+}
+.brand strong{display:block;font-size:20px;letter-spacing:.04em;line-height:1}
+.brand span{display:block;margin-top:5px;color:var(--muted);font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+.contact{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  font-size:14px;
+  font-weight:650;
+}
+.hero{max-width:780px;padding:38px 0 42px}
+.hero h1{
+  margin:0;
+  font-size:clamp(42px,7vw,82px);
+  line-height:.98;
+  font-weight:720;
+}
+.lead{
+  margin:22px 0 0;
+  max-width:690px;
+  color:#d8e5ff;
+  font-size:clamp(18px,2.2vw,22px);
+}
+.muted{color:var(--muted)}
+.section{padding:28px 0}
+.section-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:16px;
+}
+.section h2{
+  margin:0;
+  font-size:clamp(28px,4vw,42px);
+  line-height:1.1;
+  font-weight:680;
+}
+.products{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.card{
+  min-height:250px;
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 86% 0,rgba(47,128,255,.18),transparent 34%),
+    linear-gradient(180deg,var(--panel),rgba(255,255,255,.018));
+  box-shadow:0 16px 38px rgba(0,0,0,.20);
+  padding:22px;
+}
+.card.featured{
+  border-color:rgba(47,128,255,.34);
+  background:
+    radial-gradient(circle at 86% 0,rgba(47,128,255,.28),transparent 36%),
+    linear-gradient(180deg,var(--panel2),rgba(255,255,255,.022));
+}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.icon{
+  width:42px;
+  height:42px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:rgba(47,128,255,.14);
+  border:1px solid rgba(47,128,255,.22);
+  color:#d9ebff;
+  font-weight:760;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  color:#f6e7b0;
+  background:rgba(250,204,21,.08);
+  border:1px solid rgba(250,204,21,.22);
+  font-size:12px;
+  font-weight:650;
+}
+.card h3{margin:0 0 8px;font-size:22px;font-weight:690}
+.card p{margin:0;color:var(--muted)}
+.card .action{
+  margin-top:auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 16px;
+  border-radius:15px;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--line);
+  font-weight:730;
+}
+.card.featured .action{
+  background:linear-gradient(180deg,var(--accent2),var(--accent));
+  border-color:transparent;
+  color:white;
+  box-shadow:0 12px 25px rgba(47,128,255,.22);
+}
+.note{
+  margin-top:18px;
+  border:1px solid rgba(250,204,21,.22);
+  border-radius:18px;
+  background:rgba(250,204,21,.07);
+  color:#f6e7b0;
+  padding:14px 16px;
+}
+.footer{
+  margin-top:34px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:13px;
+}
+@media (max-width:840px){
+  .products{grid-template-columns:1fr}
+  .card{min-height:0}
+}
+@media (max-width:540px){
+  .page{padding:14px 14px calc(36px + var(--safe))}
+  .top{padding-bottom:22px}
+  .contact{display:none}
+  .hero{padding-top:22px}
+  .section-head{display:block}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="top" aria-label="Opero">
+    <a class="brand" href="./" aria-label="Opero etusivu">
+      <span class="mark" aria-hidden="true">O</span>
+      <span><strong>Opero</strong><span>Työkalut arkeen</span></span>
+    </a>
+    <a class="contact" href="mailto:opero@opero.fi">Ota yhteyttä</a>
+  </header>
+
+  <section class="hero">
+    <h1>Selkeämpi tapa kirjata työn arki.</h1>
+    <p class="lead">Operon työkalut auttavat pienyrittäjää pitämään ajot, kulut, asiakkaat ja päivittäiset merkinnät hallinnassa ilman raskasta järjestelmää.</p>
+  </section>
+
+  <section class="section" aria-labelledby="products">
+    <div class="section-head">
+      <h2 id="products">Tuoteperhe</h2>
+      <p class="muted">Valitse työkalu käyttötarpeen mukaan.</p>
+    </div>
+    <div class="products">
+      <article class="card featured">
+        <div class="card-top">
+          <div class="icon" aria-hidden="true">A</div>
+          <span class="badge">Pilotissa</span>
+        </div>
+        <h3>Opero Ajo</h3>
+        <p>Ajopäiväkirja ja kulut yrittäjälle. Kirjaa työajot, kulut ja kuitit helposti puhelimella tai tietokoneella.</p>
+        <a class="action" href="ajo/">Tutustu Ajoon</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <div class="icon" aria-hidden="true">K</div>
+        </div>
+        <h3>Opero Kontakti</h3>
+        <p>Asiakastyön ja yhteydenpidon seuranta myynnin ja arjen muistilistojen tueksi.</p>
+        <a class="action" href="opero-kontakti/">Avaa Kontakti</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <div class="icon" aria-hidden="true">P</div>
+        </div>
+        <h3>Opero Pakki</h3>
+        <p>Työmaiden, tuntien, kulujen ja arjen kirjausten kevyt työkalu kenttätyöhön.</p>
+        <a class="action" href="opero-pakki/">Avaa Pakki</a>
+      </article>
+    </div>
+    <div class="note">Opero Ajo on tällä hetkellä koekäyttö- ja pilotointivaiheessa. Hintaa ei ole vielä lisätty julkisesti.</div>
+  </section>
+
+  <footer class="footer">
+    Opero · opero.fi
+  </footer>
+</main>
+</body>
+</html>
