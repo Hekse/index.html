@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Opero Ajo">
+  <defs>
+    <linearGradient id="operoBlue" x1="88" y1="72" x2="424" y2="440" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00C8FF"/>
+      <stop offset="0.45" stop-color="#0A84FF"/>
+      <stop offset="1" stop-color="#0046C8"/>
+    </linearGradient>
+    <linearGradient id="operoBlue2" x1="150" y1="120" x2="370" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#78E8FF"/>
+      <stop offset="0.35" stop-color="#0A84FF"/>
+      <stop offset="1" stop-color="#0037A8"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.04  0 0 0 0 0.52  0 0 0 0 1  0 0 0 .55 0" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="#071226"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="#05265F" stroke-width="58" opacity=".55"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#operoBlue)" stroke-width="52" filter="url(#softGlow)"/>
+  <circle cx="256" cy="256" r="108" fill="#071226"/>
+  <path d="M164 256c0-53 39-92 92-92 35 0 65 17 82 43" fill="none" stroke="url(#operoBlue2)" stroke-width="28" stroke-linecap="round"/>
+  <path d="M338 305c-17 26-47 43-82 43-53 0-92-39-92-92" fill="none" stroke="#0A84FF" stroke-width="28" stroke-linecap="round" opacity=".88"/>
+  <path d="M112 165c34-58 88-87 144-87 38 0 75 12 105 35" fill="none" stroke="#9BEFFF" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+</svg>
