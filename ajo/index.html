@@ -237,6 +237,30 @@ a{color:inherit;text-decoration:none}
   border-color:rgba(250,204,21,.22);
   background:linear-gradient(180deg,rgba(250,204,21,.08),rgba(255,255,255,.02));
 }
+.price-card{
+  max-width:760px;
+  margin:0 auto;
+  text-align:center;
+}
+.price-card h2{
+  margin:12px 0 8px;
+  font-size:clamp(38px,7vw,62px);
+}
+.price-list{
+  display:grid;
+  gap:8px;
+  max-width:520px;
+  margin:20px auto 0;
+  padding:0;
+  list-style:none;
+  color:#d8e5ff;
+}
+.price-note{
+  max-width:620px;
+  margin:16px auto 0;
+  color:var(--muted);
+  font-size:13px;
+}
 .final-cta{
   margin-top:24px;
   padding:30px;
@@ -296,7 +320,7 @@ a{color:inherit;text-decoration:none}
         <a class="btn primary" href="https://hekse.github.io/index.html/opero-ajo/">Avaa Opero Ajo</a>
         <a class="btn secondary" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
       </div>
-      <div class="pilot">Opero Ajo on tällä hetkellä koekäyttö- ja pilotointivaiheessa. Hinta ja käyttöönotto vahvistetaan pilotin jälkeen.</div>
+      <div class="pilot">Opero Ajo on tällä hetkellä koekäyttö- ja pilotointivaiheessa.</div>
     </div>
 
     <aside class="hero-panel" aria-label="Opero Ajo yhteenveto">
@@ -373,7 +397,24 @@ a{color:inherit;text-decoration:none}
     <div class="card pilot-card">
       <h2 id="pilotointi">Pilotointi</h2>
       <p>Opero Ajo on RC1-vaiheen pilotissa. Ohjelmaa testataan oikeassa arjessa ennen laajempaa julkaisua.</p>
-      <p>Hinta ja käyttöönotto vahvistetaan pilotin jälkeen.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="hinta">
+    <div class="card price-card">
+      <span class="pill">Hinta</span>
+      <h2 id="hinta">3,90 €/kk</h2>
+      <p class="section-intro" style="margin-left:auto;margin-right:auto">Opero Ajo on kevyt ajopäiväkirja ja kulujen kirjaustyökalu yrittäjälle.</p>
+      <ul class="price-list">
+        <li>Ei määräaikaisuutta.</li>
+        <li>Tilaus voidaan perua milloin tahansa.</li>
+        <li>Maksu käsitellään turvallisesti Stripen kautta.</li>
+      </ul>
+      <div class="cta-row" style="justify-content:center">
+        <a class="btn primary" href="https://buy.stripe.com/28EfZjfqR2Ml2vFaifaIM00">ALOITA KÄYTTÖ – 3,90 €/KK</a>
+        <a class="btn secondary" href="https://hekse.github.io/index.html/opero-ajo/">Kirjaudu Opero Ajoon</a>
+      </div>
+      <p class="price-note">ReHeKo ei ole arvonlisäverovelvollinen. Hinta ei sisällä arvonlisäveroa.</p>
     </div>
   </section>
 
