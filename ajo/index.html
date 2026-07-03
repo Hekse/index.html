@@ -35,6 +35,7 @@ body{
   overflow-x:hidden;
 }
 a{color:inherit;text-decoration:none}
+img{max-width:100%;height:auto}
 .page{width:min(1120px,100%);margin:0 auto;padding:18px 18px calc(42px + var(--safe))}
 .top{
   display:flex;
@@ -73,6 +74,26 @@ a{color:inherit;text-decoration:none}
   font-size:14px;
   font-weight:650;
 }
+.top-actions{display:flex;align-items:center;gap:10px}
+.lang-switch{display:flex;align-items:center;gap:8px}
+.lang-btn{
+  width:24px;
+  height:18px;
+  display:grid;
+  place-items:center;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  cursor:pointer;
+  padding:0;
+  opacity:.72;
+  transition:opacity .15s ease,transform .15s ease;
+}
+.lang-btn:hover{opacity:1;transform:translateY(-1px)}
+.lang-btn.on{opacity:1}
+.flag-icon{width:24px;height:16px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.18);overflow:hidden;background-size:cover;background-position:center}
+.flag-icon.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 15'%3E%3Cpath fill='%23fff' d='M0 0h22v15H0z'/%3E%3Cpath fill='%230038a8' d='M6 0h3v15H6zM0 6h22v3H0z'/%3E%3C/svg%3E")}
+.flag-icon.gb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h60v40H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath fill='%23012169' d='M0 0h60v40H0z'/%3E%3Cpath stroke='%23fff' stroke-width='8' d='m0 0 60 40M60 0 0 40'/%3E%3Cpath stroke='%23c8102e' stroke-width='4.8' d='m0 0 60 40M60 0 0 40'/%3E%3Cpath stroke='%23fff' stroke-width='13' d='M30 0v40M0 20h60'/%3E%3Cpath stroke='%23c8102e' stroke-width='8' d='M30 0v40M0 20h60'/%3E%3C/g%3E%3C/svg%3E")}
 .hero{
   display:grid;
   grid-template-columns:minmax(0,1.05fr) minmax(280px,.78fr);
@@ -280,6 +301,27 @@ a{color:inherit;text-decoration:none}
   color:var(--muted);
   font-size:13px;
 }
+.top,
+.brand,
+.top-actions,
+.hero,
+.hero-panel,
+.mini-app,
+.split,
+.card,
+.price-card,
+.final-cta{
+  min-width:0;
+}
+.lead,
+.sublead,
+.section-intro,
+.card p,
+.step span,
+.price-note,
+.final-cta p{
+  overflow-wrap:anywhere;
+}
 @media (max-width:820px){
   .hero,.split{grid-template-columns:1fr}
   .hero{min-height:0;padding-top:18px}
@@ -288,16 +330,30 @@ a{color:inherit;text-decoration:none}
 }
 @media (max-width:540px){
   .page{padding:14px 14px calc(34px + var(--safe))}
-  .top{padding-bottom:20px}
+  .top{padding-bottom:20px;gap:12px}
   .brand img{width:42px;height:42px}
   .brand-text strong{font-size:18px}
+  .brand-text span{font-size:11px;letter-spacing:.18em}
+  .top-actions{gap:8px;flex:0 0 auto}
   .nav-link{display:none}
-  .hero h1{font-size:48px}
+  .hero{gap:22px;padding-bottom:38px}
+  .hero h1{font-size:clamp(42px,13vw,48px)}
   .lead{font-size:18px}
   .cta-row{display:grid}
   .btn{width:100%}
   .hero-panel,.final-cta{border-radius:22px}
   .metric-grid{grid-template-columns:1fr}
+  .hero-panel,.card,.final-cta{padding:18px}
+  .step{grid-template-columns:36px 1fr;padding:13px;gap:10px}
+  .step:before{width:30px;height:30px;border-radius:10px}
+}
+@media (max-width:380px){
+  .page{padding-left:12px;padding-right:12px}
+  .brand{gap:9px}
+  .brand img{width:38px;height:38px}
+  .brand-text strong{font-size:17px}
+  .hero h1{font-size:40px}
+  .btn{padding-left:14px;padding-right:14px}
 }
 </style>
 </head>
@@ -305,125 +361,134 @@ a{color:inherit;text-decoration:none}
 <main class="page">
   <header class="top" aria-label="Opero">
     <a class="brand" href="../" aria-label="Opero etusivu">
-      <img src="../opero-ajo/assets/opero-ajo-icon.svg" alt="" />
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik9wZXJvIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ib3Blcm9CbHVlIiB4MT0iODgiIHkxPSI3MiIgeDI9IjQyNCIgeTI9IjQ0MCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwMEM4RkYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjQ1IiBzdG9wLWNvbG9yPSIjMEE4NEZGIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwNDZDOCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ib3Blcm9CbHVlMiIgeDE9IjE1MCIgeTE9IjEyMCIgeDI9IjM3MCIgeTI9IjM5MCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM3OEU4RkYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjM1IiBzdG9wLWNvbG9yPSIjMEE4NEZGIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMzdBOCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9InNvZnRHbG93IiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj4KICAgICAgPGZlR2F1c3NpYW5CbHVyIGluPSJTb3VyY2VHcmFwaGljIiBzdGREZXZpYXRpb249IjEwIiByZXN1bHQ9ImJsdXIiLz4KICAgICAgPGZlQ29sb3JNYXRyaXggaW49ImJsdXIiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAuMDQgIDAgMCAwIDAgMC41MiAgMCAwIDAgMCAxICAwIDAgMCAuNTUgMCIgcmVzdWx0PSJnbG93Ii8+CiAgICAgIDxmZU1lcmdlPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iZ2xvdyIvPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPgogICAgICA8L2ZlTWVyZ2U+CiAgICA8L2ZpbHRlcj4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTE4IiBmaWxsPSIjMDcxMjI2Ii8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxNjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA1MjY1RiIgc3Ryb2tlLXdpZHRoPSI1OCIgb3BhY2l0eT0iLjU1Ii8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxNjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNvcGVyb0JsdWUpIiBzdHJva2Utd2lkdGg9IjUyIiBmaWx0ZXI9InVybCgjc29mdEdsb3cpIi8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxMDgiIGZpbGw9IiMwNzEyMjYiLz4KICA8cGF0aCBkPSJNMTY0IDI1NmMwLTUzIDM5LTkyIDkyLTkyIDM1IDAgNjUgMTcgODIgNDMiCiAgICAgICAgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI29wZXJvQmx1ZTIpIiBzdHJva2Utd2lkdGg9IjI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMzM4IDMwNWMtMTcgMjYtNDcgNDMtODIgNDMtNTMgMC05Mi0zOS05Mi05MiIKICAgICAgICBmaWxsPSJub25lIiBzdHJva2U9IiMwQTg0RkYiIHN0cm9rZS13aWR0aD0iMjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjg4Ii8+CiAgPHBhdGggZD0iTTExMiAxNjVjMzQtNTggODgtODcgMTQ0LTg3IDM4IDAgNzUgMTIgMTA1IDM1IgogICAgICAgIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzlCRUZGRiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuNTUiLz4KPC9zdmc+" alt="Opero" />
       <span class="brand-text"><strong>Opero</strong><span>Ajo</span></span>
     </a>
-    <a class="nav-link" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
+    <div class="top-actions">
+      <div class="lang-switch" aria-label="Kieli">
+        <button class="lang-btn on" id="langFI" type="button" onclick="setLang('fi')" aria-label="Suomi"><span class="flag-icon fi"></span></button>
+        <button class="lang-btn" id="langEN" type="button" onclick="setLang('en')" aria-label="English"><span class="flag-icon gb"></span></button>
+      </div>
+      <a class="nav-link" data-i18n="topCta" href="https://buy.stripe.com/28EfZjfqR2Ml2vFaifaIM00">Aloita käyttö</a>
+    </div>
   </header>
 
   <section class="hero">
     <div>
       <h1>Opero Ajo</h1>
-      <p class="lead">Ajopäiväkirja ja kulut yrittäjälle.</p>
-      <p class="sublead">Kirjaa työajot, kulut ja kuitit helposti puhelimella tai tietokoneella. Tee raportti kirjanpitoa, laskutusta tai omaa seurantaa varten.</p>
+      <p class="lead" data-i18n="heroSubtitle">Ajopäiväkirja ja kulut yrittäjälle.</p>
+      <p class="sublead" data-i18n="heroDesc">Kirjaa työajot, kulut ja kuitit helposti puhelimella tai tietokoneella. Tee raportti kirjanpitoa, laskutusta tai omaa seurantaa varten.</p>
       <div class="cta-row">
-        <a class="btn primary" href="https://hekse.github.io/index.html/opero-ajo/">Avaa Opero Ajo</a>
-        <a class="btn secondary" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
+        <a class="btn primary" data-i18n="primaryCta" href="https://buy.stripe.com/28EfZjfqR2Ml2vFaifaIM00">Aloita käyttö</a>
+        <a class="btn secondary" data-i18n="loginCta" href="https://hekse.github.io/index.html/opero-ajo/">Kirjaudu Opero Ajoon</a>
       </div>
-      <div class="pilot">Opero Ajo on tällä hetkellä koekäyttö- ja pilotointivaiheessa.</div>
+      <div class="pilot" data-i18n="earlyNotice">Opero Ajo on varhaisessa v1.0-vaiheessa ja käytettävissä kuukausitilauksella.</div>
     </div>
 
     <aside class="hero-panel" aria-label="Opero Ajo yhteenveto">
       <div class="mini-app">
         <div class="mini-head">
-          <div class="mini-title">Kuukauden koonti</div>
-          <span class="pill">Pilotti</span>
+          <div class="mini-title" data-i18n="miniTitle">Kuukauden koonti</div>
+          <span class="pill">v1.0</span>
         </div>
         <div class="metric-grid">
-          <div class="metric"><small>Ajot</small><strong>18</strong></div>
-          <div class="metric"><small>Kilometrit</small><strong>842 km</strong></div>
-          <div class="metric"><small>Kulut</small><strong>126,40 €</strong></div>
-          <div class="metric"><small>Raportti</small><strong>Valmis</strong></div>
+          <div class="metric"><small data-i18n="driveCount">Ajot</small><strong>18</strong></div>
+          <div class="metric"><small data-i18n="kilometers">Kilometrit</small><strong>842 km</strong></div>
+          <div class="metric"><small data-i18n="expenses">Kulut</small><strong>126,40 €</strong></div>
+          <div class="metric"><small data-i18n="report">Raportti</small><strong data-i18n="ready">Valmis</strong></div>
         </div>
         <div class="row">
-          <div class="row-top"><span>Asiakaskäynti</span><span>56,5 km</span></div>
-          <p>Reitti, tarkoitus, kulut ja kuitit samassa raportissa.</p>
+          <div class="row-top"><span data-i18n="sampleTrip">Asiakaskäynti</span><span>56,5 km</span></div>
+          <p data-i18n="sampleTripDesc">Reitti, tarkoitus, kulut ja kuitit samassa raportissa.</p>
         </div>
         <div class="row">
-          <div class="row-top"><span>Kuitti lisätty</span><span>PDF</span></div>
-          <p>Kuvat säilyvät ajokohtaisesti kirjanpitoa varten.</p>
+          <div class="row-top"><span data-i18n="receiptAdded">Kuitti lisätty</span><span>PDF</span></div>
+          <p data-i18n="receiptDesc">Kuvat säilyvät ajokohtaisesti kirjanpitoa varten.</p>
         </div>
       </div>
     </aside>
   </section>
 
   <section class="section" aria-labelledby="hyodyt">
-    <h2 id="hyodyt">Hyödyt</h2>
-    <p class="section-intro">Opero Ajo kokoaa arjen ajokirjaukset yhteen paikkaan ilman raskasta järjestelmää.</p>
+    <h2 id="hyodyt" data-i18n="benefitsTitle">Hyödyt</h2>
+    <p class="section-intro" data-i18n="benefitsIntro">Opero Ajo kokoaa arjen ajokirjaukset yhteen paikkaan ilman raskasta järjestelmää.</p>
     <div class="cards">
       <article class="card">
         <div class="icon" aria-hidden="true">↗</div>
-        <h3>Työajot talteen</h3>
-        <p>Kirjaa päivämäärä, reitti, tarkoitus, kilometrit ja korvaus heti matkan yhteydessä.</p>
+        <h3 data-i18n="benefit1Title">Työajot talteen</h3>
+        <p data-i18n="benefit1Text">Kirjaa päivämäärä, reitti, tarkoitus, kilometrit ja korvaus heti matkan yhteydessä.</p>
       </article>
       <article class="card">
         <div class="icon" aria-hidden="true">✓</div>
-        <h3>Kulut ja kuitit samaan paikkaan</h3>
-        <p>Lisää pysäköinnit, muut kulut ja kuittikuvat ajon yhteyteen.</p>
+        <h3 data-i18n="benefit2Title">Kulut ja kuitit samaan paikkaan</h3>
+        <p data-i18n="benefit2Text">Lisää pysäköinnit, muut kulut ja kuittikuvat ajon yhteyteen.</p>
       </article>
       <article class="card">
         <div class="icon" aria-hidden="true">□</div>
-        <h3>Raportti valmiiksi</h3>
-        <p>Muodosta kuukausiraportti kirjanpitoa, laskutusta tai omaa seurantaa varten.</p>
+        <h3 data-i18n="benefit3Title">Raportti valmiiksi</h3>
+        <p data-i18n="benefit3Text">Muodosta kuukausiraportti kirjanpitoa, laskutusta tai omaa seurantaa varten.</p>
       </article>
     </div>
   </section>
 
   <section class="section split" aria-labelledby="kenelle">
     <div>
-      <h2 id="kenelle">Kenelle Opero Ajo sopii?</h2>
-      <p class="section-intro">Opero Ajo sopii yrittäjälle, myyjälle, asentajalle, rakennusalan toimijalle tai kenelle tahansa, jonka pitää kirjata työajoja ja kuluja ilman raskasta järjestelmää.</p>
+      <h2 id="kenelle" data-i18n="whoTitle">Kenelle Opero Ajo sopii?</h2>
+      <p class="section-intro" data-i18n="whoText">Opero Ajo sopii yrittäjälle, myyjälle, asentajalle, rakennusalan toimijalle tai kenelle tahansa, jonka pitää kirjata työajoja ja kuluja ilman raskasta järjestelmää.</p>
     </div>
     <div class="card pilot-card">
-      <h3>Kevyt käyttö arjessa</h3>
-      <p>Palvelu on suunniteltu tilanteisiin, joissa ajot pitää saada talteen nopeasti puhelimella ja raportiksi ilman erillistä taulukointia.</p>
+      <h3 data-i18n="everydayTitle">Kevyt käyttö arjessa</h3>
+      <p data-i18n="everydayText">Palvelu on suunniteltu tilanteisiin, joissa ajot pitää saada talteen nopeasti puhelimella ja raportiksi ilman erillistä taulukointia.</p>
     </div>
   </section>
 
   <section class="section split" aria-labelledby="kayttoonotto">
     <div>
-      <h2 id="kayttoonotto">Käyttöönotto</h2>
-      <p class="section-intro">Pilotissa käyttöönotto pidetään yksinkertaisena. Saat tunnukset ja pääset kokeilemaan palvelua oikeassa työarjessa.</p>
+      <h2 id="kayttoonotto" data-i18n="gettingStartedTitle">Käyttöönotto</h2>
+      <p class="section-intro" data-i18n="gettingStartedText">Käyttöönotto pidetään yksinkertaisena. Tilauksen jälkeen saat kuitin, ohjeet ja turvallisen salasanan luontilinkin sähköpostiisi.</p>
     </div>
     <div class="steps">
-      <div class="step"><div><strong>Saat tunnukset</strong><span>Kirjaudut Opero Ajoon selaimella tai puhelimella.</span></div></div>
-      <div class="step"><div><strong>Lisäät lähtöpaikat ja auton tiedot</strong><span>Koti, toimisto, rekisterinumero ja oletus €/km tallentuvat käyttäjällesi.</span></div></div>
-      <div class="step"><div><strong>Kirjaat ajot puhelimella</strong><span>Lisää kohde, tarkoitus, kilometrit, kulut ja kuitit heti.</span></div></div>
-      <div class="step"><div><strong>Muodostat raportin</strong><span>Kuukausikoonti ja ajolista ovat valmiina tulostukseen tai PDF:ksi.</span></div></div>
+      <div class="step"><div><strong data-i18n="step1Title">Aloitat tilauksen</strong><span data-i18n="step1Text">Tilaat Opero Ajon turvallisesti Stripen kautta.</span></div></div>
+      <div class="step"><div><strong data-i18n="step2Title">Saat kuitin ja käyttöönotto-ohjeet</strong><span data-i18n="step2Text">Maksun jälkeen saat sähköpostiisi maksukuitin ja Opero Ajon käyttöönotto-ohjeet.</span></div></div>
+      <div class="step"><div><strong data-i18n="step3Title">Luot oman salasanasi</strong><span data-i18n="step3Text">Saat sähköpostiisi turvallisen linkin, jonka kautta luot itse Opero Ajon salasanan.</span></div></div>
+      <div class="step"><div><strong data-i18n="step4Title">Kirjaudut Opero Ajoon</strong><span data-i18n="step4Text">Kirjaudu samalla sähköpostiosoitteella, jota käytit tilauksessa.</span></div></div>
+      <div class="step"><div><strong data-i18n="step5Title">Lisäät oletustiedot</strong><span data-i18n="step5Text">Koti, toimisto, rekisterinumero ja oletus €/km tallentuvat käyttäjällesi.</span></div></div>
+      <div class="step"><div><strong data-i18n="step6Title">Aloitat käytön</strong><span data-i18n="step6Text">Kirjaa ajot, kulut ja kuitit sekä muodosta kuukausiraportti PDF-muodossa.</span></div></div>
     </div>
   </section>
 
   <section class="section" aria-labelledby="pilotointi">
     <div class="card pilot-card">
-      <h2 id="pilotointi">Pilotointi</h2>
-      <p>Opero Ajo on RC1-vaiheen pilotissa. Ohjelmaa testataan oikeassa arjessa ennen laajempaa julkaisua.</p>
+      <h2 id="pilotointi" data-i18n="statusTitle">Varhainen v1.0</h2>
+      <p data-i18n="statusText">Opero Ajo on varhaisessa v1.0-vaiheessa ja käytettävissä kuukausitilauksella. Palvelua kehitetään edelleen käytännön palautteen perusteella.</p>
     </div>
   </section>
 
   <section class="section" aria-labelledby="hinta">
     <div class="card price-card">
-      <span class="pill">Hinta</span>
-      <h2 id="hinta">3,90 €/kk</h2>
-      <p class="section-intro" style="margin-left:auto;margin-right:auto">Opero Ajo on kevyt ajopäiväkirja ja kulujen kirjaustyökalu yrittäjälle.</p>
+      <span class="pill" data-i18n="priceTitle">Hinta</span>
+      <h2 id="hinta" data-i18n="price">3,90 €/kk</h2>
+      <p class="section-intro" style="margin-left:auto;margin-right:auto" data-i18n="priceDesc">Opero Ajo on kevyt ajopäiväkirja ja kulujen kirjaustyökalu yrittäjälle.</p>
       <ul class="price-list">
-        <li>Ei määräaikaisuutta.</li>
-        <li>Tilaus voidaan perua milloin tahansa.</li>
-        <li>Maksu käsitellään turvallisesti Stripen kautta.</li>
+        <li data-i18n="priceBullet1">Ei määräaikaisuutta.</li>
+        <li data-i18n="priceBullet2">Tilaus voidaan perua milloin tahansa.</li>
+        <li data-i18n="priceBullet3">Maksu käsitellään turvallisesti Stripen kautta.</li>
       </ul>
       <div class="cta-row" style="justify-content:center">
-        <a class="btn primary" href="https://buy.stripe.com/28EfZjfqR2Ml2vFaifaIM00">ALOITA KÄYTTÖ – 3,90 €/KK</a>
-        <a class="btn secondary" href="https://hekse.github.io/index.html/opero-ajo/">Kirjaudu Opero Ajoon</a>
+        <a class="btn primary" data-i18n="priceCta" href="https://buy.stripe.com/28EfZjfqR2Ml2vFaifaIM00">ALOITA KÄYTTÖ – 3,90 €/KK</a>
+        <a class="btn secondary" data-i18n="loginCta" href="https://hekse.github.io/index.html/opero-ajo/">Kirjaudu Opero Ajoon</a>
       </div>
-      <p class="price-note">ReHeKo ei ole arvonlisäverovelvollinen. Hinta ei sisällä arvonlisäveroa.</p>
+      <p class="price-note" data-i18n="paymentNote">Maksun jälkeen saat kuitin, käyttöönotto-ohjeet ja turvallisen salasanan luontilinkin sähköpostiisi.</p>
+      <p class="price-note" data-i18n="vatText">ReHeKo ei ole arvonlisäverovelvollinen. Hinta ei sisällä arvonlisäveroa.</p>
     </div>
   </section>
 
   <section class="final-cta" aria-labelledby="koekaytto">
-    <h2 id="koekaytto">Haluatko mukaan koekäyttöön?</h2>
-    <p>Ota yhteyttä, niin katsotaan sopiiko Opero Ajo sinun käyttöösi.</p>
+    <h2 id="koekaytto" data-i18n="helpTitle">Tarvitsetko apua käyttöönotossa?</h2>
+    <p data-i18n="helpText">Ota yhteyttä, jos haluat kysyä sopiiko Opero Ajo sinun käyttöösi tai tarvitset apua käyttöönotossa.</p>
     <div class="cta-row">
-      <a class="btn primary" href="mailto:opero@opero.fi?subject=Opero%20Ajo%20koek%C3%A4ytt%C3%B6">Pyydä koekäyttöä</a>
-      <a class="btn secondary" href="https://hekse.github.io/index.html/opero-ajo/">Avaa Opero Ajo</a>
+      <a class="btn primary" data-i18n="startUsingFull" href="https://buy.stripe.com/28EfZjfqR2Ml2vFaifaIM00">Aloita käyttö</a>
+      <a class="btn secondary" data-i18n="openApp" href="https://hekse.github.io/index.html/opero-ajo/">Avaa Opero Ajo</a>
     </div>
   </section>
 
@@ -431,5 +496,23 @@ a{color:inherit;text-decoration:none}
     Opero Ajo · opero.fi
   </footer>
 </main>
+<script>
+const I18N={
+  fi:{
+    topCta:'Aloita käyttö',heroSubtitle:'Ajopäiväkirja ja kulut yrittäjälle.',heroDesc:'Kirjaa työajot, kulut ja kuitit helposti puhelimella tai tietokoneella. Tee raportti kirjanpitoa, laskutusta tai omaa seurantaa varten.',primaryCta:'Aloita käyttö',loginCta:'Kirjaudu Opero Ajoon',earlyNotice:'Opero Ajo on varhaisessa v1.0-vaiheessa ja käytettävissä kuukausitilauksella.',miniTitle:'Kuukauden koonti',driveCount:'Ajot',kilometers:'Kilometrit',expenses:'Kulut',report:'Raportti',ready:'Valmis',sampleTrip:'Asiakaskäynti',sampleTripDesc:'Reitti, tarkoitus, kulut ja kuitit samassa raportissa.',receiptAdded:'Kuitti lisätty',receiptDesc:'Kuvat säilyvät ajokohtaisesti kirjanpitoa varten.',benefitsTitle:'Hyödyt',benefitsIntro:'Opero Ajo kokoaa arjen ajokirjaukset yhteen paikkaan ilman raskasta järjestelmää.',benefit1Title:'Työajot talteen',benefit1Text:'Kirjaa päivämäärä, reitti, tarkoitus, kilometrit ja korvaus heti matkan yhteydessä.',benefit2Title:'Kulut ja kuitit samaan paikkaan',benefit2Text:'Lisää pysäköinnit, muut kulut ja kuittikuvat ajon yhteyteen.',benefit3Title:'Raportti valmiiksi',benefit3Text:'Muodosta kuukausiraportti kirjanpitoa, laskutusta tai omaa seurantaa varten.',whoTitle:'Kenelle Opero Ajo sopii?',whoText:'Opero Ajo sopii yrittäjälle, myyjälle, asentajalle, rakennusalan toimijalle tai kenelle tahansa, jonka pitää kirjata työajoja ja kuluja ilman raskasta järjestelmää.',everydayTitle:'Kevyt käyttö arjessa',everydayText:'Palvelu on suunniteltu tilanteisiin, joissa ajot pitää saada talteen nopeasti puhelimella ja raportiksi ilman erillistä taulukointia.',gettingStartedTitle:'Käyttöönotto',gettingStartedText:'Käyttöönotto pidetään yksinkertaisena. Tilauksen jälkeen saat kuitin, ohjeet ja turvallisen salasanan luontilinkin sähköpostiisi.',step1Title:'Aloitat tilauksen',step1Text:'Tilaat Opero Ajon turvallisesti Stripen kautta.',step2Title:'Saat kuitin ja käyttöönotto-ohjeet',step2Text:'Maksun jälkeen saat sähköpostiisi maksukuitin ja Opero Ajon käyttöönotto-ohjeet.',step3Title:'Luot oman salasanasi',step3Text:'Saat sähköpostiisi turvallisen linkin, jonka kautta luot itse Opero Ajon salasanan.',step4Title:'Kirjaudut Opero Ajoon',step4Text:'Kirjaudu samalla sähköpostiosoitteella, jota käytit tilauksessa.',step5Title:'Lisäät oletustiedot',step5Text:'Koti, toimisto, rekisterinumero ja oletus €/km tallentuvat käyttäjällesi.',step6Title:'Aloitat käytön',step6Text:'Kirjaa ajot, kulut ja kuitit sekä muodosta kuukausiraportti PDF-muodossa.',statusTitle:'Varhainen v1.0',statusText:'Opero Ajo on varhaisessa v1.0-vaiheessa ja käytettävissä kuukausitilauksella. Palvelua kehitetään edelleen käytännön palautteen perusteella.',priceTitle:'Hinta',price:'3,90 €/kk',priceDesc:'Opero Ajo on kevyt ajopäiväkirja ja kulujen kirjaustyökalu yrittäjälle.',priceBullet1:'Ei määräaikaisuutta.',priceBullet2:'Tilaus voidaan perua milloin tahansa.',priceBullet3:'Maksu käsitellään turvallisesti Stripen kautta.',priceCta:'ALOITA KÄYTTÖ – 3,90 €/KK',paymentNote:'Maksun jälkeen saat kuitin, käyttöönotto-ohjeet ja turvallisen salasanan luontilinkin sähköpostiisi.',vatText:'ReHeKo ei ole arvonlisäverovelvollinen. Hinta ei sisällä arvonlisäveroa.',helpTitle:'Tarvitsetko apua käyttöönotossa?',helpText:'Ota yhteyttä, jos haluat kysyä sopiiko Opero Ajo sinun käyttöösi tai tarvitset apua käyttöönotossa.',startUsingFull:'Aloita käyttö',openApp:'Avaa Opero Ajo'
+  },
+  en:{
+    topCta:'Start using',heroSubtitle:'Mileage log and expenses for small business owners.',heroDesc:'Log business trips, expenses and receipts easily on your phone or computer. Create a monthly report for accounting, invoicing or your own records.',primaryCta:'START USING – €3.90/MONTH',loginCta:'Log in to Opero Ajo',earlyNotice:'Opero Ajo is in an early v1.0 stage and is available as a monthly subscription.',miniTitle:'Monthly summary',driveCount:'Trips',kilometers:'Kilometres',expenses:'Expenses',report:'Report',ready:'Ready',sampleTrip:'Customer visit',sampleTripDesc:'Route, purpose, expenses and receipts in the same report.',receiptAdded:'Receipt added',receiptDesc:'Images stay attached to each trip for accounting.',benefitsTitle:'Benefits',benefitsIntro:'Opero Ajo keeps everyday mileage logs, expenses and receipts in one place without a heavy system.',benefit1Title:'Save business trips',benefit1Text:'Log the date, route, purpose, kilometres and mileage compensation right when the trip happens.',benefit2Title:'Expenses and receipts in one place',benefit2Text:'Add parking, other expenses and receipt images directly to the trip.',benefit3Title:'Reports ready',benefit3Text:'Create a monthly report for accounting, invoicing or your own records.',whoTitle:'Who is Opero Ajo for?',whoText:'Opero Ajo is suitable for entrepreneurs, salespeople, installers, construction professionals and anyone who needs to record business trips and expenses without a heavy system.',everydayTitle:'Lightweight everyday use',everydayText:'The service is designed for situations where trips need to be recorded quickly on a phone and turned into a report without separate spreadsheets.',gettingStartedTitle:'Getting started',gettingStartedText:'Getting started is simple. After subscribing, you will receive a receipt, setup instructions and a secure password creation link by email.',step1Title:'Start your subscription',step1Text:'Subscribe to Opero Ajo securely through Stripe.',step2Title:'Receive your receipt and setup instructions',step2Text:'After payment, you will receive a payment receipt and Opero Ajo setup instructions by email.',step3Title:'Create your password',step3Text:'You will receive a secure email link that allows you to create your own Opero Ajo password.',step4Title:'Log in to Opero Ajo',step4Text:'Log in using the same email address you used for the subscription.',step5Title:'Add your default details',step5Text:'Home, office, vehicle registration number and default €/km are saved to your account.',step6Title:'Start using Opero Ajo',step6Text:'Log trips, expenses and receipts, and create a monthly PDF report.',statusTitle:'Early v1.0 stage',statusText:'Opero Ajo is in an early v1.0 stage. The product is already usable, and feedback from real work use helps guide the final polish.',priceTitle:'Price',price:'€3.90/month',priceDesc:'Opero Ajo is a lightweight mileage log and expense tracking tool for small business owners.',priceBullet1:'No fixed-term commitment.',priceBullet2:'You can cancel your subscription at any time.',priceBullet3:'Payments are handled securely by Stripe.',priceCta:'START USING – €3.90/MONTH',paymentNote:'After payment, you will receive a receipt, setup instructions and a secure password creation link by email.',vatText:'ReHeKo is not VAT liable. The price does not include VAT.',helpTitle:'Need help getting started?',helpText:'Contact us if you want to ask whether Opero Ajo is a good fit for your use case or if you need help getting started.',startUsingFull:'Start using Opero Ajo',openApp:'Open Opero Ajo'
+  }
+};
+function setLang(lang){
+  const active=lang==='en'?'en':'fi';
+  document.documentElement.lang=active;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(I18N[active][key])el.textContent=I18N[active][key]});
+  document.getElementById('langFI')?.classList.toggle('on',active==='fi');
+  document.getElementById('langEN')?.classList.toggle('on',active==='en');
+}
+setLang('fi');
+</script>
 </body>
 </html>
