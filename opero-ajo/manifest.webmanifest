@@ -3,7 +3,7 @@
   "short_name": "Ajo",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#071226",
+  "background_color": "#03122c",
   "theme_color": "#07111f",
   "icons": [
     {
