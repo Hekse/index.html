@@ -29,7 +29,7 @@ Päiväys: 2026-05-17
   .report-trip-list{display:grid;gap:10px}
   .report-trip-row{border:1px solid var(--l);border-radius:17px;background:rgba(255,255,255,.035);padding:14px}
   .report-trip-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
-  .report-trip-main{font-size:15px;font-weight:600;line-height:1.35;color:var(--t)}
+  .report-trip-main{font-size:15px;font-weight:600;line-height:1.35;color:var(--t);min-width:0;overflow-wrap:anywhere}
   .report-trip-amounts{font-size:14px;font-weight:500;line-height:1.35;color:var(--t)}
   .report-trip-amounts b{font-weight:500}
   .report-trip-sub{display:block;margin-top:10px;color:var(--m);font-size:14px;line-height:1.45;overflow-wrap:anywhere}
@@ -56,7 +56,7 @@ Päiväys: 2026-05-17
   #report>.card:first-child{min-height:258mm;break-after:page;page-break-after:always;padding:10mm 0 0}
   #report>.card:nth-of-type(2){break-before:page;page-break-before:always}
   #report .title{display:none}
-  .report-print-head{border-bottom:1.25pt solid #0d1b2f;padding:0 0 12mm;margin:2mm 0 15mm}
+  .report-print-head{border-bottom:1.25pt solid #0d1b2f;padding:0 0 12mm 14px;margin:2mm 0 15mm}
   .report-brand-row{display:flex;align-items:center;gap:3mm;color:#0d1b2f;font-size:12pt;font-weight:600;margin-bottom:8mm}
   .report-logo{display:block;width:7mm;height:7mm;object-fit:contain}
   .report-print-head h2{font-size:22pt;line-height:1.12;font-weight:600;color:#0d1b2f;margin:0}
@@ -74,7 +74,7 @@ Päiväys: 2026-05-17
   .print-trips-section{width:100%;max-width:190mm;margin-left:auto;margin-right:auto}
   .report-trip-row{border-bottom:1px solid #d7dce5;padding:7px 0;break-inside:avoid;page-break-inside:avoid}
   .report-trip-top{display:flex;justify-content:space-between;gap:7mm;align-items:baseline}
-  .report-trip-main{font-size:10.8pt;color:#111;font-weight:500;line-height:1.25}
+  .report-trip-main{font-size:10.8pt;color:#111;font-weight:500;line-height:1.25;min-width:0;overflow-wrap:anywhere}
   .report-trip-amounts{font-size:9.2pt;color:#222;text-align:right;white-space:nowrap;line-height:1.25}
   .report-trip-amounts b{font-size:9.6pt;font-weight:500}
   .report-trip-sub{display:block;color:#555;font-size:9.6pt;font-weight:400;margin-top:2px;line-height:1.35;overflow-wrap:anywhere;word-break:normal}
@@ -486,7 +486,7 @@ function renderReport(){
   if(q('reportCreated'))q('reportCreated').textContent=(appLang==='en'?'Created: ':'Luotu: ')+new Date().toLocaleDateString(appLang==='en'?'en-GB':'fi-FI');
   const payableLabel=appLang==='en'?'Total payable':'Maksettava yhteensä';
   q('rt').innerHTML=`<div class="tot"><span>${appLang==='en'?'Trips total':'Ajot yhteensä'}</span><b>${rows.length} ${appLang==='en'?'pcs':'kpl'}</b></div><div class="tot"><span>${appLang==='en'?'Kilometres total':'Kilometrit yhteensä'}</span><b>${kmf(summary.km)}</b></div><div class="tot"><span>${appLang==='en'?'Mileage compensation total':'Km-korvaus yhteensä'}</span><b>${eur(summary.kmv)}</b></div><div class="tot"><span>${appLang==='en'?'Expenses total':'Kulut yhteensä'}</span><b>${eur(summary.costv)}</b></div><div class="tot"><span>${payableLabel}</span><b>${eur(summary.total)}</b></div>`;
-  const tripRows=rows.map(d=>{const receiptHtml=(d.receipts||[]).map(r=>`<div class="receipt-report-item"><div class="receipt-report-title">${esc(r.name||'Kuitti')}</div><img class="receipt-img-report" src="${r.data}" alt="${appLang==='en'?'Receipt':'Kuitti'}: ${esc(r.name)}"></div>`).join('');return`<div class="report-trip-row"><div class="report-trip-top"><div class="report-trip-main">${esc(d.date)} · ${esc(d.dest)}</div><div class="report-trip-amounts">${tripTypeText(d)} · ${kmf(d.km)} · <b>${eur(d.total)}</b></div></div><span class="report-trip-sub">${esc(routeText(d))}</span><div class="report-trip-meta">${d.purpose?`<span>${appLang==='en'?'Purpose':'Tarkoitus'}: ${esc(d.purpose)}</span>`:''}<span>€/km: ${eur(d.rate).replace(' €','')} €/km</span><span>${appLang==='en'?'Expenses':'Kulut'}: ${eur(d.costv)}</span></div>${d.note?`<span class="report-trip-sub">${esc(d.note)}</span>`:''}${receiptHtml?`<div class="report-receipts">${receiptHtml}</div>`:''}</div>`}).join('');
+  const tripRows=rows.map(d=>{const receiptHtml=(d.receipts||[]).map(r=>`<div class="receipt-report-item"><div class="receipt-report-title">${esc(r.name||'Kuitti')}</div><img class="receipt-img-report" src="${r.data}" alt="${appLang==='en'?'Receipt':'Kuitti'}: ${esc(r.name)}"></div>`).join('');return`<div class="report-trip-row"><div class="report-trip-top"><div class="report-trip-main">${esc(d.date)} · ${esc(d.dest)}</div><div class="report-trip-amounts">${kmf(d.km)} · <b>${eur(d.total)}</b></div></div><span class="report-trip-sub">${esc(routeText(d))}</span><div class="report-trip-meta">${d.purpose?`<span>${appLang==='en'?'Purpose':'Tarkoitus'}: ${esc(d.purpose)}</span>`:''}<span>€/km: ${eur(d.rate).replace(' €','')} €/km</span><span>${appLang==='en'?'Expenses':'Kulut'}: ${eur(d.costv)}</span></div>${d.note?`<span class="report-trip-sub">${esc(d.note)}</span>`:''}${receiptHtml?`<div class="report-receipts">${receiptHtml}</div>`:''}</div>`}).join('');
   const tripSummary=`<div class="report-trip-summary"><div class="report-trip-summary-title">${appLang==='en'?'Summary':'Yhteenveto'}</div><div class="tot"><span>${t('driveCount')}</span><b>${rows.length} ${appLang==='en'?'pcs':'kpl'}</b></div><div class="tot"><span>${t('kilometers')}</span><b>${kmf(summary.km)}</b></div><div class="tot"><span>${appLang==='en'?'Mileage compensation':'Km-korvaukset'}</span><b>${eur(summary.kmv)}</b></div><div class="tot"><span>${appLang==='en'?'Expenses':'Kulut'}</span><b>${eur(summary.costv)}</b></div><div class="tot"><span>${t('total')}</span><b>${eur(summary.total)}</b></div></div>`;
   q('rr').innerHTML=rows.length?`<div class="print-trips-section"><h3 class="report-section-title">${appLang==='en'?'Trips':'Ajot'}</h3><div class="report-trip-list">${tripRows}</div>${tripSummary}</div>`:`<div class="empty">${t('noMonth')}</div>`;
   const brand=document.querySelector('.report-brand');if(brand)brand.textContent=appLang==='en'?'Created with Opero Drive · opero.fi':'Luotu Opero Ajolla · opero.fi';
