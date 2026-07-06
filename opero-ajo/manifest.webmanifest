@@ -4,7 +4,7 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#03122c",
-  "theme_color": "#07111f",
+  "theme_color": "#03122c",
   "icons": [
     {
       "src": "assets/opero-ajo-icon-192.png",
